@@ -1,4 +1,4 @@
-﻿|Tools|**References**|**Description**|
+﻿|*Tools*|*References*|*Description*|
 | :-: | :-: | :-: |
 |<p></p><p>**IDE**</p>|<p>[Thonny, Python IDE for beginners](https://thonny.org/)</p><p>[Visual Studio 2022 Community Edition -Free Version](https://visualstudio.microsoft.com/vs/community/)</p>||
 |<p></p><p></p><p>**MicroPython**</p>|<p>[Awesome MicroPython](https://awesome-micropython.com/)</p><p>[Quick Reference for ESP32-Pico](https://docs.micropython.org/en/latest/esp32/quickref.html)</p><p>[MicroPython Firmware for Atom Lite](https://micropython.org/download/M5STACK_ATOM/)</p>||
