@@ -26,5 +26,3 @@ a po zaregistrovaní si môžu pozrieť priebeh a výsledky našej práce.
 
 Za podporu v našej práci ďakujeme Ing. Romanovi Kissovi Sen. a Romanovi
 Kissovi Jr.
-
-abc
