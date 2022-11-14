@@ -5,10 +5,12 @@ Ako náš LoRa gateway sme použili Raspberry Pi 3, na ktorý sme nasadili LoRa 
 
 ## Jednotlivé kroky vytvárania gateway
 
-1. Nasadenie LoRa Hat na Raspberry Pi
+#### 1. Nasadenie LoRa Hat na Raspberry Pi
+
 Ako prvé sme na GPIO header raspberry náš LoRa Hat. Následne sme našróbovali anténu potrebnú pre LoRa sieť. Viď obrázok č. 1.
  
-2. Inštalácia OS na Raspberry Pi
+#### 2. Inštalácia OS na Raspberry Pi
+
 Na raspberry sme museli najprv nainštalovať operačný systém. Zvolili sme si ako operačný systém Raspbian, pretože je pre nás veľmi výhodný. 
 Ako prvé sme si museli zo stránky raspberry stiahnuť Raspberry Pi Imager.
 Ten nám slúži aby sme mohli nainštalovať OS na našu SD kartu.
@@ -16,7 +18,7 @@ SD kartu sme vložili do PC a spustili Raspberry Pi Imager.
 Vybrali sme vhodný OS a nahrali ho na SD kartu. Následne sme vložili SD kartu do raspbery a zapli sme ho.
 Dokončili sme inštaláciu už na samotnom raspberry. 
 
-3. Inštalácia packet forwarderu 
+#### 3. Inštalácia packet forwarderu 
 
 
 
