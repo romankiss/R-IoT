@@ -20,6 +20,19 @@ Dokončili sme inštaláciu už na samotnom raspberry.
 
 #### 3. Inštalácia packet forwarderu 
 
+Jednotlivé kroky inštalácie:
+
+**Naklonovanie repozitáru gateway softvéru:**
+
+Do raspberry zadáme príkaz ako root: git clone https://github.com/dragino/dual_chan_pkt_fwd
+ 
+**Povolíme SPI:**
+**Inštalácia wiringPi
+**Konfigurácia dual channel gateway kódu**
+**Spustenie gateway aplikácie**
+
+
+
 
 
 
