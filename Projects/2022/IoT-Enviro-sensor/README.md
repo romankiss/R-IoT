@@ -1,1 +1,1 @@
-
+Zámer našej práce 
