@@ -1,4 +1,4 @@
-Základné pojmy
+***Základné pojmy***
 
 Riadenie prístupu: Systém, ktorý určuje, kto, kedy a kde môžu ľudia vstúpiť alebo opustiť zariadenie alebo oblasť. Tradičnou formou kontroly prístupu je používanie zámkov dverí, ale moderná kontrola prístupu môže zahŕňať elektronické systémy a bezdrôtové zámky. Kontrola prístupu sa môže vzťahovať aj na kybernetickú bezpečnosť.
 Access Point: Uzol Wi-Fi, ktorý umožňuje používateľom vstup do siete, zvyčajne LAN.
@@ -7,7 +7,7 @@ Arduino: Jednodoskový mikrokontrolér používaný na prototypovanie bez toho, 
 Broker: Sprostredkovateľ správ IoT je procesor na spracovanie udalostí a príkazov naprieč zariadeniami, systémami a procesmi pomocou pracovného toku a analýzy.
 MQTT: MQTT je štandardný protokol na odosielanie správ pre internet vecí (IoT). Je navrhnutý ako extrémne ľahký prenos správ na publikovanie/predplatenie, ktorý je ideálny na pripojenie vzdialených zariadení s malou kódovou stopou a minimálnou šírkou pásma siete.
 
-Technológia
+***Technológia***
 
 IoT je počítačový periférny systém, ktorý interaguje s mechanickými alebo digitálnymi strojmi, predmetmi. Pre spotrebiteľov je internet vecí známejší ako koncept smart-home (osvetlenie, automatizácia, kúrenie / klimatizácia, informačné médiá bezpečnostného systému atď.).
 Bezdrôtový prenos na krátke vzdialenosti, napríklad:
@@ -24,21 +24,21 @@ Wired, napríklad:
 Ethernet, je sieťový štandard, ktorý používa skrútený pár a optická vlákna ktoré je spojené pomocou čísla húb a spínač.
 Komunikácia po elektrickej sieti (PLC), komunikačná technológia využívajúca elektrické káble na prenos energie a údajov.
 
-Proces telemetria
+***Proces telemetria***
 
 To je známe ako telemetria do systému, ktorý umožňuje sledovať, sprostredkovanie fyzikálnych veličín alebo chemických prostredníctvom dát sa prenáša do centrálneho riadenia. Telemetrický systém sa zvyčajne vykonáva pomocou bezdrôtovej komunikácie.
 
-Naše riešenie:
+***Naše riešenie:***
 
 V smetných nádobách budú umiestnené senzory, ktoré budú zbierať informácie o zaplnení týchto nádob. Senzory sú naplánované aby boli napojené na arduina. Tieto arduina budú odosielať info do Raspberry mikrokontrolerov v ktorých bude toto info spracované a odoslané pre konečného užívateľa. Tento užívateľ bude vedieť dať pokyn na základe info zo smetných nádob, či je za potreby ísť smetnú nádobu vyniesť alebo nie.
 
-Edge
+***Edge***
 
 Edge internetu vecí (IoT) je miesto, kde senzory a zariadenia prenášajú údaje do siete v reálnom čase. IoT edge computing rieši problémy s latenciou spojené s cloudom, keďže dáta sú spracovávané bližšie k ich východiskovému bodu. Spolu so zníženou latenciou prináša IoT okrajová architektúra zvýšenú bezpečnosť a hladší zážitok pre koncového používateľa.
  
 V sieti s vysokou priepustnosťou, ako je napríklad 5G, možno IoT edge použiť na takmer okamžité spracovanie veľkého množstva údajov, čím sa pre používateľa vytvorí pohlcujúcejší a komplexnejší zážitok. Zároveň, aj keď sa prenášajú relatívne malé množstvá dát, IoT edge dokáže urýchliť prácu strojov a iných zariadení, ktoré majú vplyv na bezpečnosť ľudí, čím zaistí bezpečnosť operátorov a ostatných.
 
-Komponenty v našej architektúre:
+***Komponenty v našej architektúre:***
 
 Senzor
 Edge Node – Raspberry Pi
@@ -50,9 +50,13 @@ Virtual Network Computing je samozrejmou možnosťou pri práci s platformami Li
 Node-Red 
 Pre vývoj komplexných IoT riešení je na trhu k dispozícií aj open-source vizuálno-programovací nástroj Node-RED (https://nodered.org/). Tento nástroj pochádza z dielne spoločnosti IBM, ktorá sa aktívne podieľa na vývoji IoT infraštruktúry a IoT štandardov. Jeho veľkou výhodou je,  že funguje vo webovom prehliadači.
 
-Node-RED je možné nainštalovať: Lokálny počítač, Na doskový počítač typu Raspberry Pi, Android zariadenie, Do cloudu (napríklad Amazon, Google)
+Node-RED je možné nainštalovať: 
+- Lokálny počítač
+- Na doskový počítač typu Raspberry Pi
+- Android zariadenie
+- Do cloudu (napríklad Amazon, Google)
 
-Komunikácia
+***Komunikácia***
 
 MQTT 
 MQTT je štandardný protokol na odosielanie správ OASIS pre internet vecí (IoT). Je navrhnutý ako extrémne ľahký prenos správ na publikovanie/predplatenie, ktorý je ideálny na pripojenie vzdialených zariadení s malou kódovou stopou a minimálnou šírkou pásma siete. MQTT sa dnes používa v širokej škále priemyselných odvetví, ako je automobilový priemysel, výroba, telekomunikácie, ropa a plyn atď.
