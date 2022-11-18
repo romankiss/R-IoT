@@ -7,8 +7,10 @@ Ako náš LoRa gateway sme použili Raspberry Pi 3, na ktorý sme nasadili LoRa 
 
 #### 1. Nasadenie LoRa Hat na Raspberry Pi
 
-Ako prvé sme na GPIO header raspberry náš LoRa Hat. Následne sme našróbovali anténu potrebnú pre LoRa sieť. Viď obrázok č. 1.
- 
+Ako prvé sme na GPIO header raspberry náš LoRa Hat. Následne sme našróbovali anténu potrebnú pre LoRa sieť.
+
+![Raspberry](https://github.com/romankiss/R-IoT/blob/main/Projects/2022/IoT-Enviro-sensor/images/Raspberry.png)
+
 #### 2. Inštalácia OS na Raspberry Pi
 
 Na raspberry sme museli najprv nainštalovať operačný systém. Zvolili sme si ako operačný systém Raspbian, pretože je pre nás veľmi výhodný. 
@@ -41,9 +43,7 @@ Do raspberry zadáme príkaz ako root: git clone https://github.com/dragino/dual
 Viac informácií o [LoRa-GPS-Hat](https://www.dragino.com/products/lora/item/106-lora-gps-hat.html)
 
 Viac informácií o [Raspberry-Pi](https://www.raspberrypi.com/documentation/)
-## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
 
 
 
