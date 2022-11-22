@@ -7,7 +7,7 @@ Ako náš LoRa gateway sme použili Raspberry Pi 3, na ktorý sme nasadili LoRa 
 
 #### 1. Nasadenie LoRa Hat na Raspberry Pi
 
-Ako prvé sme na GPIO header raspberry náš LoRa Hat. Následne sme našróbovali anténu potrebnú pre LoRa sieť.
+Ako prvé sme na GPIO header raspberry nasadili náš LoRa Hat. Následne sme našróbovali anténu potrebnú pre LoRa sieť.
 
 ![Raspberry](https://github.com/romankiss/R-IoT/blob/main/Projects/2022/IoT-Enviro-sensor/images/Raspberry.png)
 
@@ -65,7 +65,7 @@ Spustíme si editor nano v ktorom upravíme parametre ako frekvenciu na ktorej c
 
 *Spustenie softvéru gateway:*
 
-Na záver uz len spustíme samotný gateway softvér príkazom: *sudo ./dual_chan_pkt_fwd*
+Na záver už len spustíme samotný gateway softvér príkazom: *sudo ./dual_chan_pkt_fwd*
 
 ![Launch](https://github.com/romankiss/R-IoT/blob/main/Projects/2022/IoT-Enviro-sensor/images/Launch.png)
 
