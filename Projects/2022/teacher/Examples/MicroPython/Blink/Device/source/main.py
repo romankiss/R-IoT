@@ -12,7 +12,7 @@ np.write()
 
 def doit(t):
     print("Button has been pressed")
-    np[0] = (random.randrange(255),random.randrange(255),random.randrange(255))
+    np[0] = (random.randrange(128),random.randrange(255),random.randrange(255))
     np.write()   
 
 button1.irq(trigger=Pin.IRQ_FALLING, handler=doit)
