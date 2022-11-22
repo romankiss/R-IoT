@@ -1,4 +1,3 @@
-# Raspberry Pi Pico - sample#6
 from machine import *
 import time
 import neopixel
@@ -11,11 +10,8 @@ np[0] = (0, 128, 0) # RGB  set to red, 1/2 brightness
 np.write()
 
 def doit(t):
-    print("Button has been pressed")
-    np[0] = (random.randrange(128),random.randrange(255),random.randrange(255))
+    print("Button has been pressed!")
+    np[0] = (random.randrange(64),random.randrange(255),random.randrange(255))
     np.write()   
 
 button1.irq(trigger=Pin.IRQ_FALLING, handler=doit)
-
-
-
