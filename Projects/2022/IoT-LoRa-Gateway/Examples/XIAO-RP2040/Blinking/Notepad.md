@@ -1,4 +1,14 @@
 
+<h3>Tools:</h3>
+
+https://fritzing.org/download/
+
+https://thonny.org/
+
+https://micropython.org/download/?mcu=RP2040
+
+
+
 <h2>Hardware:</h2>
 
 https://wiki.seeedstudio.com/XIAO-RP2040/
