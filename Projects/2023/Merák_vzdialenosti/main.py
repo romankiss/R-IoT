@@ -10,7 +10,7 @@ np.write()
 sensor = HCSR04(trigger_pin=5, echo_pin=4)
 distance = 0
 
-time.sleep_ms(1000)
+time.sleep(1)
 
 while True:
     
