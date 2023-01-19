@@ -31,10 +31,10 @@ https://docs.micropython.org/en/latest/esp32/tutorial/intro.html
 
 <h2>Example-Distance Measurement:</h2>
 
-![image](https://user-images.githubusercontent.com/30365471/211862234-a7408239-e07b-4675-91a9-6091da537d5f.png)
+![image_of_device_conections](https://github.com/romankiss/R-IoT/blob/main/Projects/2023/Mer%C3%A1k_vzdialenosti/imgs/example_pic.jpg?raw=true)
 
 
-![image](https://user-images.githubusercontent.com/30365471/211862108-0c999d4f-6950-402f-a153-23d2ff06cbeb.png)
+![image_scheme](https://github.com/romankiss/R-IoT/blob/main/Projects/2023/Mer%C3%A1k_vzdialenosti/imgs/scheme.jpg?raw=true)
 
 ----------------------
 <h3>Comment:</h3>
