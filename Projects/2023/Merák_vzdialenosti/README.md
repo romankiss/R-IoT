@@ -1,10 +1,5 @@
 # Meranie vzdialenosti
 
-Zariadenia:
-  * **ESP32** Stamp C3 Mikrokontrolér - firmware: MicroPython
-  * **HC-SR04** ultrazvukový snímač vzdialenosti
-  * Prepojovacie káble
-
 Po pripojení zostavy do počítača cez USB započne meranie vzdialenosti a odosielanie nameraných hodnôt cez Tx do konzoly PC v určitých časových rozostupoch.
 
 
@@ -21,7 +16,11 @@ https://micropython.org/download/?mcu=RP2040
 
 https://www.digikey.sk/en/product-highlight/m/m5stack/m5stamp-c3-esp32-miniature-module
 
+https://www.theengineeringprojects.com/2018/10/introduction-to-hc-sr04-ultrasonic-sensor.html
+
 ![image_of_the_c3_controller](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimgaz.staticbg.com%2Fthumb%2Flarge%2Foaupload%2Fbanggood%2Fimages%2F65%2F5D%2F36f8432a-26f7-4c84-8cec-f1534c5482ad.jpg&f=1&nofb=1&ipt=14bd36b4e8ef3107b0da6f04d86bc7bc29c960813e6aeb0d2e5756a985b4bf73&ipo=images)
+
+![image_of_the_HC-SR04](https://images.theengineeringprojects.com/image/webp/2018/10/Introduction-to-HC-SR04.jpg.webp?ssl=1)
 
 
 <h2>MicroPython/Programming:</h2>
