@@ -29,7 +29,7 @@ https://www.digikey.sk/en/product-highlight/m/m5stack/m5stamp-c3-esp32-miniature
 https://docs.micropython.org/en/latest/esp32/tutorial/intro.html
 
 
-<h2>Example-Blinking:</h2>
+<h2>Example-Distance Measurement:</h2>
 
 ![image](https://user-images.githubusercontent.com/30365471/211862234-a7408239-e07b-4675-91a9-6091da537d5f.png)
 
