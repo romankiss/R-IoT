@@ -1,7 +1,6 @@
 IDE na programovanie: https://thonny.org/
-
-    jednoduché na používanie
-    kompatibilné s rôznymi mikrokontrolérmi
+-jednoduché na používanie
+-kompatibilné s rôznymi mikrokontrolérmi
 
 Tento program sme použili na nahratie firmvéru do danej dosky (ESP32 S2 MINI V1) a následné naprogramovanie kódu potrebného pre tento projekt.
 
