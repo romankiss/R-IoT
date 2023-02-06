@@ -1,0 +1,52 @@
+* Under each line you can read what does following line mean/why we used it
+
+from machine import Pin, Timer
+      // Imports the necessary modules from the MicroPython library to control the pins and timers.
+
+2   import machine, time, neopixel, random
+      // Imports additional necessary modules for the code, such as the `machine` module for accessing hardware, the `time` module for timing operations, the `neopixel` module for controlling NeoPixels, and the `random` module for generating random numbers.
+
+3   timer = Timer()
+      // Creates an instance of the Timer class.
+
+4   switch = Pin(11, Pin.OUT)
+      // Creates a Pin object for the switch that is connected to Pin 11 and sets it as an output pin.
+
+5   switch.value(1)
+      //  Sets the switch Pin to a high state.
+
+6   button1 = Pin(26, Pin.IN, Pin.PULL_UP)
+      //  Creates a Pin object for the button1 that is connected to Pin 26 and sets it as an input pin with a pull-up resistor.
+
+7   ledB = Pin(25, Pin.OUT, 0)
+      //  Creates a Pin object for the user LED that is connected to Pin 25 and sets it as an output pin with an initial low state.
+
+8   np = neopixel.NeoPixel(machine.Pin(12), 1)
+      //  Creates a NeoPixel object connected to Pin 12 and sets the number of NeoPixels to 1.
+
+9   np[0] = (0, 255, 0)
+     //  Sets the first (and only) NeoPixel to a green color.
+
+10  np.write()
+      //  Updates the NeoPixel with the current color setting.
+
+11  def doit(t):
+      //  Defines a callback function called `doit` that takes an argument `t`.
+
+12  np[0] = (random.randrange(100),random.randrange(100),random.randrange(100))
+      //  Sets the first NeoPixel to a random color.
+
+13  ledB.value(not ledB.value())
+      //  Toggles the state of the user LED.
+
+14  def switcher(t):
+        Defines a callback function called `switcher` that takes an argument `t`.
+
+15  switch.value(not switch.value())
+        Toggles the state of the switch Pin.
+
+16  timer.init(freq=1, mode=Timer.PERIODIC, callback=doit)
+        Initializes the timer with a frequency of 1 Hz and sets the mode to periodic. The `doit` function will be called at each second.
+
+17  button1.irq(trigger=Pin.IRQ_FALLING, handler=switcher)
+        Enables the button1 Pin to trigger an interrupt request (IRQ) on the falling edge of the signal. When the IRQ is triggered, the `switcher` function will be called.
