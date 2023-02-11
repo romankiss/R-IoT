@@ -24,6 +24,11 @@ The TTN supports a Webhook integration for publishing an uplink messages. The fo
 
 <h2>Azure IoT Central Application</h2>
 
+<img width="464" alt="IoTCentralDashboard" src="https://user-images.githubusercontent.com/30365471/218279425-788fc415-283b-4a2e-af14-6f97c63d28fe.png">
+
+
+
+
 <h4>Dashboard</h4>
 
 <img width="464" alt="IoTCentralDashboard" src="https://user-images.githubusercontent.com/30365471/218278511-fab7e8a2-ef36-4626-86ce-e001362dda4d.png">
