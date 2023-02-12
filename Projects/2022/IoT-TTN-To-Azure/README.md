@@ -44,8 +44,8 @@ First of all, the Azure Fuction App is neccessary to create it, see the followin
 
 <img width="640" alt="AzureDeviceInfo" src="https://user-images.githubusercontent.com/30365471/218318422-29feccec-bba6-4d81-bc40-acff9af0d9c2.png">
 
-Now, we can create a HttpTriggerTTNtoIoTC function deploying its code in the Azure Portal. The files can be found in the folder:
-https://github.com/romankiss/R-IoT/tree/main/Projects/2022/IoT-TTN-To-Azure/IoT-Subscriber/HttpTriggerTTNtoIoTC
+Now, we can create a HttpTriggerTTNtoIoTC function deploying its code in the Azure Portal. The files can be found in the folder 
+<a href="https://github.com/romankiss/R-IoT/tree/main/Projects/2022/IoT-TTN-To-Azure/IoT-Subscriber/HttpTriggerTTNtoIoTC">here.</a>
 
 
 <h3>AEG Subscription</h3>
