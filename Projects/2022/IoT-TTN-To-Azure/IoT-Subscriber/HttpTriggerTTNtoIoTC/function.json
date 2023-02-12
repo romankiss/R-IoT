@@ -1,0 +1,19 @@
+{
+  "bindings": [
+    {
+      "name": "eventGridEvent",
+      "authLevel": "function",
+      "methods": [
+        "post",
+        "options"
+      ],
+      "direction": "in",
+      "type": "httpTrigger"
+    },
+    {
+      "name": "$return",
+      "type": "http",
+      "direction": "out"
+    }
+  ]
+}
