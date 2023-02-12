@@ -1,14 +1,14 @@
 
 <h2>Concept</h2>
 
-The following screen snippet shows an integration concept based on the Azure services such as an Azure Event Grid (AEG) and Azure Function (AF):
+The following screen snippet shows an integration concept based on the Azure services such as an <b>Azure Event Grid (AEG)</b> and <b>Azure Function (AF)</b>:
 
 <img width="640" alt="TTN2Azure" src="https://user-images.githubusercontent.com/30365471/218275872-442e536c-eada-400d-982e-43c099bd85fc.PNG">
 
 As the above concept shows, the TTN server publishes the device messages on the AEG Custom Topic for distributing them using the loosely decoupled event driven PUB/SUB model to the destination targets.
 This solution is very generic and easy for extension and filtering messages in the AEG model.
 
-In prior of using the TTN Publisher, we have to create in the Azure some resources, such as AEG, AF and IoT Central Application.
+In prior of using the <b>TTN Publisher</b>, we have to create in the Azure some resources, such as AEG, AF and IoT Central Application.
 
 <h2>Azure</h2>
 
@@ -37,7 +37,7 @@ The TTN supports a Webhook integration for publishing an uplink messages. The fo
 <img width="640" alt="TTN-WebhookToAzureEventGrid" src="https://user-images.githubusercontent.com/30365471/218276983-36786d1c-b9ae-421e-a3c9-ea5c40e75c1a.PNG">
 
 In this point, we can subscribed on the custom topic topicTTN-1 some built-in (standard) target resources such as storage queue, service bus, etc. 
-For our destination such as the Azure IoT Central App we have to create a custom subscriber which will handle all integration needs like is a device provisioning (registration + configuration), etc. For this purpose we can use a serverless component such as the Azure HttpTrigger Function.
+For our destination such as the Azure IoT Central App we have to create a custom subscriber which will handle all integration needs like is a device provisioning (registration + configuration), etc. For this purpose we can use a serverless component such as the <b>Azure HttpTrigger Function</b>.
 
 <h3>Azure Function - IoT Subscriber</h3>
 First of all, the Azure Fuction App is neccessary to create it, see the following screen snippet:
