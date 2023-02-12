@@ -40,7 +40,7 @@ In this point, we can subscribed on the custom topic topicTTN-1 some built-in (s
 For our destination such as the Azure IoT Central App we have to create a custom subscriber which will handle all integration needs like is a device provisioning (registration + configuration), etc. For this purpose we can use a serverless component such as the Azure HttpTrigger Function.
 
 <h3>Azure Function - IoT Subscriber</h3>
-First of all, the Azure Fuction App is neccessary to create, see the following screen snippet:
+First of all, the Azure Fuction App is neccessary to create it, see the following screen snippet:
 
 <img width="640" alt="AzureDeviceInfo" src="https://user-images.githubusercontent.com/30365471/218318422-29feccec-bba6-4d81-bc40-acff9af0d9c2.png">
 
@@ -49,7 +49,7 @@ First of all, the Azure Fuction App is neccessary to create, see the following s
 
 <h3>Azure IoT Central Application</h3>
 
-Our integration (subscribing) to the TTN is done, so we can see the device messages (Raw Data) in the IoT Central App.
+Our integration (subscribing) to the TTN is done, so we can see the device messages (Raw Data) in the IoT Central App:
 <h4>Raw Data</h4>
 
 <img width="640" alt="AzureDeviceInfo" src="https://user-images.githubusercontent.com/30365471/218278994-85e65e13-3510-44b6-af61-90d916eb6ed1.png">
