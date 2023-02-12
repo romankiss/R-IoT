@@ -10,14 +10,12 @@ This solution is very generic and easy for extension and filtering messages in t
 
 In prior of using the <b>TTN Publisher</b>, we have to create in the Azure some resources, such as AEG, AF and IoT Central Application.
 
-<h2>Azure</h2>
+<h2>Azure (<a href="https://portal.azure.com/#home">portal</a>)</h2>
 
 <img width="464" alt="AzureDashboard" src="https://user-images.githubusercontent.com/30365471/218279181-a89f1c6b-46c8-4bdb-9bc7-08dfd1d8e501.png">
 
 As a first azure resource, we can create an Azure IoT Central App for consuming a device telemetry data.
-<h3>Azure IoT Central App (spsepn-iotc)</h3>
-
-https://spsepn-iotc.azureiotcentral.com/
+<h3>Azure IoT Central App (<a href="https://spsepn-iotc.azureiotcentral.com/">spsepn-iotc</a>)</h3>
 
 <img width="464" alt="IoTCentralDashboard" src="https://user-images.githubusercontent.com/30365471/218279425-788fc415-283b-4a2e-af14-6f97c63d28fe.png">
 
@@ -30,7 +28,7 @@ https://spsepn-iotc.azureiotcentral.com/
 Now, we can integrate the TTN Publisher with AEG Pub/Sub eventing service. Once we have created a Custom Topic endpoint, we can use this entry point for publishing an event to the AEG Pub/Sub model. 
 The following step shows a plug-in place in the TTN Integration Webhook pane.
 
-<h2>TTN Publisher</h2>
+<code><h2>TTN Publisher</h2></code>
 
 The TTN supports a Webhook integration for publishing an uplink messages. The following screen snippet shows a configuration of the Webhook as an AEG Publisher with a CloudEventSchema:
 
@@ -48,7 +46,7 @@ Now, we can create a HttpTriggerTTNtoIoTC function deploying its code in the Azu
 <a href="https://github.com/romankiss/R-IoT/tree/main/Projects/2022/IoT-TTN-To-Azure/IoT-Subscriber/HttpTriggerTTNtoIoTC">here.</a>
 
 
-<h2>IoT Central App Subscription</h2>
+<code><h2>IoT Central App Subscription</h2></code>
 
 
 <h3>Azure IoT Central Application</h3>
