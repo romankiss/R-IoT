@@ -3,7 +3,10 @@
 
 The following screen snippet shows an integration concept based on the Azure services such as an <b>Azure Event Grid (AEG)</b> and <b>Azure Function (AF)</b>:
 
-<img width="640" alt="TTN2Azure" src="https://user-images.githubusercontent.com/30365471/218275872-442e536c-eada-400d-982e-43c099bd85fc.PNG">
+<img width="800" alt="TTN2Azure" src="https://user-images.githubusercontent.com/30365471/218342682-4f88dc6c-91c7-4651-b47c-e64153c29726.png">
+
+
+
 
 As the above concept shows, the TTN server publishes the device messages on the AEG Custom Topic for distributing them using the loosely decoupled event driven PUB/SUB model to the destination targets.
 This solution is very generic and easy for extension and filtering messages in the AEG model.
