@@ -1,3 +1,3 @@
 **Measured RSI values in school building and area** 
 
-![Raspberry](https://github.com/romankiss/R-IoT/blob/main/Projects/2022/IoT-Enviro-sensor/images/Raspberry.png)
+![GND&1][(https://github.com/romankiss/R-IoT/blob/main/Projects/2022/IoT-LoRa-Gateway/images/GND%261.png)]
