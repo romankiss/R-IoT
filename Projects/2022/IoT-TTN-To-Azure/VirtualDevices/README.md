@@ -6,3 +6,15 @@
 <img width="751" alt="AzureIoTHubTester" src="https://user-images.githubusercontent.com/30365471/219094987-7d7775fb-6534-4348-9b25-2302d8ff0495.PNG">
 
 
+<h3>Provisioning device</h3>
+
+<img width="451" alt="Connect" src="https://user-images.githubusercontent.com/30365471/219115730-02781382-eba7-4e46-acf8-08c500273a09.PNG">
+
+The follwing line shows a format parameters for inserting into the above textbox:
+
+<code><b>scopeId  deviceId  @PrimaryKey from SAS-IoT-Devices</b>  | modelId </code>
+
+<h5>Example:</h5>
+<code><b>0ne001234A5  device911  @Zh+ECoBEMgX/CHZxxxxxxxxxxxxxxxxxxA==</b>  | dtmi:com:example:TemperatureController;2 </code>
+
+
