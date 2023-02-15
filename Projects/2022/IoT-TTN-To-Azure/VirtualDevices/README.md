@@ -7,7 +7,7 @@ See more details about the design and implementation of the small tool tester fo
 
 for Android mobile version <a href="https://www.codeproject.com/Articles/5322753/Azure-IoT-Central-Tester">here.</a>
 
-<img width="751" alt="AzureIoTHubTester" src="https://user-images.githubusercontent.com/30365471/219094987-7d7775fb-6534-4348-9b25-2302d8ff0495.PNG">
+<img width="640" alt="AzureIoTHubTester" src="https://user-images.githubusercontent.com/30365471/219094987-7d7775fb-6534-4348-9b25-2302d8ff0495.PNG">
 
 
 <h3>Provisioning device</h3>
