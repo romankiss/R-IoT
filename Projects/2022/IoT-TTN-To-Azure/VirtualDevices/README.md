@@ -14,7 +14,7 @@ for Android mobile version <a href="https://www.codeproject.com/Articles/5322753
 
 <img width="451" alt="Connect" src="https://user-images.githubusercontent.com/30365471/219115730-02781382-eba7-4e46-acf8-08c500273a09.PNG">
 
-The following line shows a format parameters for inserting into the above textbox:
+The following line shows a format for parameters for inserting into the above textbox:
 
 <code><b>scopeId  deviceId  @PrimaryKey from SAS-IoT-Devices</b>  | modelId </code>
 
