@@ -25,6 +25,8 @@ public static async Task<ActionResult> Run(JObject eventGridEvent, HttpRequest r
         return (ActionResult)new OkResult();
     }
 
+    //log.LogInformation(eventGridEvent.ToString());
+
     // consumer of telemetry (iot central)
     uint sasTokenTTLInHrs = 1;
     string iotcScopeId = req.Headers["iotc-scopeId"].FirstOrDefault() ?? Environment.GetEnvironmentVariable("AzureIoTC_scopeId");
@@ -78,7 +80,7 @@ public static async Task<ActionResult> Run(JObject eventGridEvent, HttpRequest r
         catch (Exception ex)
         {
             log.LogError(ex.InnerException == null ? ex.Message : ex.InnerException.Message);
-            Connectivity.RemoveDevice(deviceId);
+            Connectivity.RemoveDevice(iotcScopeId, deviceId);
             throw ex; // for retrying and deadlettering undeliverable message
         }
     }
@@ -106,22 +108,23 @@ static class Connectivity
 
     public static async Task<ConnectivityInfo> GetConnectionInfo(string deviceId, string modelId, string iotcScopeId, string iotcSasToken, ILogger log, uint sasTokenTTLInHrs = 24, int retryCounter = 10, int pollingTimeInSeconds = 3)
     {
-        if (devices.ContainsKey(deviceId))
+        string xdeviceId = $"_{iotcScopeId}_{deviceId}";
+        if (devices.ContainsKey(xdeviceId))
         {
-            if (!string.IsNullOrEmpty(modelId) && devices[deviceId].ModelId != modelId)
+            if (!string.IsNullOrEmpty(modelId) && devices[xdeviceId].ModelId != modelId)
             {
                 log.LogWarning($"Reprovissiong device with new model");
-                devices.Remove(deviceId);
+                devices.Remove(xdeviceId);
             }
             else
             {
-                if (!SharedAccessSignatureBuilder.IsValidExpiry(devices[deviceId].SaSExpiry, 100))
+                if (!SharedAccessSignatureBuilder.IsValidExpiry(devices[xdeviceId].SaSExpiry, 100))
                 {
                     log.LogWarning($"Refreshing sasToken");
-                    devices[deviceId].SasToken = SharedAccessSignatureBuilder.GetSASTokenFromConnectionString(devices[deviceId].DeviceConnectionString, sasTokenTTLInHrs);
-                    devices[deviceId].SaSExpiry = ulong.Parse(SharedAccessSignatureBuilder.GetExpiry(sasTokenTTLInHrs));
+                    devices[xdeviceId].SasToken = SharedAccessSignatureBuilder.GetSASTokenFromConnectionString(devices[xdeviceId].DeviceConnectionString, sasTokenTTLInHrs);
+                    devices[xdeviceId].SaSExpiry = ulong.Parse(SharedAccessSignatureBuilder.GetExpiry(sasTokenTTLInHrs));
                 }
-                return devices[deviceId];
+                return devices[xdeviceId];
             }
         }
 
@@ -160,7 +163,7 @@ static class Connectivity
                     cinfo.RequestUri = $"https://{cinfo.IoTHubName}/devices/{deviceId}/messages/events?api-version=2021-04-12";
                     cinfo.SasToken = SharedAccessSignatureBuilder.GetSASToken($"{cinfo.IoTHubName}/{deviceId}", deviceKey, null, sasTokenTTLInHrs);
                     cinfo.SaSExpiry = ulong.Parse(SharedAccessSignatureBuilder.GetExpiry(sasTokenTTLInHrs));
-                    devices.Add(deviceId, cinfo);
+                    devices.Add(xdeviceId, cinfo);
                     log.LogInformation($"DeviceConnectionString: {cinfo.DeviceConnectionString}");                        
                     return cinfo;
                 }
@@ -174,10 +177,11 @@ static class Connectivity
         }
     }
 
-    public static void RemoveDevice(string deviceId)
+    public static void RemoveDevice(string iotcScopeId, string deviceId)
     {
-        if (devices.ContainsKey(deviceId))
-            devices.Remove(deviceId);
+        string xdeviceId = $"_{iotcScopeId}_{deviceId}";
+        if (devices.ContainsKey(xdeviceId))
+            devices.Remove(xdeviceId);
     }
 }
 
