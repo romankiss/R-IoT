@@ -2,6 +2,7 @@
 <h2>MerryIoT Sensors</h2>
 
    <a href="https://manuals.plus/merryiot/ms10-motion-detection-manual">Motion Detection MS10</a>
+   
    <h4>Config</h4>
    
    port: 204
@@ -18,6 +19,18 @@
    
 
    <a href="https://manuals.plus/merryiot/dw10-open-and-close-door-window-sensor-manual">OpenAndClose Door-Window DW10</a>
+   
+   <h4>Config</h4>
+   
+   port: 204
+   
+   payload: 00580201130201
+   
+   005802      (10minutes reporting interval at close)
+   
+   0113     (enable vibration high sensitive and till)
+   
+   0201  (buzzer alarm with period 1 second)
 
    
 
