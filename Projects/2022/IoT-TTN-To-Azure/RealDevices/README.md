@@ -1,9 +1,9 @@
 
 <h2>MerryIoT Sensors</h2>
 
-   <h3>Motion Detection MS10</h3>
+   <a href="https://manuals.plus/merryiot/ms10-motion-detection-manual"><h4>Motion Detection MS10</h4></a>
 
-   https://manuals.plus/merryiot/ms10-motion-detection-manual
+   
 
 
    <h3>OpenAndClose Door-Window DW10</h3>
