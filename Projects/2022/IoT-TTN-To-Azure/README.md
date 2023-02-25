@@ -1,4 +1,4 @@
-<h2>IoT Device Connectivity to The Azure IoT</h2>
+<h2>IoT Device Connectivity to Azure IoT</h2>
 
 ![image](https://user-images.githubusercontent.com/30365471/221384588-23fa4f91-38fc-4485-9763-e601da2de7f0.png)
 
