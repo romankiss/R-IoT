@@ -1,4 +1,7 @@
-# Meranie vzdialenosti
+# Distance Measuring
+## Using the ESP-32 MCU and uPython
+## Currently you are in the Remake branch - a branch to test and rewrite the current chaotic main branch
+## This documentation is written purely in english for economical reasons
 
 Po pripojení zostavy do počítača cez USB započne meranie vzdialenosti a odosielanie nameraných hodnôt cez Tx do konzoly PC v určitých časových rozostupoch.
 
