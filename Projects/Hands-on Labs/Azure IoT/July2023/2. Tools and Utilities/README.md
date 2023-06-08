@@ -33,7 +33,7 @@ See more details about the design and implementation of the small mobile tool te
   
 <br />
 <br />
-<a href="https://https://github.com/Azure/azure-iot-explorer/releases">2. Azure IoT Explorer</a>
+<a href="https://github.com/Azure/azure-iot-explorer/releases">2. Azure IoT Explorer</a>
 <br />
   
   <br />
