@@ -7,5 +7,9 @@
 
 <h1>IoT Device Connectivity to Azure IoT</h1>
 
-![image](https://user-images.githubusercontent.com/30365471/221384588-23fa4f91-38fc-4485-9763-e601da2de7f0.png)
+![image](https://github.com/romankiss/R-IoT/assets/30365471/70e0096b-2084-492f-bf3f-e60df24600b1)
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/6ad1d1d6-8c5a-4a75-b126-49a68c996226)
+
+
 
