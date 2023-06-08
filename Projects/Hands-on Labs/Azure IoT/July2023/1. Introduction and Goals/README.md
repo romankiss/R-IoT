@@ -12,4 +12,13 @@
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/6ad1d1d6-8c5a-4a75-b126-49a68c996226)
 
 
+<br />
+<h1>Azure IoT (Virtual) Device Simulator</h1>
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/fcad2717-3d72-4f0f-9c95-d46cd3f50190)
+
+<br />
+<h1>Android Mobile as an IoT PnP Device (Simulator)</h1>
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/11fbd8f6-b855-4f50-b70e-076eead0d8ec)
 
