@@ -34,7 +34,12 @@ See more details about the design and implementation of the small mobile tool te
 <br />
 <br />
 <a href="https://github.com/Azure/azure-iot-explorer/releases">2. Azure IoT Explorer</a>
+
+  <br />
 <br />
   
-  <br />
+  ![image](https://github.com/romankiss/R-IoT/assets/30365471/7b5ac748-25f1-48dd-a19a-c4bc684e9d4a)
+
+  
+<br />
 <br />
