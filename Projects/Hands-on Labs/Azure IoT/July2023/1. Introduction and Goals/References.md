@@ -14,3 +14,11 @@
   <li><a href="https://learn.microsoft.com/en-us/azure/iot-central/core/concepts-iiot-architecture">Industrial IoT (IIoT) architecture patterns with Azure IoT Central</a></li>
   <li><a href="https://learn.microsoft.com/en-us/azure/iot-central/core/quick-deploy-iot-central">Use your smartphone as a device to send telemetry to an IoT Central application</a></li>
 </ul></p>
+
+<p><ul>
+  <li><h2><a href="">IoT Plug and Play device model (IoT PnP Device)</a></h2></li>
+  <li><a href="">What is Azure Internet of Things (IoT)?</a></li>
+  <li><a href="">IoT conceptual overview</a></li>
+  <li><a href="">Device infrastructure and connectivity</a></li>
+  <li><a href="">Analyze and visualize your IoT data</a></li>
+</ul></p>
