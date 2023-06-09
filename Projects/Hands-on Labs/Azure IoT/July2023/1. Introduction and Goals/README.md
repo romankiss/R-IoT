@@ -1,3 +1,15 @@
+<h1>The goal of this Hands-On Lab</h1>
+  <ul>
+    <l>aaaaa</l>
+    <l>aaaaa</l>
+  <l>aaaaa</l>
+  <l>aaaaa</l>    
+   </ul>
+  
+  
+  
+  
+  
 
 <h1>Internet of Things with Microsoft Azure</h1>
 
