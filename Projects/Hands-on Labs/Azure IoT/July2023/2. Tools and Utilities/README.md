@@ -53,5 +53,19 @@ See more details about the design and implementation of the small mobile tool te
 <p>This tool allows to explore Azure Storage accounts such as blobs, files, queues, etc.</p>
 <br />
   <br />
+ 
+ <p>4. Option: Developing a device code using .NET nanoFramework in Microsoft Visual Studio</p>
   <br />
+ <ul>
+    <li><a href="https://visualstudio.microsoft.com/free-developer-offers/">Microsoft Visual Studio 2022</a></li>
+    <li><a href="https://marketplace.visualstudio.com/items?itemName=nanoframework.nanoframework-vs2022-extension">.NET nanoFramework Visual Studio Extension</a></li>
+  <li><a href="https://www.nuget.org/packages/nanoff">.NET nanoFramework firmware flasher tool repository</a></li>
+  <br />
+ </ul>
+ 
+ 
+ 
+ 
+ 
+ 
   
