@@ -1,9 +1,12 @@
 <h1>The goal of this Hands-On Lab</h1>
+
+  
   <ul>
-    <li>aaaaa</li>
-    <li>aaaaa</li>
-  <li>aaaaa</li>
-  <li>aaaaa</li>    
+    <li><p>Using Azure Services to build Azure IoT End-to-End Solutions connecting the real and simulated PnP (Plug & Play) devices to the Azure IoT Hub and Azure IoT Central.</p></li>
+    <li><p>Using different types of devices such as LoRaWAN, CAT-M/NB-IoT or Direct MQTT for IoT connectivity</p></li>
+    <li><p>Using comercial and custom developed IoT devices</p></li>
+    <li><p>Step by step developing a custom IoT Plug and Plug device using Microsoft Visual Studio 2022 with C# coding</p></li> 
+    <li><p>Troubleshooting IoT Soluttion</p></li> 
    </ul>
   
   
