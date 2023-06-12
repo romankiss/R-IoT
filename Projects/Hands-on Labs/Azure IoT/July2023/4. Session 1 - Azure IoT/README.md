@@ -35,9 +35,9 @@
 <br />
 <br />  
  <ul>
-    <li><p>Telemetry Data</p></li>
+  <li><p><h4>Telemetry Data</h4></p></li>
+    <li><p><h4>C2D Messages</h4></p></li>
     <li><p>Commands</p></li>
-    <li><p>C2D Messages</p></li>
     <li>Properties (ReadOnly, Writable)</p></li> 
     <li><p>Notifications of property changes - Eventing</p></li> 
    </ul>
