@@ -54,8 +54,9 @@ See more details about the design and implementation of the small mobile tool te
 <br />
   <br />
  
- <p>4. Option: Developing a device code using .NET nanoFramework in Microsoft Visual Studio</p>
+ <p>4. (Option) Tools & Utilities for developing a device code using .NET nanoFramework in Microsoft Visual Studio</p>
   <br />
+ 
  <ul>
     <li><a href="https://visualstudio.microsoft.com/free-developer-offers/">Microsoft Visual Studio 2022</a></li>
     <li><a href="https://marketplace.visualstudio.com/items?itemName=nanoframework.nanoframework-vs2022-extension">.NET nanoFramework Visual Studio Extension</a></li>
