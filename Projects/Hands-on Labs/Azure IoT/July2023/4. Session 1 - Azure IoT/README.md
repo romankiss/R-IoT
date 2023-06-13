@@ -45,3 +45,36 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
        </ul>
    </ul>
 
+<br />
+<br />  
+<h1>3. Exploring Azure IoT Hub with simulated devices</h1>
+<br />
+<p>
+  
+  
+  
+  
+  
+  
+  
+ </p>
+
+<br />
+<br />  
+<h1>4. Exploring Azure IoT Central with simulated devices</h1>
+<br />
+<p>
+  
+  
+  
+  
+  
+  
+  
+ </p>
+
+<br />
+<br />  
+<h1>5. Using IoT Central for creating a Plug&Play device model</h1>
+<br />
+ </p>
