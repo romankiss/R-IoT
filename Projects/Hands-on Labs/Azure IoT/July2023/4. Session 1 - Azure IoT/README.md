@@ -49,13 +49,14 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
 <br />  
 <h1>3. Exploring Azure IoT Hub with simulated devices</h1>
 <br />
-<p>
+
+ ![image](https://github.com/romankiss/R-IoT/assets/30365471/fb658b94-44b4-4edd-8ef7-d0f5689aa540)
+
   
   
   
   
-  
-  
+  <p>
   
  </p>
 
@@ -63,6 +64,9 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
 <br />  
 <h1>4. Exploring Azure IoT Central with simulated devices</h1>
 <br />
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/10e45b1d-b6cb-429f-b496-8b06087a2f98)
+
 <p>
   
   
