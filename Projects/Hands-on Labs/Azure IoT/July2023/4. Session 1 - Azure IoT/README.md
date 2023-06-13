@@ -67,6 +67,7 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
 
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/10e45b1d-b6cb-429f-b496-8b06087a2f98)
 
+
 <p>
   
   
@@ -81,4 +82,6 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
 <br />  
 <h1>5. Using IoT Central for creating a Plug&Play device model</h1>
 <br />
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/358825e3-f6a4-4dd0-8ff8-0cc21e90f85e)
  </p>
