@@ -27,7 +27,7 @@ The IoT Devices can be categorized based on the connectivity, capabilities, etc.
     <li><p>Industrial (IIoT) Devices.</p></li>
     <li><p>Medical (IoMT) or healthcare IoT Devices.</p></li>
     <li><p>Smart Home IoT Devices</p></li>
-    <li><p><a href="">Virtual (Simulated) IoT Devices.</a></p></li>
+    <li><p><a href="https://github.com/romankiss/R-IoT/blob/main/Projects/Hands-on%20Labs/Azure%20IoT/July2023/5.%20Session%202%20-%20IoT%20Devices/Virtual_(Simulated)_IoT_Devices.md">Virtual (Simulated) IoT Devices.</a></p></li>
     <li><p>...</p></li> 
    </ul>
 
