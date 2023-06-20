@@ -34,9 +34,9 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
 <h2>Types based on their capabilities.</h2>
 
   <ul>
-    <li><p>Simple IoT Devices.</p></li>
-    <li><p>IoT PnP (Plug & Play} Devices.</p></li>
-    <li><p>IoT Edge Devices</p></li>
+    <li><p><a href="https://devicecatalog.azure.com/">Simple IoT Devices.</a></p></li>
+    <li><p><a href="https://devicecatalog.azure.com/">IoT PnP (Plug & Play} Devices.</a></p></li>
+    <li><p><a href="https://devicecatalog.azure.com/">IoT Edge Devices</a></p></li>
     <li><p></p></li> 
     <li><p>...</p></li> 
    </ul>
@@ -47,8 +47,8 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
 <h2>Types based on their connectivity</h2>
 <ul>
     <li><p>Using Direct IoT Protocol (MQTT, HTTPS, AMQP, ...).</p></li>
-    <li><p>LoRaWAN IoT Devices.</p></li>
-    <li><p>NB-IoT Devices</p></li>
+    <li><p><a href="https://devicecatalog.azure.com/">LoRaWAN IoT Devices.</a></p></li>
+    <li><p><a href="https://devicecatalog.azure.com/">NB-IoT Devices</a></p></li>
     <li><p>CAT-M/LTE-M IoT Devices</p></li> 
     <li><p>...</p></li> 
    </ul>
