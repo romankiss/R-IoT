@@ -23,7 +23,13 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
   <li><h3><p>Azure IoT Hub </p></h3></li> 
     <li><p><h3>Azure IoT Central </p></h3></li> 
    </ul>
-   
+
+<br />
+<br />  
+<h1>1a. Azure IoT Stream Pipeline</h1>
+
+   ![image](https://github.com/romankiss/R-IoT/assets/30365471/ebe11dc8-6993-48e6-9290-10ca20e7c4b8)
+
 <br />
 <br />  
 <h1>2. Azure IoT End-to-End Data Model</h1>
