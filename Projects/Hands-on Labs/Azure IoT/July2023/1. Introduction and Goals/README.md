@@ -26,6 +26,13 @@
 
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/6ad1d1d6-8c5a-4a75-b126-49a68c996226)
 
+<br />
+<br />
+<h3>Where the IoT Stream Pipeline starts?</h3>
+<br />
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/2372b9c3-0fb8-443d-b302-126ae73cc4b7)
+
 
 <br />
 <h1>Azure IoT (Virtual) Device Simulator</h1>
