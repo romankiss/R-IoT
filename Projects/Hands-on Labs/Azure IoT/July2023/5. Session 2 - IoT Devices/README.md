@@ -34,8 +34,8 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
 <h2>Types based on their capabilities.</h2>
 
   <ul>
-    <li><p><a href="https://devicecatalog.azure.com/">Simple IoT Devices.</a></p></li>
-    <li><p><a href="https://devicecatalog.azure.com/">IoT PnP (Plug & Play} Devices.</a></p></li>
+    <li><p><a href="https://github.com/romankiss/R-IoT/blob/main/Projects/Hands-on%20Labs/Azure%20IoT/July2023/5.%20Session%202%20-%20IoT%20Devices/Simple-IoT-Devices.md">Simple IoT Devices.</a></p></li>
+    <li><p><a href="https://github.com/romankiss/R-IoT/blob/main/Projects/Hands-on%20Labs/Azure%20IoT/July2023/5.%20Session%202%20-%20IoT%20Devices/IoT-PnP-Devices.md">IoT PnP (Plug & Play} Devices.</a></p></li>
     <li><p><a href="https://github.com/romankiss/R-IoT/blob/main/Projects/Hands-on%20Labs/Azure%20IoT/July2023/5.%20Session%202%20-%20IoT%20Devices/IoT-Edge-Devices.md">IoT Edge Devices</a></p></li>
     <li><p></p></li> 
     <li><p>...</p></li> 
@@ -47,8 +47,8 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
 <h2>Types based on their connectivity</h2>
 <ul>
     <li><p>Using Direct IoT Protocol (MQTT, HTTPS, AMQP, ...).</p></li>
-    <li><p><a href="https://devicecatalog.azure.com/">LoRaWAN IoT Devices.</a></p></li>
-    <li><p><a href="https://devicecatalog.azure.com/">NB-IoT Devices</a></p></li>
+    <li><p><a href="https://github.com/romankiss/R-IoT/blob/main/Projects/Hands-on%20Labs/Azure%20IoT/July2023/5.%20Session%202%20-%20IoT%20Devices/LoRaWAN-IoT-Devices.md">LoRaWAN IoT Devices.</a></p></li>
+    <li><p><a href="https://github.com/romankiss/R-IoT/blob/main/Projects/Hands-on%20Labs/Azure%20IoT/July2023/5.%20Session%202%20-%20IoT%20Devices/NB-IoT-Devices.md">NB-IoT Devices</a></p></li>
     <li><p>CAT-M/LTE-M IoT Devices</p></li> 
     <li><p>...</p></li> 
    </ul>
