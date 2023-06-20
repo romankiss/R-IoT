@@ -9,8 +9,12 @@ IoT devices are hardware devices, such as sensors, gadgets, appliances and other
 The goal of the <b>Session 2</b> is to know how the IoT Device is working, how can be connected and managed, etc. and also how we can create an IoT Device from the scratch for our needs.  
 
 
+ <h2><a href="https://devicecatalog.azure.com/">Azure Certified Device Catalog</a></h2>
 
+![image](https://github.com/romankiss/R-IoT/assets/30365471/fb343bb0-97e6-41cd-92b3-5049e9207935)
 
+<br />
+<br />
 
 <h2>Types of the IoT Devices:</h2>
 <br />
@@ -41,7 +45,7 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
     <li><p>Using Direct IoT Protocol (MQTT, HTTPS, AMQP, ...).</p></li>
     <li><p>LoRaWAN IoT Devices.</p></li>
     <li><p>NB-IoT Devices</p></li>
-    <li><p>CAT-M IoT Devices</p></li> 
+    <li><p>CAT-M/LTE-M IoT Devices</p></li> 
     <li><p>...</p></li> 
    </ul>
 
