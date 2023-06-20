@@ -28,7 +28,10 @@
   <br />
    <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/23b17100-c5d3-4141-8979-a1740b9ddef5">
   <a href="https://shop.m5stack.com/collections/m5-sensor/products/m5stickccompatible-hat-pir-sensor">PIR Motion sensor.</a>
-
+  <br />
+  <br />
+   <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/d1e6fe78-4a29-4b5e-b431-03b0590ae394">
+  <a href="https://shop.m5stack.com/products/atom-mate">Atom HAT.</a>
 </p>
 
 
@@ -36,11 +39,21 @@
 
 
 
+<br />
+<br />
+<br />
+<br />
 
 
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/0b4a6f75-5e66-49cd-948c-f4a8c6f6dcfd)
+
 <br />
 <br />
 <br />
 <br />
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/16339872-d221-4c7d-890b-aeaec8fdc3e4)
+
 
 
