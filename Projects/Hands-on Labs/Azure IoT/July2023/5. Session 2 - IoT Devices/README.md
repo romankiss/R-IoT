@@ -28,6 +28,8 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
     <li><p>...</p></li> 
    </ul>
 
+<br />
+<br />
 
 <h2>Types based on their capabilities.</h2>
 
@@ -35,10 +37,12 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
     <li><p>Simple IoT Devices.</p></li>
     <li><p>IoT PnP (Plug & Play} Devices.</p></li>
     <li><p>IoT Edge Devices</p></li>
-    <li><p>Exploring Azure IoT Central with simulated devices</p></li> 
-    <li><p>Using IoT Central for creating a Plug&Play device model</p></li> 
+    <li><p></p></li> 
+    <li><p>...</p></li> 
    </ul>
 
+<br />
+<br />
 
 <h2>Types based on their connectivity</h2>
 <ul>
@@ -49,7 +53,8 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
     <li><p>...</p></li> 
    </ul>
 
-
+<br />
+<br />
 
 
   
@@ -59,7 +64,8 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
 
 
 
-
+<br />
+<br />
 
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/fd85c0d5-0ba6-4bb0-9b3a-ead88add179b)
 
