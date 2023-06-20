@@ -36,7 +36,7 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
   <ul>
     <li><p><a href="https://devicecatalog.azure.com/">Simple IoT Devices.</a></p></li>
     <li><p><a href="https://devicecatalog.azure.com/">IoT PnP (Plug & Play} Devices.</a></p></li>
-    <li><p><a href="Projects/Hands-on Labs/Azure IoT/July2023/5. Session 2 - IoT Devices/IoT-Edge-Devices.md">IoT Edge Devices</a></p></li>
+    <li><p><a href="https://github.com/romankiss/R-IoT/blob/main/Projects/Hands-on%20Labs/Azure%20IoT/July2023/5.%20Session%202%20-%20IoT%20Devices/IoT-Edge-Devices.md">IoT Edge Devices</a></p></li>
     <li><p></p></li> 
     <li><p>...</p></li> 
    </ul>
