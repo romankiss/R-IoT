@@ -16,8 +16,11 @@ The goal of the <b>Session 2</b> is to know how the IoT Device is working, how c
 <br />
 <br />
 
-<h2>Types of the IoT Devices:</h2>
+<h2>Types of the IoT Devices.</h2>
 <br />
+The IoT Devices can be categoriezed based on the connectivity, capabilities, etc. The following are few groups, interesting to us for this session:
+
+
 
 <h2>Types based on their usage.</h2>
 <ul>
