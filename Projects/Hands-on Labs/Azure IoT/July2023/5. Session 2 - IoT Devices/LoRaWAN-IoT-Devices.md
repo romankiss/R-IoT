@@ -28,6 +28,8 @@ https://console.cloud.thethings.network/
 
 <br /><br />
 
+<h3>Hardware components for HAT version</h3>
+<br /><br />
 <p style="display:inline-block;">
   <img  width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/40ae9537-c80b-49c5-803d-bfe5a858fb83">
   <a href="https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit">ATOM Lite ESP32 IoT Development Kit.</a>
@@ -52,15 +54,17 @@ https://console.cloud.thethings.network/
 <br />
 
 
+
+<h3>LoRa IoT Device with PIR Motion sensor:</h3>
 <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/c3e47b2b-2e1d-46b6-ac0c-a4baac4bd640">
 
+<br /><br />
 
 
+<h3>LoRa IoT Device powered by phone with a Debuging app:</h3>
+<img width="30%" src="https://github.com/romankiss/R-IoT/assets/30365471/c59d1251-553d-41f0-a7e5-e3091d36b625">
 
-
-
-
-
+<br /><br />
 
 
 <br />
