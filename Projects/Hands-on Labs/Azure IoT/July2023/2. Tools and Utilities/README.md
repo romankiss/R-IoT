@@ -66,8 +66,8 @@ See more details about the design and implementation of the small mobile tool te
 <br />
 <br />
  <h3><a href="https://play.google.com/store/apps/details?id=de.kai_morich.serial_usb_terminal&hl=en_US">5. Serial USB Terminal on Mobile smartphone</a></h3>
- <br />
- This mobile application is suitable for powering your IoT Device and showing a Debug messages.
+     This mobile application is suitable for powering your IoT Device and showing a Debug messages.
+<br />
  
  
  
