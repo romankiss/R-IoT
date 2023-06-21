@@ -16,8 +16,6 @@ https://console.cloud.thethings.network/
 
 
 
-<h2>LoRaWAN IoT Devices</h2>
-
 
 
 
