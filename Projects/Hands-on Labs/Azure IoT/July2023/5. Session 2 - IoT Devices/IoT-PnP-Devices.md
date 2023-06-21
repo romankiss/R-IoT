@@ -24,10 +24,9 @@
    <img width="8%" src="https://github.com/romankiss/R-IoT/assets/30365471/1663ec76-b4f1-4eaa-818f-df65e08acdd1">
   <a href="https://shop.m5stack.com/products/pir-module">PIR Motion sensor.</a>
   <br/><br/>
-   <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/9171e468-b6e1-4f96-844f-c82f91afc04c">
+   <img width="18%" src="https://github.com/romankiss/R-IoT/assets/30365471/bd3caa2e-92a6-4a4b-af79-58e805fdbae3">
   <a href="https://shop.m5stack.com/products/atomic-portabc-extension-base">Atomic PortABC Extension Base.</a>
 </p>
-
 
 
 
