@@ -1,7 +1,12 @@
 
 
+The Things Indoor Gateway
 
 
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/6797de24-33ec-4b1d-9356-fff88c37ff1f)
+
+<br /><br /><br />
 
 
 
@@ -12,6 +17,5 @@
 <br />
 <br />
 
-![image](https://github.com/romankiss/R-IoT/assets/30365471/6797de24-33ec-4b1d-9356-fff88c37ff1f)
 
 
