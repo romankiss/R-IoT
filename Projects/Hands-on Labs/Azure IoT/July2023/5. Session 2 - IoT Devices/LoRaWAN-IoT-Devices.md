@@ -74,13 +74,20 @@ https://console.cloud.thethings.network/
 <br />
 <br />
 <br />
-
-
-
-
-
-
-
+<h3>Examples of the LoRaWAN IoT Devices</h3>
+<br /><br />
+<p style="display:inline-block;">
+  <img  width="15%" src="https://github.com/romankiss/R-IoT/assets/30365471/f872fd2a-04b3-4536-8481-cd494b53dab4">
+  <a href="https://aithings.store/indoor-monitoring/milesight-ws101-868m-lorawan-smart-button">Milesight WS101-868M LoRaWAN Smart Button.</a>
+  <br/><br/>
+  <img  width="25%" src="https://github.com/romankiss/R-IoT/assets/30365471/45da77eb-c227-4fcf-b9cd-cb2129e37f38">
+   <a href="https://iot-shop.de/en/shop/els-ers-elsys-ers-room-sensor-3946?category=4#attr=2152,2153,3633,3638,10344,2149,2148,3637,2146,3636,3634,3635,2147,2151,3639,9583">Elsys ERS Room Sensor.</a>
+  <br/><br/><br/><br/>
+ <img  width="35%" src="https://github.com/romankiss/R-IoT/assets/30365471/d1dc2e1a-717e-4710-a1ea-f2571bed7826">
+  <a href="https://iot-shop.de/en/shop/category/connectivity-lorawan-4">IoT-Shop.de</a>
+  <br/><br/>
+  <br/><br/>
+</p>
 
 
 
