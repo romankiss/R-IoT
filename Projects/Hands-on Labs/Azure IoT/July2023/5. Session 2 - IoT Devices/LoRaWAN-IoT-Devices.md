@@ -52,6 +52,10 @@ https://console.cloud.thethings.network/
 <br />
 
 
+<img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/c3e47b2b-2e1d-46b6-ac0c-a4baac4bd640">
+
+
+
 
 
 
