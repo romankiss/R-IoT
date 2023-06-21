@@ -37,11 +37,22 @@
 <br />
 
 
+<h3>Creating PnP (Plug & Play) Device Model</h3>
 
+<br />
+<br />
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/358825e3-f6a4-4dd0-8ff8-0cc21e90f85e)
 
 
 <br />
 <br />
+<h3><a href="https://github.com/Azure/iot-plugandplay-models">Azure/iot-plugandplay-models repository</a></h3>
+<br />
+<br />
+
+
+
 <br />
 <br />
 
