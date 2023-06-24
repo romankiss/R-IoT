@@ -32,6 +32,24 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
 
 <br />
 <br />  
+
+
+<h1>1b. IoT Workflow</h1>
+  <ul>
+    <li><p>Things (devices that generate data).</p></li>
+    <li><p>Insights (data forming)</p></li>
+      <ul>
+        <li><p>Hot Path</p></li>
+        <li><p>Warm Path</p></li>
+        <li><p>Cold Path</p></li>
+     </ul>
+    <li><p>Actions based on insights (raising alarms, etc.)</p></li>
+   </ul>
+   
+
+
+<br />
+<br /> 
 <h1>2. Azure IoT End-to-End Data Model</h1>
 
 <br />
