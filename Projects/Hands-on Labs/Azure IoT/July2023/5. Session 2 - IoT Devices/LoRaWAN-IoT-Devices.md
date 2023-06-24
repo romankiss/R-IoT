@@ -11,22 +11,11 @@ https://console.cloud.thethings.network/
 <br />
 
 
-
-
-
-
-
-
-
-
-
-
-
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/6797de24-33ec-4b1d-9356-fff88c37ff1f)
 
 <br /><br />
 
-<h3>Hardware components for HAT version</h3>
+<h3>Hardware components for HAT version:</h3>
 <br /><br />
 <p style="display:inline-block;">
   <img  width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/40ae9537-c80b-49c5-803d-bfe5a858fb83">
@@ -41,18 +30,23 @@ https://console.cloud.thethings.network/
    <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/23b17100-c5d3-4141-8979-a1740b9ddef5">
   <a href="https://shop.m5stack.com/collections/m5-sensor/products/m5stickccompatible-hat-pir-sensor">PIR Motion sensor.</a>
   <br/><br/>
+   <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/1eba506c-6b42-4984-9ceb-1487732a2156">
+  <a href="https://shop.m5stack.com/products/m5stickc-env-hat-iii-sht30-qmp6988">ENV III (Temperature, Humidity and atmospheric presure) sensor.</a>
+  <br/><br/>
    <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/d1e6fe78-4a29-4b5e-b431-03b0590ae394">
-  <a href="https://shop.m5stack.com/products/atom-mate">Atom HAT.</a>
+  <a href="https://shop.m5stack.com/products/atom-mate">Atom HAT extension.</a>
   <br/><br/>
    <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/8feae0ad-7026-4ae4-8f9a-403a8b012bfd">
   <a href="https://shop.m5stack.com/products/lorawan-unit-868mhz-asr6501-with-antenna">LoRaWAN UNIT 868MHz (ASR6501) with Antenna</a>
 </p>
+
 <br />
 <br />
+<h3>Telemetry data - payload:</h3>
 <br />
-
-
-
+<img width="80%" src="https://github.com/romankiss/R-IoT/assets/30365471/1792bea7-ca61-417b-a5a3-19a36b6c9d9a">
+<br />
+<br />
 <h3>LoRa IoT Device with PIR Motion sensor:</h3>
 <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/c3e47b2b-2e1d-46b6-ac0c-a4baac4bd640">
 
