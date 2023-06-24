@@ -60,7 +60,8 @@
 <br />
 <br />
 
-![image](https://github.com/romankiss/R-IoT/assets/30365471/358825e3-f6a4-4dd0-8ff8-0cc21e90f85e)
+![image](https://github.com/romankiss/R-IoT/assets/30365471/b2e05da7-c32c-46e8-855e-cb5cef883fa4)
+
 
 
 <br />
@@ -73,7 +74,6 @@
 
 <br />
 <br />
-
 
 
 
