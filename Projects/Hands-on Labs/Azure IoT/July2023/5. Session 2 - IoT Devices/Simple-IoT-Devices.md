@@ -8,11 +8,7 @@
 
 <h2>Things used in this device end</h2>
 
-<h3>Hardware components for HAT version</h3>
-
-
-
-
+<h3>Hardware components for HAT version:</h3>
 
 <p style="display:inline-block;">
   <img  width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/40ae9537-c80b-49c5-803d-bfe5a858fb83">
@@ -31,11 +27,6 @@
   <a href="https://shop.m5stack.com/products/atom-mate">Atom HAT.</a>
 </p>
 
-
-
-
-
-
 <br />
 <br />
 <br />
@@ -52,5 +43,20 @@
 
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/16339872-d221-4c7d-890b-aeaec8fdc3e4)
 
+<br />
+<br />
+<h3>Telemetry data - payload:</h3>
+<p>
+<code>
+{
+  "counter": 1,
+  "motion": 2,
+  "temperature": 27.5,
+  "humidity": 47.4,
+  "lux": 7.5,
+  "distance": 19
+}
+</code>
+</p>
 
 
