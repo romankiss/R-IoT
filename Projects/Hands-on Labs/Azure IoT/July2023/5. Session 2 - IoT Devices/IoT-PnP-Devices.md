@@ -8,7 +8,7 @@
 
 <h2>Things used in this device end</h2>
 
-<h3>Hardware components for GROVE version</h3>
+<h3>Hardware components for GROVE version:</h3>
 
 
 <p style="display:inline-block;">
@@ -23,12 +23,30 @@
   <br/><br/>
    <img width="8%" src="https://github.com/romankiss/R-IoT/assets/30365471/1663ec76-b4f1-4eaa-818f-df65e08acdd1">
   <a href="https://shop.m5stack.com/products/pir-module">PIR Motion sensor.</a>
+   <br/><br/>
+   <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/1eba506c-6b42-4984-9ceb-1487732a2156">
+  <a href="https://shop.m5stack.com/products/m5stickc-env-hat-iii-sht30-qmp6988">ENV III (Temperature, Humidity and atmospheric presure) sensor.</a>
+  <br/><br/>
   <br/><br/>
    <img width="18%" src="https://github.com/romankiss/R-IoT/assets/30365471/bd3caa2e-92a6-4a4b-af79-58e805fdbae3">
   <a href="https://shop.m5stack.com/products/atomic-portabc-extension-base">Atomic PortABC Extension Base.</a>
 </p>
 
-
+<br />
+<br />
+<h3>Telemetry data - payload:</h3>
+<p>
+<code>
+{
+  "counter": 1,
+  "motion": 2,
+  "temperature": 27.5,
+  "humidity": 47.4,
+  "lux": 7.5,
+  "distance": 19
+}
+</code>
+</p>
 
 
 <br />
