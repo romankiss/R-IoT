@@ -48,12 +48,10 @@
 </code>
 </p>
 
-
 <br />
 <br />
 <br />
 <br />
-
 
 <h3>Creating PnP (Plug & Play) Device Model</h3>
 
@@ -61,19 +59,13 @@
 <br />
 
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/b2e05da7-c32c-46e8-855e-cb5cef883fa4)
-
-
-
-<br />
+<br/>
+<h3><a href="https://github.com/romankiss/R-IoT/blob/main/Projects/Hands-on%20Labs/Azure%20IoT/July2023/5.%20Session%202%20-%20IoT%20Devices/Device%20Model%20classroom_2v2.json">Example of the Device Model dtmi:spsepnIotc001:classroom_2v2;1</a></h3>
 <br />
 <h3><a href="https://github.com/Azure/iot-plugandplay-models">Azure/iot-plugandplay-models repository</a></h3>
 <br />
 <br />
 
-
-
-<br />
-<br />
 
 
 
