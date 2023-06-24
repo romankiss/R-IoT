@@ -1,0 +1,100 @@
+[
+  {
+    "@id": "dtmi:spsepnIotc001:classroom_2v2;1",
+    "@type": "Interface",
+    "contents": [
+      {
+        "@id": "dtmi:spsepnIotc001:classroom_2v2:counter;1",
+        "@type": [
+          "Telemetry",
+          "NumberValue"
+        ],
+        "displayName": {
+          "en": "counter"
+        },
+        "name": "counter",
+        "schema": "integer",
+        "minValue": 0
+      },
+      {
+        "@id": "dtmi:spsepnIotc001:classroom_2v2:temperature;1",
+        "@type": [
+          "Telemetry",
+          "NumberValue",
+          "Temperature"
+        ],
+        "displayName": {
+          "en": "temperature"
+        },
+        "name": "temperature",
+        "schema": "double",
+        "unit": "degreeCelsius"
+      },
+      {
+        "@id": "dtmi:spsepnIotc001:classroom_2v2:humidity;1",
+        "@type": [
+          "Telemetry",
+          "NumberValue",
+          "Humidity"
+        ],
+        "displayName": {
+          "en": "humidity"
+        },
+        "name": "humidity",
+        "schema": "double",
+        "unit": "percent"
+      },
+      {
+        "@id": "dtmi:spsepnIotc001:classroom_2v2:lux;1",
+        "@type": [
+          "Telemetry",
+          "NumberValue",
+          "Illuminance"
+        ],
+        "displayName": {
+          "en": "lux"
+        },
+        "name": "lux",
+        "schema": "double",
+        "unit": "lux"
+      },
+      {
+        "@id": "dtmi:spsepnIotc001:classroom_2v2:distance;1",
+        "@type": [
+          "Telemetry",
+          "NumberValue",
+          "Distance"
+        ],
+        "displayName": {
+          "en": "distance"
+        },
+        "name": "distance",
+        "schema": "double",
+        "unit": "millimetre",
+        "decimalPlaces": 0,
+        "maxValue": 2000,
+        "minValue": 0
+      },
+      {
+        "@id": "dtmi:spsepnIotc001:classroom_2v2:motion;1",
+        "@type": [
+          "Telemetry",
+          "NumberValue"
+        ],
+        "displayName": {
+          "en": "motion"
+        },
+        "name": "motion",
+        "schema": "integer",
+        "minValue": 0
+      }
+    ],
+    "displayName": {
+      "en": "classroom"
+    },
+    "@context": [
+      "dtmi:iotcentral:context;2",
+      "dtmi:dtdl:context;2"
+    ]
+  }
+]
