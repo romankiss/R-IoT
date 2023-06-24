@@ -49,4 +49,9 @@
 
 <br />
 <br />
+<h3>NB-IoT Device powered and monitored by mobile phone:</h3>
+<br />
+<img width="70%" src="https://github.com/romankiss/R-IoT/assets/30365471/95cbf22e-349b-47a7-bab2-0f6200e50e11">
+
+
 
