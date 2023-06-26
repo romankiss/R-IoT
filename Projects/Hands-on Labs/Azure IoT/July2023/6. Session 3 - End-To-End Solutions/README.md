@@ -1,4 +1,39 @@
 
+
+
+<h1>Azure IoT Central for End-to-End Solution.</h1>
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/8552581b-992c-45cf-b2a2-7469c7d2d5d5)
+
+<br />
+<br/>
+<br/>
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/eae79006-13e7-4658-a4f5-7ce0aff423a9)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  <h2><p><a href="https://learn.microsoft.com/en-us/azure/iot-central/core/concepts-iiot-architecture">Industrial IoT (IIoT) architecture patterns with Azure IoT Central.</a></p></h2>
 
  ![image](https://github.com/romankiss/R-IoT/assets/30365471/b12dc516-4878-4ac3-b45c-c56d5d3f02c1)
