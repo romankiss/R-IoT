@@ -53,5 +53,13 @@
 <br />
 <img width="70%" src="https://github.com/romankiss/R-IoT/assets/30365471/95cbf22e-349b-47a7-bab2-0f6200e50e11">
 
+<br />
+<br />
+<h3>Example of NB-IoT Device with Grove sensors</h3>
+<img width="70%" src="https://github.com/romankiss/R-IoT/assets/30365471/e5d0c704-e283-4a5e-9656-7de93922fc0a">
+
+
+
+
 
 
