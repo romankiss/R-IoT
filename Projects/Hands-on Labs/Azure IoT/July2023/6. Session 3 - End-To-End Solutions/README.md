@@ -19,8 +19,9 @@
 
 
 
+<h2><p><a href="https://github.com/romankiss/R-IoT/assets/30365471/69b528b4-d1f9-4117-8b53-cabdd910c2ef">Example: Collect IoT Data from classroom using NB-IoT Device and IoT Central App.</a></p></h2>
 
-
+![image](https://github.com/romankiss/R-IoT/assets/30365471/69b528b4-d1f9-4117-8b53-cabdd910c2ef)
 
 
 
