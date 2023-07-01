@@ -21,8 +21,12 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
     <li><p>Azure Functions </p></li>
     <li><p>Azure Stream Analytics </p></li> 
   <li><h3><p>Azure IoT Hub </p></h3></li> 
-    <li><p><h3>Azure IoT Central </p></h3></li> 
+    <li><p><h3><a href="https://github.com/romankiss/R-IoT/edit/main/Projects/Hands-on%20Labs/Azure%20IoT/July2023/4.%20Session%201%20-%20Azure%20IoT/Azure%20IoT%20Central.md">Azure IoT Central</a></h3></p></li>
+
    </ul>
+
+
+
 
 <br />
 <br />  
