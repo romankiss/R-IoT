@@ -35,10 +35,7 @@
 <br />
 <br />
 
-<h1><a href="https://www.codeproject.com/Articles/5322753/Azure-IoT-Central-Tester">3. Android Mobile as a real IoT PnP Device</a></h1>
-
-<h3><a href="https://learn.microsoft.com/en-us/azure/iot/iot-phone-app-how-to">How to turn your smartphone into an IoT device</a></h3>
-
+<h1><a href="https://learn.microsoft.com/en-us/azure/iot/iot-phone-app-how-to">3. Android Mobile as a real IoT PnP Device</a></h1>
 
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/f81cb34c-4213-4f24-9be9-caaa0cca258f)
 <br />
