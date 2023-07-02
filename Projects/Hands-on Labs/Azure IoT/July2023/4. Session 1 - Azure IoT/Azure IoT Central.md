@@ -36,6 +36,51 @@ More details can be found <a href="https://learn.microsoft.com/en-us/azure/iot-c
 
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/af5dbf9a-6a88-480c-9913-632caafc1406)
 
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<h1><a href="https://learn.microsoft.com/en-us/azure/iot/iot-phone-app-how-to">Android Mobile as a real IoT PnP Device (my First IoT Device)</a></h1>
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/f81cb34c-4213-4f24-9be9-caaa0cca258f)
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+![image](https://github.com/romankiss/R-IoT/assets/30365471/215bbcb6-6a35-4fe6-ac00-d99d79760dab)
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <br/>
 <br/>
 <br/>
