@@ -39,6 +39,11 @@
 
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/f81cb34c-4213-4f24-9be9-caaa0cca258f)
 <br />
+<br />
+<br />
+<br />
+<br />
+<br />
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/215bbcb6-6a35-4fe6-ac00-d99d79760dab)
 
 <br />
