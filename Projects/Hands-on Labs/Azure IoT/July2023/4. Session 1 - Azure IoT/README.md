@@ -50,8 +50,14 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
     <li><p>Actions based on insights (raising alarms, etc.)</p></li>
    </ul>
    
-
-
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 <br />
 <br /> 
 <h1>2. Azure IoT End-to-End Data Model</h1>
@@ -74,20 +80,29 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
    </ul>
 
 <br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 <br />  
+
 <h1>3. Exploring Azure IoT Hub with simulated devices</h1>
 <br />
 
  ![image](https://github.com/romankiss/R-IoT/assets/30365471/fb658b94-44b4-4edd-8ef7-d0f5689aa540)
 
-  
-  
-  
-  
-  <p>
-  
- </p>
-
+  <br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 <br />
 <br />  
 <h1>4. Exploring Azure IoT Central with simulated devices</h1>
@@ -96,20 +111,18 @@ The goal of the <b>Session 1</b> is to know how to manage <b>Azure IoT Services<
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/10e45b1d-b6cb-429f-b496-8b06087a2f98)
 
 
-<p>
-  
-  
-  
-  
-  
-  
-  
- </p>
-
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 <br />
 <br />  
 <h1>5. Using IoT Central for creating a Plug&Play device model</h1>
 <br />
 
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/358825e3-f6a4-4dd0-8ff8-0cc21e90f85e)
- </p>
+ 
