@@ -1,7 +1,7 @@
 
 The [.Net nanoFramework](https://github.com/nanoframework) is to be a platform that enables the writing of managed code applications for constrained embedded devices. Developers can harness the familiar IDE Visual Studio and their .NET (C#) knowledge to quickly write applications without having to worry about the low level hardware intricacies of a micro-controller.
 
-Getting started with.NET nanoFramework
+Getting started with .NET nanoFramework
 
 Installation steps:
 
