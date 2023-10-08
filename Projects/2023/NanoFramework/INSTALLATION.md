@@ -41,3 +41,23 @@ Ak nemáš najnovšiu verziu rozšírenie čo budeme inštalovať neskôr nepôj
 
 
 ## nanoFramework
+
+Oukej, čiže teraz ked´ už máme najnovšiu verziu štúdia stiahnutú ideme si stiahnuť framework .NET prispôeobený pre malé zariadenia s obmädzenou pamäťou a tak - nanoFramework.   
+Prvým krokom bude mať pred sebou zapatý "editačný mód" MSVS22.   
+![editačný mód](https://github.com/romankiss/R-IoT/assets/59760649/e869a40b-06e5-41a7-83e2-75396ea2e196)   
+Rozkliknime kertu Extensions > Manage extensions   
+![karta Extensions](https://github.com/romankiss/R-IoT/assets/59760649/98b6f4f8-5986-4e30-a320-6dfc25a97e25)   
+V ľavo tohoto okna máme kategórie: Installed, Online, Updates...     
+Klik na kategóriu Online > do vyhľadávanie v pravo hore napíš "nano"    
+Vyhľadávanie by malo vyhodiť jediný výsledok ".NET nanoFramework Extension":
+![Hl´adanie nano Frejmworku](https://github.com/romankiss/R-IoT/assets/59760649/88be4046-8dbf-4072-96f4-90ac6b08fcb9)    
+
+<p color="red"> Pokiaľ ti vyhľadávanie nenašlo to čo malo určite sa uisti, že máš naj. verziu MSVS.  <br>
+Príp. skús vypnúť a znova zapnúť celé MSVS. </p>
+
+Urob všetko čo od teba budú chcieť, nainštaluj nanoFramework.
+Pokiaľ sa všetko podarilo tak kategória Installed by mala vypadať cca dajako takto:  
+
+![Kategória Installed ext.](https://github.com/romankiss/R-IoT/assets/59760649/b7c0fef6-ad78-444e-8c66-51cf1d292524)  
+
+
