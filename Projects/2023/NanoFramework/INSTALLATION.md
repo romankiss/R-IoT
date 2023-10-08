@@ -60,4 +60,11 @@ Pokiaľ sa všetko podarilo tak kategória Installed by mala vypadať cca dajako
 
 ![Kategória Installed ext.](https://github.com/romankiss/R-IoT/assets/59760649/b7c0fef6-ad78-444e-8c66-51cf1d292524)  
 
+## Napaľovačka firmwéru
+
+Posledný SW čo bude treba stiahnuť je nám na to, aby sme napálili firmwér do našich čipov.  
+Budeme potrebovať WIN Power shell (Modré CMD).  
+
+![PS s vlepeným komandom](https://github.com/romankiss/R-IoT/assets/59760649/f07e49ed-7203-40c6-b371-75cf9cec482a)   
+Do riadku napíšeme toto:    dotnet tool install -g nanoff        
 
