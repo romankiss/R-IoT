@@ -67,4 +67,5 @@ Budeme potrebovať WIN Power shell (Modré CMD).
 
 ![PS s vlepeným komandom](https://github.com/romankiss/R-IoT/assets/59760649/f07e49ed-7203-40c6-b371-75cf9cec482a)   
 Do riadku napíšeme toto:    dotnet tool install -g nanoff        
+A potom toto:  nanoff --target ESP32_PICO --serialport COM5 --update   (port nahrd´)
 
