@@ -39,7 +39,7 @@ while (true)
 ## Obete:
 -Maťova červená ledka, odpálená?(svietila -> už nesvieti), ostatné farby ok
 ## UwU:
-![pls potešilo by](https://shop.m5stack.com/products/m5paper-esp32-development-kit-v1-1-960x540-4-7-eink-display-235-ppi)
+[pls potešilo by](https://shop.m5stack.com/products/m5paper-esp32-development-kit-v1-1-960x540-4-7-eink-display-235-ppi)
 
 Spolupáchateľ: Matej X
 
