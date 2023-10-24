@@ -21,6 +21,26 @@ Note: The following are instructions for instalation of the .Net tool using Powe
      Install-Package -Name dotnet
 
 <br />
+
+Now, you can install nanoff (nano Firmware Flasher tool):
+
+     dotnet tool install -g nanoff
+
+<br />
+
+Example of using a nanoff for download a firmware for AtomLite microcontroller:
+
+     nanoff --target ESP32_PICO --serialport COM3 --update
+<br />
+Example of using a nanoff for showing COM ports:
+
+     nanoff --listports
+<br />
+Example of using a nanoff for showing all targets (microcontrollers):
+
+     nanoff --listtargetss    
+
+<br />
 <br />
 <br />
 Samples:
