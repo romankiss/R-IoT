@@ -11,6 +11,14 @@ Installation steps:
 
 - Install [.NET nanoFramework Firmware Flasher](https://www.nuget.org/packages/nanoff) using PowerShell
 
+<br />
+<br />
+
+Note: The following are instructions for instalation of the .Net tool using PowerShell:
+   1. Open PowerShell as an administrator.
+   2. Run the following command to install the latest version of .NET:
+
+     Install-Package -Name dotnet
 
 <br />
 <br />
