@@ -1,5 +1,6 @@
 using Iot.Device.Button;
 using Iot.Device.Ws28xx.Esp32;
+//using Iot.Device.Hcsr04.Esp32;
 using nanoFramework.AtomLite;
 using System;
 using System.Diagnostics;
@@ -9,6 +10,7 @@ namespace NFAppAtomLite_Testing
 {
     public class Program
     {
+        //static Hcsr04 sonar = null;
         static Sk6812 neo = null;
         static GpioButton button = null;
         static int ii = 0;
@@ -25,7 +27,10 @@ namespace NFAppAtomLite_Testing
             neo = new Sk6812(27, 3);    //AtomLite/Matrix 27 //AtomicPortABC 23/33 //Hat 22 //Grove 26(RGBLed), 32(RGBLedStick)
             neo.Image.SetPixel(1, 0, 0, 0, 10);
             neo.Update();
-    
+
+            // ultrasonic ranger sensor
+            //sonar = new Hcsr04(32, 26);  //Grove trigger 32, echo 26;
+            
             Thread.Sleep(Timeout.Infinite);
         }
 
@@ -35,6 +40,14 @@ namespace NFAppAtomLite_Testing
             Debug.WriteLine($"Button has been pressed, rgb = {i}");
             neo.Image.SetPixel(0, 0, (byte)(i==1?10:0), (byte)(i == 2 ? 10 : 0), (byte)(i == 3 ? 10 : 0));
             neo.Update();
+
+             if (sonar != null) 
+             {
+                 if (sonar.TryGetDistance(out Length distance))
+                     Debug.WriteLine($"Distance: {distance.Centimeters} cm");
+                 else
+                     Debug.WriteLine("Error reading sensor");
+             }
         }
     }
 }
