@@ -18,6 +18,7 @@ namespace NFAppAtomLite_Testing
 
             GpioButton button = new(39, debounceTime: TimeSpan.FromMilliseconds(200));
             button.Press += Button_Press;
+            //neo = new Sk6812(22, 3);    // AtomicPortABC 23/33 //Hat 22 // Grove 26(RGBLed), 32(RGBLedStick)
             neo = AtomLite.NeoPixel;            
             neo.Image.SetPixel(0, 0, 0, 0, 10);
             neo.Update();
