@@ -10,17 +10,20 @@ namespace NFAppAtomLite_Testing
     public class Program
     {
         static Sk6812 neo = null;
+        static GpioButton button = null;
         static int ii = 0;
 
         public static void Main()
         {
             Debug.WriteLine("Hello from nanoFramework!");
 
-            GpioButton button = new(39, debounceTime: TimeSpan.FromMilliseconds(200));
+            //button = AtomLite.Button;
+            button = new(39, debounceTime: TimeSpan.FromMilliseconds(200));
             button.Press += Button_Press;
-            //neo = new Sk6812(22, 3);    // AtomicPortABC 23/33 //Hat 22 // Grove 26(RGBLed), 32(RGBLedStick)
-            neo = AtomLite.NeoPixel;            
-            neo.Image.SetPixel(0, 0, 0, 0, 10);
+
+            //neo = AtomLite.NeoPixel;
+            neo = new Sk6812(26, 3);    // AtomicPortABC 23/33 //Hat 22 // Grove 26(RGBLed), 32(RGBLedStick)
+            neo.Image.SetPixel(1, 0, 0, 0, 10);
             neo.Update();
     
             Thread.Sleep(Timeout.Infinite);
