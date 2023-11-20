@@ -22,7 +22,7 @@ namespace NFAppAtomLite_Testing
             button.Press += Button_Press;
 
             //neo = AtomLite.NeoPixel;
-            neo = new Sk6812(26, 3);    // AtomicPortABC 23/33 //Hat 22 // Grove 26(RGBLed), 32(RGBLedStick)
+            neo = new Sk6812(27, 3);    //AtomLite/Matrix 27 //AtomicPortABC 23/33 //Hat 22 //Grove 26(RGBLed), 32(RGBLedStick)
             neo.Image.SetPixel(1, 0, 0, 0, 10);
             neo.Update();
     
