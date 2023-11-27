@@ -31,6 +31,7 @@ namespace NFAppAtomLite_Testing
         {
             Debug.WriteLine("Hello from nanoFramework!");
 
+            Timer pub_Timer = new Timer(TimerCallback, null, 10000, 60000);
 
             GpioController gpio = new GpioController();
             //releA = gpio.OpenPin(32, PinMode.Output);         //Grove 32
@@ -94,12 +95,18 @@ namespace NFAppAtomLite_Testing
             }
 
             // PIR
+            //int motion = Interlocked.Exchange(ref motion_counter, 0);
+            //Debug.WriteLine($"[{motion}]PIR change");
+        }
+
+        private static void TimerCallback(object state)
+        {
+            // PIR
             int motion = Interlocked.Exchange(ref motion_counter, 0);
             Debug.WriteLine($"[{motion}]PIR change");
         }
     }
 }
-
 
 
 //neo.Image.SetPixel(0, 0, 0, (byte)(new Random()).Next(10), 0);
