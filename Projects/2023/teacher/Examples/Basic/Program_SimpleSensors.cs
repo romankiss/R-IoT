@@ -1,4 +1,5 @@
 using Iot.Device.Button;
+using Iot.Device.Sht3x;
 using Iot.Device.Hcsr04;
 using Iot.Device.Hcsr04.Esp32;
 using Iot.Device.Hcsr501;
@@ -66,8 +67,15 @@ namespace NFAppAtomLite_Testing
                     Interlocked.Increment(ref motion_counter);
                 }
             };
-            #endregion     
+            #endregion  
 
+            #region Temp&Hum   
+            Configuration.SetPinFunction(32, DeviceFunction.I2C1_CLOCK);   // Grove connector
+            Configuration.SetPinFunction(26, DeviceFunction.I2C1_DATA);    // grove connector
+            Sht3x sensorTH = new(new(new I2cConnectionSettings(1, 0x44)));  // sensorAddress = 0x44
+            Debug.WriteLine($"sensorTH: temperature[C]={sensorTH.Temperature.DegreesCelsius:F2}, humidity[%]={sensorTH.Humidity.Percent:F2}");
+            #endregion
+    
             Thread.Sleep(Timeout.Infinite);
         }
 
