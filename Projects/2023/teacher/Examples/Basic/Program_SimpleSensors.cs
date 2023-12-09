@@ -4,6 +4,7 @@ using Iot.Device.Hcsr04;
 using Iot.Device.Hcsr04.Esp32;
 using Iot.Device.Hcsr501;
 using Iot.Device.Ws28xx.Esp32;
+using Iot.Device.Ssd13xx;
 using nanoFramework.AtomLite;
 using System;
 using System.Device.Gpio;
@@ -75,7 +76,30 @@ namespace NFAppAtomLite_Testing
             Sht3x sensorTH = new(new(new I2cConnectionSettings(1, 0x44)));  // sensorAddress = 0x44
             Debug.WriteLine($"sensorTH: temperature[C]={sensorTH.Temperature.DegreesCelsius:F2}, humidity[%]={sensorTH.Humidity.Percent:F2}");
             #endregion
-    
+
+
+            #region Display 128x64, interface I2C connected via Grove connector 
+            Configuration.SetPinFunction(32, DeviceFunction.I2C1_CLOCK);   // Grove connector
+            Configuration.SetPinFunction(26, DeviceFunction.I2C1_DATA);    // Grove connector
+            //
+            I2cDevice i2c_oled128x64 = I2cDevice.Create(new I2cConnectionSettings(1, 0x3C));
+            var display = new Iot.Device.Ssd13xx.Ssd1306(i2c_oled128x64);
+            display.ClearScreen();
+            display.Font =  new Sinclair8x8();
+            display.Write(0, 0, "1234567890123456");
+            display.Write(0, 1, "HELLO",2,true);
+            display.Write(0, 3, "WORLD", 2, true);
+            display.DrawHorizontalLine(0, 50, 127);
+            display.Write(0, 7, "1234567890123456");
+            display.Display();
+            #endregion
+
+        
+
+
+
+
+                
             Thread.Sleep(Timeout.Infinite);
         }
 
