@@ -46,9 +46,10 @@ Example of using a nanoff for showing all targets (microcontrollers):
 Samples:
 
  <ul>
-    <li><a href="https://github.com/nanoframework/Samples/tree/main/samples/Blinky">Blink your first led</a></li>
-    <li><a href="https://github.com/nanoframework/Samples">Generic Samples</a></li>
-  <li><a href="https://github.com/nanoFramework/nanoFramework.IoT.Device">IoT.Device Samples</a></li>
+    <li><a href="https://robocraze.com/blogs/post/sound-sensor-working-and-its-applications">Sound Sensor Working and Its Applications</a></li>
+    <li><a href="https://particle.hackster.io/cjacinto1/monitoring-sound-with-big-sound-sensor-53f9a5">Monitoring sound with Big Sound Sensor</a></li>
+    <li><a href="https://circuitdigest.com/microcontroller-projects/interfacing-sound-sensor-with-arduino">How Does a Sound Sensor Work and how to Interface it with Arduino?</a></li>
+    <li><a href="https://www.full-skills.com/arduino-uno-projects/amplify-creativity-with-arduinos-big-sound-sensor/">Amplify Creativity with Arduino’s Big Sound Sensor!</a></li>
   <br />
  </ul>
 
