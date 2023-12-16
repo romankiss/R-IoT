@@ -1,3 +1,11 @@
+**References:**
+ <ul>
+    <li><a href="https://docs.nanoframework.net/content/getting-started-guides/getting-started-managed.html">Getting Started Guide for managed code (C#)</a></li>
+    <li><a href="https://ftdichip.com/drivers/">FTDI Driver for Usb</a></li>
+    <br />
+ </ul>
+
+
 
 The [.Net nanoFramework](https://github.com/nanoframework) is to be a platform that enables the writing of managed code applications for constrained embedded devices. Developers can harness the familiar IDE Visual Studio and their .NET (C#) knowledge to quickly write applications without having to worry about the low level hardware intricacies of a micro-controller.
 
@@ -52,4 +60,10 @@ Samples:
     <li><a href="https://www.full-skills.com/arduino-uno-projects/amplify-creativity-with-arduinos-big-sound-sensor/">Amplify Creativity with Arduino’s Big Sound Sensor!</a></li>
   <br />
  </ul>
+
+
+
+
+
+
 
