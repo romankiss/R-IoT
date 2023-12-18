@@ -83,7 +83,8 @@ namespace NFAppAtomLite_Testing
             Configuration.SetPinFunction(26, DeviceFunction.I2C1_DATA);    // Grove connector
             //
             I2cDevice i2c_oled128x64 = I2cDevice.Create(new I2cConnectionSettings(1, 0x3C));
-            var display = new Iot.Device.Ssd13xx.Ssd1306(i2c_oled128x64);
+            var display = new Iot.Device.Ssd13xx.Ssd1306(i2c_oled128x64, DisplayResolution.OLED128x64);
+            display.Orientation = DisplayOrientation.Landscape180;
             display.ClearScreen();
             display.Font =  new Sinclair8x8();
             display.Write(0, 0, "1234567890123456");
@@ -91,6 +92,9 @@ namespace NFAppAtomLite_Testing
             display.Write(0, 3, "WORLD", 2, true);
             display.DrawHorizontalLine(0, 50, 127);
             display.Write(0, 7, "1234567890123456");
+            byte[] buffer = { 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0xFF, 0xC3, 0xFF, 0xC3, 0xFF, 0xC3, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF };
+            display.DrawBitmap(100, 20, 2, 15, buffer);
+            display.DrawBitmap(100, 40, 1, 8, display.Font['X']);
             display.Display();
             #endregion
 
