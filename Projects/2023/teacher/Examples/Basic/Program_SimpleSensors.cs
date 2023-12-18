@@ -24,7 +24,8 @@ namespace NFAppAtomLite_Testing
         static GpioButton button = null;
         static int ii = 0;
         static int motion_counter = 0;
-        static AdcChannel adc0 = null;  
+        static AdcChannel adc0 = null; 
+        static Aht20 aht20 = null;
         static Hcsr04 sonar = null;
         static GpioPin releA = null;
         static GpioPin releB = null;
@@ -80,13 +81,24 @@ namespace NFAppAtomLite_Testing
             };
             #endregion  
 
-            #region Temp&Hum   
+            #region Temp&Hum  - sensor aht30 
             Configuration.SetPinFunction(32, DeviceFunction.I2C1_CLOCK);   // Grove connector
             Configuration.SetPinFunction(26, DeviceFunction.I2C1_DATA);    // grove connector
             Sht3x sensorTH = new(new(new I2cConnectionSettings(1, 0x44)));  // sensorAddress = 0x44
             Debug.WriteLine($"sensorTH: temperature[C]={sensorTH.Temperature.DegreesCelsius:F2}, humidity[%]={sensorTH.Humidity.Percent:F2}");
             #endregion
 
+             #region Temp&Hum  - sensor aht20   
+             var i2c_aht20 = AtomLite.GetGrove(Aht20.DefaultI2cAddress);
+             res = i2c_aht20.WriteByte(0x07);
+             if (res.Status == I2cTransferStatus.FullTransfer)
+             {
+                 aht20 = new Aht20(i2c_aht20);  //seeed, aht20+BMP280,     = 0x38
+                 Debug.WriteLine($"Temp = {aht20.GetTemperature().DegreesCelsius} °C, Hum = {aht20.GetHumidity().Percent} %");
+             }
+             #endregion
+
+                
 
             #region Display 128x64, interface I2C connected via Grove connector 
             Configuration.SetPinFunction(32, DeviceFunction.I2C1_CLOCK);   // Grove connector
@@ -139,6 +151,12 @@ namespace NFAppAtomLite_Testing
             {
                 releA.Toggle();
             }
+
+            // Temp&Hum
+             if (aht20 != null)
+             {
+                 Debug.WriteLine($"Temp = {aht20.GetTemperature().DegreesCelsius} °C, Hum = {aht20.GetHumidity().Percent} %");
+             }
 
             // Sound
             if (adc0 != null)
