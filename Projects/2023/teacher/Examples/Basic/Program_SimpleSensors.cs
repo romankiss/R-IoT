@@ -24,6 +24,7 @@ namespace NFAppAtomLite_Testing
         static GpioButton button = null;
         static int ii = 0;
         static int motion_counter = 0;
+        static AdcChannel adc0 = null;  
         static Hcsr04 sonar = null;
         static GpioPin releA = null;
         static GpioPin releB = null;
@@ -50,6 +51,15 @@ namespace NFAppAtomLite_Testing
 
             #region ultrasonic ranger sensor
             //sonar = new Hcsr04(32, 26);  //Grove trigger 32, echo 26;
+            #endregion
+
+            #region Sound Sensor LM386
+            //gpio.OpenPin(33, PinMode.InputPullUp);
+            var adctrl = new AdcController();
+            adc0 = adctrl.OpenChannel(5);       // Hat ADC1_CH5 G33pin; Grove  ADC1_CH4 G32    
+            int max1 = adctrl.MaxValue;
+            int min1 = adctrl.MinValue;
+            Debug.WriteLine($"min1=" + min1.ToString() + " max1=" + max1.ToString());
             #endregion
 
             #region PIR
@@ -130,6 +140,14 @@ namespace NFAppAtomLite_Testing
                 releA.Toggle();
             }
 
+            // Sound
+            if (adc0 != null)
+            {
+                int soundValue = adc0.ReadValue();
+                double ratio = adc0.ReadRatio();
+                Debug.WriteLine($"SoundValue = {soundValue}, ratio = {ratio}");
+            }  
+            
             // PIR
             //int motion = Interlocked.Exchange(ref motion_counter, 0);
             //Debug.WriteLine($"[{motion}]PIR change");
