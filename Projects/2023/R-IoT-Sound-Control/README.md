@@ -1,1 +1,1 @@
-
+Zachytávanie frekvencie zvuku, s ktorou prebiehajú rôzne operácie. Rozoznávanie typu zvuku či ide o auto alebo o výstrel zo zbrane napríklad a to pomocou frekvencie. Na problém o rozoznávanie typu o čo ide bude odpovedať AI "machine vision". 
