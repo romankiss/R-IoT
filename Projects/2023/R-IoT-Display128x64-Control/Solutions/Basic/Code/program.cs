@@ -1,8 +1,12 @@
+using System;
+using System.Diagnostics;
+using Iot.Device.Ssd13xx;
+using Iot.Device.Adxl343Lib;
+using nanoFramework.Hardware.Esp32;
 using System.Device.I2c;
 using System.Numerics;
-using nanoFramework.AtomLite;
-using Iot.Device.Ssd13xx.Commands;
 using Iot.Device.Ssd13xx.Commands.Ssd1306Commands;
+
 
 namespace AccelDisplay
 {
@@ -18,6 +22,11 @@ namespace AccelDisplay
             Debug.WriteLine($"BUS SPEED DISPLAY: {i2cDisplay.ConnectionSettings.BusSpeed}");
             var display = new Iot.Device.Ssd13xx.Ssd1306(i2cDisplay);
             display.Font = new Sinclair8x8();
+
+            var overClock = new SetDisplayClockDivideRatioOscillatorFrequency(0x01, 0x0F);
+            var adressingMode = new SetMemoryAddressingMode(SetMemoryAddressingMode.AddressingMode.Page);
+            display.SendCommand(overClock);
+            display.SendCommand(adressingMode);
 
             return display;
         }
@@ -43,37 +52,42 @@ namespace AccelDisplay
 
             //Accel
             Adxl343 sensor = accelConfig();
-            
+
+            //Accel display
             Adxl343Display test1 = new Adxl343Display(256, 128, display, sensor);
 
             Vector3 v = new Vector3();
+            Vector3 vOld = new Vector3(0, 0, 0);
+
+            display.ClearScreen();
 
             while (true)
             {
-                if (sensor.TryGetAcceleration(ref v)) {
 
+                if (sensor.TryGetAcceleration(ref v))
+                    {
 
-                    //Display text
-                    display.ClearScreen();
+                     if (Math.Abs(v.X - vOld.X) > 17 || Math.Abs(v.Y - vOld.Y) > 17)
+                     {
+                           //Display text
 
-                    test1.WriteVector(64, 64, v, "Displej funguje");
-                    test1.WriteVector(64, 63, v, "vcelku neuveritelne");
-                    
-                    display.Display();
+                            display.ClearScreen();
 
+                            test1.WriteVector(64, 64, v, "Displej funguje");
+                            test1.WriteVector(64, 63, v, "vcelku neuveritelne");
+
+                            display.Display();
+                            vOld = v;
+                     }
                 }
-
-                    Thread.Sleep(200);
             }
 
-            //**Not implemented**
-            //SLEEP on Gyro, if double tap, wake up
-            //add COMMANDS to the Display
+
+
 
         }
 
-    }
-    
 
+    }
 
  } 
