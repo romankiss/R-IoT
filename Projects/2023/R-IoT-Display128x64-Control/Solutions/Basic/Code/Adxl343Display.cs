@@ -27,10 +27,7 @@ namespace AccelDisplay
         public void WriteVector(int x, int y, Vector3 v,string text)
         {
             ///Changes the X and Y of the text based on the Vector3 variable.
-            Vector3 vOld = new Vector3(0, 0, 0);
-
-            if (Math.Abs(v.X - vOld.X) > 17 || Math.Abs(v.Y - vOld.Y) > 17)
-            {
+            
                 
                 bool isLandscape = _display.Orientation == DisplayOrientation.Landscape180;
 
@@ -58,8 +55,6 @@ namespace AccelDisplay
 
                 _display.Write(xFinal < 0 ? 0 : xFinal, yFinal, stringTruncating(text, xFinal, yFinal, _display));
                 
-                vOld = v;
-            }
         }
 
         private static string stringTruncating(string text, int x, int y, Ssd1306 display)
