@@ -8,3 +8,7 @@ https://circuitdigest.com/microcontroller-projects/interfacing-sound-sensor-with
 
 https://full-skills.com/arduino-uno-projects/amplify-creativity-with-arduinos-big-sound-sensor/
 
+https://www.instructables.com/The-Best-Way-for-Sampling-Audio-With-ESP32/
+
+
+
