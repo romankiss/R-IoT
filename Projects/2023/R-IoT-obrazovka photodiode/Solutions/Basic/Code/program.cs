@@ -6,6 +6,8 @@ using Iot.Device.Bh1750fvi;
 using Iot.Device.Ssd13xx;
 using Iot.Device.Button;
 using System;
+using UnitsNet.Units;
+using UnitsNet;
 
 namespace NFAppAtomLite_Testing
 {
@@ -28,8 +30,9 @@ namespace NFAppAtomLite_Testing
             I2cDevice i2c_oled128x64 = I2cDevice.Create(new I2cConnectionSettings(2, 0x3C));
             var display = new Iot.Device.Ssd13xx.Ssd1306(i2c_oled128x64);
             var sensor = new Bh1750fvi(device);
-            
 
+            
+           
 
 
 
@@ -43,8 +46,10 @@ namespace NFAppAtomLite_Testing
                 
                 illuminance = sensor.Illuminance.Value; //read illuminance(Lux)
                 Debug.WriteLine($"LUX = {illuminance}");
-                display.Write(0, 5, $"LUX = {illuminance}");
-                
+                //zaokruhlenie na cele cislo 
+                int y = (int)Math.Round(illuminance / 8);
+
+                display.Write(0, 5, $"LUX = {y}");
                 display.DrawHorizontalLine(0, 50, 127);
                
                 display.Display();
