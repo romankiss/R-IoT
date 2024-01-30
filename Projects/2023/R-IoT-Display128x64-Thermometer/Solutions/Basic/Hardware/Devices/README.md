@@ -16,7 +16,7 @@
   <br>
   <a href="https://www.sunrom.com/p/digital-light-sensor-bh1750fvi"> BH1750FVI</a>
   <br>
-  <img src="https://files.seeedstudio.com/products/103020272/img/grove-i2c-hub-6-port-preview.jpg" width="100"     
+  <img src="https://files.seeedstudio.com/products/103020272/img/grove-i2c-hub-6-port-preview.jpg" width="120"     
   height="100">
   <br>
   <a href="https://wiki.seeedstudio.com/Grove-I2C-Hub-6Port/"> I2C Hub(6 Port)</a>
