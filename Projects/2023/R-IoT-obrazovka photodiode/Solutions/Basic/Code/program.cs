@@ -47,11 +47,14 @@ namespace NFAppAtomLite_Testing
 
             button.Press += (sender, e) =>
             {
+                neo.Image.Clear();
+                display.ClearScreen();
 
                 illuminance = sensor.Illuminance.Value; //read illuminance(Lux)
                 Debug.WriteLine($"LUX = {illuminance}");
                 //zaokruhlenie na cele cislo 
-                int y = (int)Math.Round(illuminance / 8);
+                int y = ((int)sensor.Illuminance.Value);
+
 
                 display.Write(0, 5, $"LUX = {y}");
                 display.DrawHorizontalLine(0, 50, 127);
@@ -64,7 +67,7 @@ namespace NFAppAtomLite_Testing
                     {
                         neo.Image.SetPixel(7, 0, 10, 0, 0);
                         neo.Update();
-                        Thread.Sleep(50);
+                        Thread.Sleep(20);
                     }
 
 
@@ -74,42 +77,43 @@ namespace NFAppAtomLite_Testing
                     {
                         neo.Image.SetPixel(0, 0, 0, 10, 0);
                         neo.Update();
-                        Thread.Sleep(50);
+                        Thread.Sleep(5);
                     }
 
                     if (n >= 10 && n < 20)
                     {
                         neo.Image.SetPixel(1, 0, 0, 10, 0);
                         neo.Update();
-                        Thread.Sleep(50);
+                        Thread.Sleep(5);
                     }
 
                     if (n >= 20 && n < 30)
                     {
                         neo.Image.SetPixel(2, 0, 0, 10, 0);
                         neo.Update();
-                        Thread.Sleep(50);
+                        Thread.Sleep(5);
                     }
 
                     if (n >= 30 && n < 40)
                     {
                         neo.Image.SetPixel(3, 0, 0, 10, 0);
                         neo.Update();
-                        Thread.Sleep(50);
+                        Thread.Sleep(5);
                     }
 
                     if (n >= 40 && n < 50)
                     {
                         neo.Image.SetPixel(4, 0, 0, 10, 0);
                         neo.Update();
-                        Thread.Sleep(50);
+                        Thread.Sleep(5);
                     }
 
                     if (n >= 50)
                     {
                         neo.Image.SetPixel(5, 0, 0, 10, 0);
+                        neo.Image.SetPixel(6, 0, 17, 10, 7);
                         neo.Update();
-                        Thread.Sleep(50);
+                        Thread.Sleep(5);
                     }
                 }
 
