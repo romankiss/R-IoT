@@ -1,17 +1,11 @@
-using nanoFramework.Hardware.Esp32;
-using System.Device.I2c;
-using System.Threading;
-using Iot.Device.Bh1750fvi;
-
-
-using Iot.Device.Ssd13xx;
 using System.Diagnostics;
+using System.Threading;
+using System.Device.I2c;
+using nanoFramework.Hardware.Esp32;
+using Iot.Device.Bh1750fvi;
+using Iot.Device.Ssd13xx;
+using Iot.Device.Button;
 using System;
-
-
-
-// https://docs.nanoframework.net/devicesdetails/Mfrc522/README.html
-// https://github.com/nanoframework/nanoFramework.IoT.Device/blob/develop/devices/Mfrc522/samples/Program.cs
 
 namespace NFAppAtomLite_Testing
 {
@@ -19,49 +13,50 @@ namespace NFAppAtomLite_Testing
     {
         public static void Main()
         {
+            double illuminance;
+            GpioButton button = new GpioButton(buttonPin: 39, debounceTime: TimeSpan.FromMilliseconds(200));
 
-
-
-
-            Configuration.SetPinFunction(21, DeviceFunction.I2C1_CLOCK);   // Grove connector
-            Configuration.SetPinFunction(25, DeviceFunction.I2C1_DATA);    // Grove connector
-            //
-            I2cDevice i2c_oled128x64 = I2cDevice.Create(new I2cConnectionSettings(1, 0x3C));
-            var display = new Iot.Device.Ssd13xx.Ssd1306(i2c_oled128x64);
-            display.Orientation = DisplayOrientation.Landscape180;
-            display.ClearScreen();
-            display.Font = new Sinclair8x8();
-
-
-
+            //senzor
+            Configuration.SetPinFunction(23, DeviceFunction.I2C1_DATA);
+            Configuration.SetPinFunction(33, DeviceFunction.I2C1_CLOCK);
+            I2cConnectionSettings settings = new I2cConnectionSettings(busId: 1, (int)I2cAddress.AddPinLow);
+            I2cDevice device = I2cDevice.Create(settings);
+            //display
             Configuration.SetPinFunction(22, DeviceFunction.I2C2_DATA);
             Configuration.SetPinFunction(19, DeviceFunction.I2C2_CLOCK);
+            
+            I2cDevice i2c_oled128x64 = I2cDevice.Create(new I2cConnectionSettings(2, 0x3C));
+            var display = new Iot.Device.Ssd13xx.Ssd1306(i2c_oled128x64);
+            var sensor = new Bh1750fvi(device);
+            
 
-            I2cConnectionSettings settings = new I2cConnectionSettings(busId: 2, (int)I2cAddress.AddPinLow);
-            I2cDevice device = I2cDevice.Create(settings);
-            Bh1750fvi sensor = new Bh1750fvi(device);
 
-            while (true)
+
+
+
+            //font do displaya
+            display.Font = new Sinclair8x8();
+            display.ClearScreen();
+
+            button.Press += (sender, e) =>
             {
-
-                double illuminance = sensor.Illuminance.Value;
-
-
-
-
-
-                // read illuminance(Lux)
-                Debug.WriteLine(illuminance.ToString());
-                display.ClearScreen();
-                display.Write(0, 0, illuminance.ToString());
+                
+                illuminance = sensor.Illuminance.Value; //read illuminance(Lux)
+                Debug.WriteLine($"LUX = {illuminance}");
+                display.Write(0, 5, $"LUX = {illuminance}");
+                
+                display.DrawHorizontalLine(0, 50, 127);
+               
                 display.Display();
+                
+            };
 
 
 
-                Thread.Sleep(200);
-            }
+            Thread.Sleep(Timeout.Infinite);
+
+          
         }
 
     }
 }
-
