@@ -1,1 +1,1 @@
-
+Momentálne žiadne
