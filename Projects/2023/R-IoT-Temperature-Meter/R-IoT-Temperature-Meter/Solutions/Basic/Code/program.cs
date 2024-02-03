@@ -29,7 +29,7 @@ namespace NFAppAtomLite_Testing
             button.Press += (sender, e) =>
             {
 
-                #region Temp&Hum  - sensor sht30 
+                #region Temp&Hum  - sensor sht30   (RK: configuraciu pinov, sensorov, atd. treba urbot mimo "event handler", lebo ma byt vykonana len raz a nie pri kazdej udalosti)
                 Configuration.SetPinFunction(32, DeviceFunction.I2C1_CLOCK);
                 Configuration.SetPinFunction(26, DeviceFunction.I2C1_DATA);
                 Sht3x sensorTH = new(new(new I2cConnectionSettings(1, 0x44)));
