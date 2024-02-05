@@ -1,4 +1,4 @@
-<h2>Same useful code for device connectivity, storage, etc.</h2>
+<h2>Useful code for device connectivity, storage, etc.</h2>
 
 based on the 
 https://github.com/nanoframework/Samples/tree/main
