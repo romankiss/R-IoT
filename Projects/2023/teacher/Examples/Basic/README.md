@@ -1,6 +1,12 @@
 <h2>Same useful code for device connectivity, storage, etc.</h2>
 
+based on the 
+https://github.com/nanoframework/Samples/tree/main
+   
 
+
+<br></br>
+<br></br>
 
 <h3>WiFi Connection</h3>
 
