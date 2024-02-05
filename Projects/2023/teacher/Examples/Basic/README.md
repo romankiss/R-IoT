@@ -77,6 +77,11 @@
 
    <h4>Show contents of the specific file, for example: telemetryFilePath</h4>
 
+       string body = File.ReadAllText(telemetrydataFilePath);
+       Debug.WriteLine($"{telemetrydataFilePath}:\r\n{body}");
+
+or
+       
        foreach (var file in listFiles)
        {
            if (file == telemetrydataFilePath)
@@ -99,6 +104,13 @@
            fs.Write(Encoding.UTF8.GetBytes(data), 0, data.Length);
            Debug.Write($"FileStorage.Write: {data}");
        }
+
+
+ <h4>Delete file from Storage</h4>
+
+        if(File.Exists(telemetrydataFilePath))
+               File.Delete(telemetrydataFilePath);
+        
 
 
 
