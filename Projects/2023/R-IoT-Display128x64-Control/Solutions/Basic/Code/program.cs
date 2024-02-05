@@ -6,12 +6,18 @@ using nanoFramework.Hardware.Esp32;
 using System.Device.I2c;
 using System.Numerics;
 using Iot.Device.Ssd13xx.Commands.Ssd1306Commands;
-
+using Iot.Device.Hcsr501;
+using System.Device.Gpio;
+using Iot.Device.Button;
+using nanoFramework.AtomLite;
+using Iot.Device.Ws28xx.Esp32;
+using System.Threading;
 
 namespace AccelDisplay
 {
     public class Program
     {
+        
 
         public static Ssd1306 displayConfig()
         {
@@ -43,9 +49,16 @@ namespace AccelDisplay
             return sensor;
         }
 
+        public static Hcsr501 motionConfig() 
+        {
+            Hcsr501 motionSensor = new Hcsr501(23, PinNumberingScheme.Logical);
+            return motionSensor;
+        }
 
         public static void Main()
         {
+            int movementCounter = 0;
+
             //Display
             Ssd1306 display = displayConfig();
             display.Orientation = DisplayOrientation.Landscape180;
@@ -56,30 +69,78 @@ namespace AccelDisplay
             //Accel display
             Adxl343Display test1 = new Adxl343Display(256, 128, display, sensor);
 
+            Adxl343Display test2 = new Adxl343Display(256, 128, display, sensor);
+
+            //Motion sensor
+            Hcsr501 motionSensor = motionConfig();
+
+            //Button
+            GpioButton button = new GpioButton(buttonPin: 39, debounceTime: TimeSpan.FromMilliseconds(200));
+
+
             Vector3 v = new Vector3();
             Vector3 vOld = new Vector3(0, 0, 0);
 
+            Sk6812 neo = new Sk6812(27, 3);
+            neo.Image.SetPixel(1, 0, 10, 10, 10);
+            neo.Update();
+
             display.ClearScreen();
+
+            //Worked for 10 seconds, as all previous attempts, no longer works.
+            //Heavy WIP
+            new Thread(() =>
+            {
+
+            while (true) { 
+
+                button.Press += (sender, e) =>
+                {
+                    Debug.WriteLine("PRESSED!!");
+                    movementCounter = 0;
+                };
+                
+                Thread.Sleep(Timeout.Infinite);
+            }
+
+            }).Start();
+
+
+            Debug.WriteLine(movementCounter.ToString());
 
             while (true)
             {
 
                 if (sensor.TryGetAcceleration(ref v))
-                    {
+                {
 
-                     if (Math.Abs(v.X - vOld.X) > 17 || Math.Abs(v.Y - vOld.Y) > 17)
+
+                    if (Math.Abs(v.X - vOld.X) > 17 || Math.Abs(v.Y - vOld.Y) > 17)
                      {
                            //Display text
 
                             display.ClearScreen();
 
-                            test1.WriteVector(64, 64, v, "Displej funguje");
-                            test1.WriteVector(64, 63, v, "vcelku neuveritelne");
-
+                            test1.WriteVector(64, 64, v, "Display is functional.");
+                            
+                            test1.WriteVector(64, 48, v, "Movement counter:");    
+                            //Succesfully counts movement
+                            test1.WriteVector(64, 40, v, movementCounter.ToString());
                             display.Display();
                             vOld = v;
-                     }
+
+                    }
+
                 }
+
+                if (motionSensor.IsMotionDetected)
+                {
+                    //LED
+                    Debug.WriteLine(movementCounter.ToString());
+                    movementCounter++;
+                }
+
+
             }
 
 
@@ -91,3 +152,4 @@ namespace AccelDisplay
     }
 
  } 
+
