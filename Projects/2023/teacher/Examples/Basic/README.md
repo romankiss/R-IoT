@@ -2,13 +2,6 @@
 
 
 
-
-
-
-
-
-
-
 <h3>WiFi Connection</h3>
 
        #region WiFi
@@ -64,7 +57,68 @@
         }
         #endregion
 
+<h3>Storage</h3>
+
+
+       // E = USB storage
+       // D = SD Card
+       // I = Internal storage
+       const string DirectoryPath = "I:\\";
+       const string telemetrydataFilePath = DirectoryPath + "telemetryData.json";
+
+  <h4>Show all files in the DirectoryPath</h4>     
+
+       string[] listFiles = Directory.GetFiles(DirectoryPath);
+       Debug.WriteLine("FileStorage:");
+       foreach (var file in listFiles)
+       {
+           Debug.WriteLine($" {file}");
+       }
+
+   <h4>Show contents of the specific file, for example: telemetryFilePath</h4>
+
+       foreach (var file in listFiles)
+       {
+           if (file == telemetrydataFilePath)
+           {
+               Debug.WriteLine($"{file}:");
+               using (FileStream fs = new FileStream(telemetrydataFilePath, FileMode.Open, FileAccess.Read))
+               {
+                   byte[] data = new byte[fs.Length];
+                   fs.Read(data, 0, data.Length);
+                   Debug.WriteLine($"{Encoding.UTF8.GetString(data, 0, data.Length)}");
+               }
+           }
+       }
+
+<h4>Append a telemetry data to internal storage</h4>
+
+       var data = $"[{DateTime.UtcNow.ToString("hh:mm:ss.fff")}] temp={temp:F2}, hum={hum:F2}\r\n";
+       using (FileStream fs = new FileStream(telemetrydataFilePath, FileMode.Append))
+       {
+           fs.Write(Encoding.UTF8.GetBytes(data), 0, data.Length);
+           Debug.Write($"FileStorage.Write: {data}");
+       }
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
