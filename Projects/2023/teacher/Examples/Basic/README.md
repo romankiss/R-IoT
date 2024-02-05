@@ -1,4 +1,4 @@
-<h2>Same usefull code for device connectivity, storage, etc.</h2>
+<h2>Same useful code for device connectivity, storage, etc.</h2>
 
 
 
