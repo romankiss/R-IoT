@@ -17,7 +17,11 @@ namespace AccelDisplay
 {
     public class Program
     {
-        
+        //static variables (added by RK)
+        //static Ssd1306 display = null;
+        //static Hcsr501 motionSensor = null;
+        //static Sk6812 neo = null;
+        //static int movementCounter = 0;
 
         public static Ssd1306 displayConfig()
         {
@@ -73,10 +77,24 @@ namespace AccelDisplay
 
             //Motion sensor
             Hcsr501 motionSensor = motionConfig();
+            //added by RK
+            //motionSensor.Hcsr501ValueChanged += (s, e) =>
+            //{
+            //    if (e.PinValue == PinValue.High)
+            //   {
+            //        //Blink(Color.FromArgb(10, 10, 10));      // motion blink
+            //        Interlocked.Increment(ref movementCounter);
+            //    }
+            // };
 
             //Button
             GpioButton button = new GpioButton(buttonPin: 39, debounceTime: TimeSpan.FromMilliseconds(200));
-
+            // added by RK
+            //button.Press += (sender, e) =>
+            //{
+            //    Debug.WriteLine("PRESSED!!");
+            //    Interlocked.Exchange(ref movementCounter, 0);
+            //};
 
             Vector3 v = new Vector3();
             Vector3 vOld = new Vector3(0, 0, 0);
@@ -89,6 +107,7 @@ namespace AccelDisplay
 
             //Worked for 10 seconds, as all previous attempts, no longer works.
             //Heavy WIP
+            // comment by RK: remove this task 
             new Thread(() =>
             {
 
