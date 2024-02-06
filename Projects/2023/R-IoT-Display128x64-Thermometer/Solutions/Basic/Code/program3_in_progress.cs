@@ -13,7 +13,7 @@ using Iot.Device.Sht3x;
 using nanoFramework.AtomLite;
 using Iot.Device.Ahtxx;
 using UnitsNet;
-using System.IO.Ports;
+//using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
 using System.Device.Wifi;
@@ -56,10 +56,6 @@ namespace Display
             I2cConnectionSettings settings1 = new I2cConnectionSettings(1, 0x23);
             I2cDevice i2cdevice1 = I2cDevice.Create(settings1);
 
-            //?
-            I2cConnectionSettings hubSettings = new I2cConnectionSettings(1, 0x70); 
-            I2cDevice i2cHub = I2cDevice.Create(hubSettings);
-
 
 
 
@@ -100,8 +96,8 @@ namespace Display
 
             //====================================================//
             
-            Aht20 aht20Sensor = new Aht20(i2cDevice);
-            Bh1750fvi lightSensor = new Bh1750fvi(i2cdevice1);
+            aht20 = new Aht20(i2cDevice);
+            bh1750fvi = new Bh1750fvi(i2cdevice1);
 
 
             #region Temp&Hum  - sensor aht20  
@@ -124,7 +120,7 @@ namespace Display
 
                 Debug.WriteLine($"Press");
 
-                UpdateDisplay(lightSensor);
+                UpdateDisplay();
 
             };
             Thread.Sleep(Timeout.Infinite);
@@ -132,16 +128,15 @@ namespace Display
 
         //========================================//
         //need to fix:: light sensor, displaying on display; (correct initialization) 
-        //========================================//
-      
-        private static void UpdateDisplay(Bh1750fvi lightSensor)
+
+        private static void UpdateDisplay()
         {
             
-            // Controll point
+            // Control point
             if (aht20 == null || bh1750fvi == null)
             {
                 Debug.WriteLine("Error!");
-                //return;
+                return;
             }
             
             double temperature = aht20.GetTemperature().DegreesCelsius;
@@ -150,7 +145,7 @@ namespace Display
             double illuminance = bh1750fvi.Illuminance.Value;
 
 
-            I2cDevice i2cOled = I2cDevice.Create(new I2cConnectionSettings(2, 0x3C));
+            I2cDevice i2cOled = I2cDevice.Create(new I2cConnectionSettings(1, 0x3C));
             var display = new Iot.Device.Ssd13xx.Ssd1306(i2cOled);
             display.ClearScreen();
             display.Font = new Sinclair8x8();
