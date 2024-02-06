@@ -13,7 +13,6 @@ using Iot.Device.Sht3x;
 using nanoFramework.AtomLite;
 using Iot.Device.Ahtxx;
 using UnitsNet;
-//using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
 using System.Device.Wifi;
@@ -43,7 +42,6 @@ namespace Display
             //hub 
             Configuration.SetPinFunction(21, DeviceFunction.I2C1_CLOCK);
             Configuration.SetPinFunction(25, DeviceFunction.I2C1_DATA);
-            
             #endregion
             
             // Create an instance of I2cDevice using the appropriate settings for your device
@@ -51,13 +49,9 @@ namespace Display
             I2cConnectionSettings settings = new I2cConnectionSettings(1, 0x38); // Replace with the correct I2C bus index and address
             I2cDevice i2cDevice = I2cDevice.Create(settings);
 
-
             //light sensore
             I2cConnectionSettings settings1 = new I2cConnectionSettings(1, 0x23);
             I2cDevice i2cdevice1 = I2cDevice.Create(settings1);
-
-
-
 
             #region WIFI
             //WIFI
@@ -99,16 +93,15 @@ namespace Display
             aht20 = new Aht20(i2cDevice);
             bh1750fvi = new Bh1750fvi(i2cdevice1);
 
-
             #region Temp&Hum  - sensor aht20  
             //AHT20 thermometer
             var i2c_aht20 = AtomLite.GetGrove(0x38);
             var res = i2c_aht20.WriteByte(0x07);
-            //AH
+            
             if (res.Status == I2cTransferStatus.FullTransfer)
             {
                 aht20 = new Aht20(i2c_aht20);  //seeed, aht20+BMP280,     = 0x38
-                Debug.WriteLine($"Temp = {aht20.GetTemperature().DegreesCelsius} °C, Hum = {aht20.GetHumidity().Percent} %");
+                Debug.WriteLine($"Temp = {aht20.GetTemperature().DegreesCelsius} °C,\nHum = {aht20.GetHumidity().Percent} %");
             }
             #endregion
 
@@ -123,27 +116,18 @@ namespace Display
                 UpdateDisplay();
 
             };
+
             Thread.Sleep(Timeout.Infinite);
         }
 
         //========================================//
-        //need to fix:: light sensor, displaying on display; (correct initialization) 
 
         private static void UpdateDisplay()
         {
             
-            // Control point
-            if (aht20 == null || bh1750fvi == null)
-            {
-                Debug.WriteLine("Error!");
-                return;
-            }
-            
             double temperature = aht20.GetTemperature().DegreesCelsius;
             double humidity = aht20.GetHumidity().Percent;
-            //double illuminance = bh1750fvi.Illuminance.Lux;
-            double illuminance = bh1750fvi.Illuminance.Value;
-
+            double illuminance = bh1750fvi.Illuminance.Lux;
 
             I2cDevice i2cOled = I2cDevice.Create(new I2cConnectionSettings(1, 0x3C));
             var display = new Iot.Device.Ssd13xx.Ssd1306(i2cOled);
@@ -151,9 +135,12 @@ namespace Display
             display.Font = new Sinclair8x8();
 
             DateTime currentTime = DateTime.UtcNow;
-            string timeString = currentTime.ToString("HH:mm:ss");
+            DateTime time = currentTime.AddHours(1); //+1
+            string timeString = time.ToString("HH:mm:ss");
 
-            Debug.WriteLine("Current UTC time is: " + currentTime); //+1
+
+            Debug.WriteLine("Current UTC time is: " + time); 
+            Debug.WriteLine($"LUX = {illuminance}");
 
             // Deploying things on display
             display.ClearScreen();
@@ -162,11 +149,7 @@ namespace Display
             display.DrawHorizontalLine(0, 63, 127);
             display.DrawVerticalLine(0, 0, 63);
             display.DrawVerticalLine(127, 0, 63);
-
-            //lux
-            Debug.WriteLine($"LUX = {illuminance}");
-            display.Write(5, 40, $"LUX = {illuminance}");
-            //lux
+            display.DrawHorizontalLine(0, 15, 127);
 
             byte[] bitmap = { 0b111,
                               0b101,
@@ -177,11 +160,12 @@ namespace Display
 
 
             //all important values
-            display.DrawString(5, 20, $"Temp: {temperature:F2}");//°
+            display.DrawString(5, 20, $"Temp: {temperature:F2}");
             display.DrawString(5, 30, $"Humi: {humidity:F2} %");
-            display.DrawString(5, 4, $"Time: {timeString}");//time
+            display.DrawString(5, 40, $"LUX : {illuminance:F1}");
+            display.DrawString(5, 4, $"Time: {timeString}");
             
-            display.DrawHorizontalLine(0, 15, 127);
+            
 
             display.Display();
 
@@ -216,4 +200,3 @@ namespace Display
         
     }
 }
-
