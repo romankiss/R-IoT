@@ -24,19 +24,18 @@ namespace Display
     {
         static Sk6812 neo = null;
         static GpioButton button = null;
-        static int i = 0;
         static Aht20 aht20 = null;
         static Bh1750fvi bh1750fvi = null;
-
+        /*
         const string MYSSID = "AS PIESTANY 3";
         const string MYPASSWORD = "123456789";
-
-        
+        */
+        const string MYSSID = "bitdata_ferdinand";
+        const string MYPASSWORD = "deTRa7hu";
 
         public static void Main()
         {
             GpioController gpio = new GpioController();
-            neo = new Sk6812(27, 3);    //AtomLite/Matrix 27 //AtomicPortABC 23/33 //Hat 22 //Grove 26(RGBLed), 32(RGBLedStick)
 
             #region PINS
             //hub 
@@ -44,14 +43,15 @@ namespace Display
             Configuration.SetPinFunction(25, DeviceFunction.I2C1_DATA);
             #endregion
             
-            // Create an instance of I2cDevice using the appropriate settings for your device
             //thermometer
             I2cConnectionSettings settings = new I2cConnectionSettings(1, 0x38); // Replace with the correct I2C bus index and address
             I2cDevice i2cDevice = I2cDevice.Create(settings);
+            aht20 = new Aht20(i2cDevice);
 
             //light sensore
             I2cConnectionSettings settings1 = new I2cConnectionSettings(1, 0x23);
             I2cDevice i2cdevice1 = I2cDevice.Create(settings1);
+            bh1750fvi = new Bh1750fvi(i2cdevice1);
 
             #region WIFI
             //WIFI
@@ -90,19 +90,11 @@ namespace Display
 
             //====================================================//
             
-            aht20 = new Aht20(i2cDevice);
-            bh1750fvi = new Bh1750fvi(i2cdevice1);
-
-            #region Temp&Hum  - sensor aht20  
-            //AHT20 thermometer
-            var i2c_aht20 = AtomLite.GetGrove(0x38);
-            var res = i2c_aht20.WriteByte(0x07);
-            
-            if (res.Status == I2cTransferStatus.FullTransfer)
-            {
-                aht20 = new Aht20(i2c_aht20);  //seeed, aht20+BMP280,     = 0x38
-                Debug.WriteLine($"Temp = {aht20.GetTemperature().DegreesCelsius} °C,\nHum = {aht20.GetHumidity().Percent} %");
-            }
+            #region Display
+            I2cDevice i2cOled = I2cDevice.Create(new I2cConnectionSettings(1, 0x3C));
+            var display = new Iot.Device.Ssd13xx.Ssd1306(i2cOled);
+            display.ClearScreen();
+            display.Font = new Sinclair8x8();
             #endregion
 
 
@@ -113,7 +105,7 @@ namespace Display
 
                 Debug.WriteLine($"Press");
 
-                UpdateDisplay();
+                UpdateDisplay(display);
 
             };
 
@@ -122,34 +114,24 @@ namespace Display
 
         //========================================//
 
-        private static void UpdateDisplay()
+        private static void UpdateDisplay(Ssd1306 display)
         {
             
             double temperature = aht20.GetTemperature().DegreesCelsius;
             double humidity = aht20.GetHumidity().Percent;
             double illuminance = bh1750fvi.Illuminance.Lux;
 
-            I2cDevice i2cOled = I2cDevice.Create(new I2cConnectionSettings(1, 0x3C));
-            var display = new Iot.Device.Ssd13xx.Ssd1306(i2cOled);
-            display.ClearScreen();
-            display.Font = new Sinclair8x8();
-
             DateTime currentTime = DateTime.UtcNow;
             DateTime time = currentTime.AddHours(1); //+1
             string timeString = time.ToString("HH:mm:ss");
 
 
-            Debug.WriteLine("Current UTC time is: " + time); 
+            Debug.WriteLine("Time =  " + time); 
             Debug.WriteLine($"LUX = {illuminance}");
+            Debug.WriteLine($"Temperature = {temperature}");
+            Debug.WriteLine($"Humidity = {humidity}");
 
-            // Deploying things on display
             display.ClearScreen();
-
-            display.DrawHorizontalLine(0, 0, 127);
-            display.DrawHorizontalLine(0, 63, 127);
-            display.DrawVerticalLine(0, 0, 63);
-            display.DrawVerticalLine(127, 0, 63);
-            display.DrawHorizontalLine(0, 15, 127);
 
             byte[] bitmap = { 0b111,
                               0b101,
@@ -158,6 +140,12 @@ namespace Display
 
             display.DrawBitmap(102, 20, 1, 8, display.Font['C']);
 
+            //display overlay
+            display.DrawHorizontalLine(0, 0, 127);
+            display.DrawHorizontalLine(0, 63, 127);
+            display.DrawVerticalLine(0, 0, 63);
+            display.DrawVerticalLine(127, 0, 63);
+            display.DrawHorizontalLine(0, 15, 127);
 
             //all important values
             display.DrawString(5, 20, $"Temp: {temperature:F2}");
@@ -165,12 +153,9 @@ namespace Display
             display.DrawString(5, 40, $"LUX : {illuminance:F1}");
             display.DrawString(5, 4, $"Time: {timeString}");
             
-            
-
             display.Display();
 
             Debug.WriteLine("----------");
-
         }
         
         private static void Wifi_AvailableNetworksChanged(WifiAdapter sender, object e)
@@ -200,3 +185,4 @@ namespace Display
         
     }
 }
+
