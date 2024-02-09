@@ -1,4 +1,6 @@
-<h1>Fotopasca</h1>
+<h1>Fotopasca</h1>  
+
+For the english version of this file see: [ENG phototrap project readme translation](https://github.com/romankiss/R-IoT/blob/main/Projects/2023/R-IoT-Fotopasca/ENG%20phototrap%20project%20readme%20translation.md)
 
 ![prac_postup_fotopasce](https://github.com/romankiss/R-IoT/assets/59760649/9d4d7acb-c86b-41d1-9649-4b85d9d8b1bb)
 
@@ -15,3 +17,5 @@ Vytvorenie alternatívnych trás pre pripojenie do internetu bude už ťažšie 
 ## Zdroje
 [https://proto.school/](https://proto.school/)   
 [https://crypto4dummiez.substack.com/p/interplanetary-file-system-for-dummies](https://crypto4dummiez.substack.com/p/interplanetary-file-system-for-dummies)
+[https://www.instructables.com/Tiny-Outdoor-Camera/?utm_source=newsletter&utm_medium=email](https://www.instructables.com/Tiny-Outdoor-Camera/?utm_source=newsletter&utm_medium=email)
+
