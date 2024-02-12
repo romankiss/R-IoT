@@ -9,7 +9,6 @@ using Iot.Device.Ssd13xx.Commands.Ssd1306Commands;
 using Iot.Device.Hcsr501;
 using System.Device.Gpio;
 using Iot.Device.Button;
-using nanoFramework.AtomLite;
 using Iot.Device.Ws28xx.Esp32;
 using System.Threading;
 
@@ -17,11 +16,6 @@ namespace AccelDisplay
 {
     public class Program
     {
-        //static variables (added by RK)
-        //static Ssd1306 display = null;
-        //static Hcsr501 motionSensor = null;
-        //static Sk6812 neo = null;
-        //static int movementCounter = 0;
 
         public static Ssd1306 displayConfig()
         {
@@ -53,7 +47,7 @@ namespace AccelDisplay
             return sensor;
         }
 
-        public static Hcsr501 motionConfig() 
+        public static Hcsr501 motionConfig()
         {
             Hcsr501 motionSensor = new Hcsr501(23, PinNumberingScheme.Logical);
             return motionSensor;
@@ -77,55 +71,25 @@ namespace AccelDisplay
 
             //Motion sensor
             Hcsr501 motionSensor = motionConfig();
-            //added by RK
-            //motionSensor.Hcsr501ValueChanged += (s, e) =>
-            //{
-            //    if (e.PinValue == PinValue.High)
-            //   {
-            //        //Blink(Color.FromArgb(10, 10, 10));      // motion blink
-            //        Interlocked.Increment(ref movementCounter);
-            //    }
-            // };
 
             //Button
             GpioButton button = new GpioButton(buttonPin: 39, debounceTime: TimeSpan.FromMilliseconds(200));
-            // added by RK
-            //button.Press += (sender, e) =>
-            //{
-            //    Debug.WriteLine("PRESSED!!");
-            //    Interlocked.Exchange(ref movementCounter, 0);
-            //};
+
 
             Vector3 v = new Vector3();
             Vector3 vOld = new Vector3(0, 0, 0);
 
             Sk6812 neo = new Sk6812(27, 3);
-            neo.Image.SetPixel(1, 0, 10, 10, 10);
-            neo.Update();
+
 
             display.ClearScreen();
 
-            //Worked for 10 seconds, as all previous attempts, no longer works.
-            //Heavy WIP
-            // comment by RK: remove this task 
-            new Thread(() =>
+
+            button.Press += (sender, e) =>
             {
-
-            while (true) { 
-
-                button.Press += (sender, e) =>
-                {
-                    Debug.WriteLine("PRESSED!!");
-                    movementCounter = 0;
-                };
-                
-                Thread.Sleep(Timeout.Infinite);
-            }
-
-            }).Start();
-
-
-            Debug.WriteLine(movementCounter.ToString());
+                Debug.WriteLine("PRESSED");
+                movementCounter = 0;
+            };
 
             while (true)
             {
@@ -135,40 +99,45 @@ namespace AccelDisplay
 
 
                     if (Math.Abs(v.X - vOld.X) > 17 || Math.Abs(v.Y - vOld.Y) > 17)
-                     {
-                           //Display text
+                    {
+                        //Display text
 
-                            display.ClearScreen();
+                        display.ClearScreen();
 
-                            test1.WriteVector(64, 64, v, "Display is functional.");
-                            
-                            test1.WriteVector(64, 48, v, "Movement counter:");    
-                            //Succesfully counts movement
-                            test1.WriteVector(64, 40, v, movementCounter.ToString());
-                            display.Display();
-                            vOld = v;
+                        test1.WriteVector(64, 64, v, "Display is functional.");
 
+                        test1.WriteVector(64, 48, v, "Movement counter:");
+
+                        test1.WriteVector(64, 40, v, movementCounter.ToString());
+
+                        display.Display();
                     }
+                    
+                    if (motionSensor.IsMotionDetected)
+                    {
+
+                        //LED
+                        Debug.WriteLine(movementCounter.ToString());
+                        movementCounter++;
+
+                        neo.Image.SetPixel(0, 0, 100, 0, 0);
+                        neo.Update();
+                        Thread.Sleep(1);
+                        neo.Image.SetPixel(0, 0, 0, 0, 0);
+                        neo.Update();
+                    }
+                    
+
 
                 }
 
-                if (motionSensor.IsMotionDetected)
-                {
-                    //LED
-                    Debug.WriteLine(movementCounter.ToString());
-                    movementCounter++;
-                }
 
 
             }
 
 
-
-
         }
-
 
     }
 
- } 
-
+}
