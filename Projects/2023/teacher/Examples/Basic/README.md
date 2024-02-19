@@ -1,3 +1,4 @@
+<!-- language-all: lang-csharp -->
 <h2>Useful code for device connectivity, storage, etc.</h2>
 
 based on the 
@@ -123,8 +124,6 @@ or
 
 <h3>Web Server</h3>
 
-<br></br>
-
        #region WebServer
        using (WebServer server = new WebServer(80, HttpProtocol.Http)) //, new Type[] { typeof(ControllerTest) }))
        {
@@ -170,6 +169,14 @@ or
              }
          }
          #endregion
+
+<h4>Using browser to get the data from the WebServer</h4>
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/c84f72a0-1527-46a2-9072-a1d7e4c9a537)
+
+
+
+![image](https://github.com/romankiss/R-IoT/assets/30365471/ff4874bd-50c5-43f9-985f-8189601247ca)
 
 
 
