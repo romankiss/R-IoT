@@ -118,9 +118,58 @@ or
                File.Delete(telemetrydataFilePath);
         
 
+<br></br>
+<br></br>
 
+<h3>Web Server</h3>
 
+<br></br>
 
+       #region WebServer
+       using (WebServer server = new WebServer(80, HttpProtocol.Http)) //, new Type[] { typeof(ControllerTest) }))
+       {
+           server.CommandReceived += ServerCommandReceived;
+           server.Start();
+           Debug.WriteLine($"WebServer started.");
+           Blink(0, 40, 0);
+           Thread.Sleep(Timeout.Infinite);
+        }
+      
+         static void ServerCommandReceived(object source, WebServerEventArgs e)
+         {
+             Blink();
+             
+             var url = e.Context.Request.RawUrl;
+             Debug.WriteLine($"Command received: {url}, Method: {e.Context.Request.HttpMethod}");
+             var parameters = WebServer.DecodeParam(e.Context.Request.RawUrl);
+         
+             if (e.Context.Request.HttpMethod == HttpMethod.Get.Method)
+             {
+                 if (url.ToLower() == "/sayhello")
+                 {
+                     WebServer.OutPutStream(e.Context.Response, $"Hello from nanoFramework, available memory: {memory}");
+                 }
+                 else if (url.ToLower() == "/telemetrydata" && File.Exists(telemetrydataFilePath))
+                 {
+                     WebServer.SendFileOverHTTP(e.Context.Response, telemetrydataFilePath);
+                 }
+                 else
+                 {
+                     WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.NotFound);
+                 }
+             }
+             else if (e.Context.Request.HttpMethod == HttpMethod.Delete.Method)
+             {
+                 if (url.ToLower() == "/telemetrydata" && File.Exists(telemetrydataFilePath))
+                 {
+                     File.Delete(telemetrydataFilePath);
+                     WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.OK);
+                 }
+                 else
+                     WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.NotFound);
+             }
+         }
+         #endregion
 
 
 
