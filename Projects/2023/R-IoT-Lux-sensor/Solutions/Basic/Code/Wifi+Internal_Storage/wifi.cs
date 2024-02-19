@@ -39,8 +39,7 @@ namespace websajt
                     Debug.WriteLine($"Wifi ready - {_ssid}, mac:{GetMacId(out string ipaddress)}, ip:{ipaddress}");
                     // Otherwise, you are connected and have a valid IP and date
                     Debug.WriteLine($" {WifiNetworkHelper.Status}");
-                    AtomLite.NeoPixel.Image.SetPixel(0, 0, 0, 15, 0);
-                    AtomLite.NeoPixel.Update();
+                    websajt.Blink.Blinks(0,0,15);
 
                     WebServer server = new WebServer(80, HttpProtocol.Http);
 

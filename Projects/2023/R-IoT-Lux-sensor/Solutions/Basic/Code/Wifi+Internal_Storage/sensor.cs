@@ -16,6 +16,8 @@ namespace websajt
         static double _hum = 0;
         static string _telemetrydataFilePath = null;
         static Aht20 _sensor_temperature = null;
+        public static int pocet = 0;
+        public static string dat2 = null;
         public Sensor(Aht20 sensor_temperature, string telemetrydataFilePath)
         {
             _telemetrydataFilePath = telemetrydataFilePath;
@@ -27,43 +29,68 @@ namespace websajt
         #region sensor
         public static void ReadData()
         {
-            AtomLite.NeoPixel.Image.SetPixel(0, 0, Color.Green);
-            AtomLite.NeoPixel.Update();
             string body = File.ReadAllText(_telemetrydataFilePath);
             Debug.WriteLine($"{_telemetrydataFilePath}:\r\n{body}");
-            Thread.Sleep(100);
-            AtomLite.NeoPixel.Image.Clear();
-            AtomLite.NeoPixel.Update();
+            websajt.Blink.Blinks(0, 255, 0);
         }
 
         public static void DeleteData()
         {
-            AtomLite.NeoPixel.Image.SetPixel(0, 0, Color.Red);
-            AtomLite.NeoPixel.Update();
             Debug.WriteLine("Deleting storage");
             if (File.Exists(_telemetrydataFilePath))
                 File.Delete(_telemetrydataFilePath);
-            Thread.Sleep(100);
-            AtomLite.NeoPixel.Image.Clear();
-            AtomLite.NeoPixel.Update();
+            websajt.Blink.Blinks(255, 0, 0);
+
         }
 
         public static void WriteData(object state)
         {
-            AtomLite.NeoPixel.Image.SetPixel(0, 0, Color.Blue);
-            AtomLite.NeoPixel.Update();
             _temp = _sensor_temperature.GetTemperature().DegreesCelsius;
             _hum = _sensor_temperature.GetHumidity().Percent;
 
-            var data = $"[{DateTime.UtcNow.ToString("dd.MM.yyyy hh:mm:ss")}] temp={_temp:F2}, hum={_hum:F2}\r\n";
+            var data = $"[{DateTime.UtcNow.ToString("dd:MM:yyyy hh:mm:ss")}] temp={_temp:F2}, hum={_hum:F2}\r\n";
             using (FileStream fs = new FileStream(_telemetrydataFilePath, FileMode.Append))
             {
                 fs.Write(Encoding.UTF8.GetBytes(data), 0, data.Length);
                 Debug.Write($"FileStorage.Write: {data}");
             }
-            Thread.Sleep(100);
-            AtomLite.NeoPixel.Image.Clear();
-            AtomLite.NeoPixel.Update();
+            websajt.Blink.Blinks(0, 0, 255);
+            if (pocet < 20)
+            {
+                pocet = 0;
+                byte[] Zisti = File.ReadAllBytes(_telemetrydataFilePath);
+                foreach (byte Z in Zisti)
+                {
+                    if (Z == 10)
+                    {
+                        ++pocet;
+                    }
+                }
+                Debug.WriteLine($"{pocet}");
+            }
+            string dat = null;
+            int i = 0;
+            if (pocet > 19)
+            {
+                byte[] lines = File.ReadAllBytes(_telemetrydataFilePath);
+                foreach (byte s in lines)
+                {
+                    if (i == 1)
+                    {
+
+                        char c = (char)s;
+
+                        dat2 = c.ToString();
+                        dat = dat + dat2;
+                    }
+                    if (s == 10)
+                    {
+                        i = 1;
+                    }
+                }
+                byte[] datas = Encoding.UTF8.GetBytes(dat);
+                File.WriteAllBytes(_telemetrydataFilePath, datas);
+            }
         }
         #endregion
 
