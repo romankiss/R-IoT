@@ -12,7 +12,7 @@ namespace NFAppAtomLite_Testing
         static Sk6812 neo = null;
         static GpioButton button = null;
         static int ii = 0;
-        static int jj = 0;
+        static int jj = -1;
 
         public static void Main()
         {
@@ -22,17 +22,6 @@ namespace NFAppAtomLite_Testing
             button.Press += Button_Press;
 
             neo = new Sk6812(32, 10);    //AtomLite/Matrix 27 //AtomicPortABC 23/33 //Hat 22 //Grove 26(RGBLed), 32(RGBLedStick)
-            neo.Image.SetPixel(0, 0, 0, 0, 0);
-            neo.Image.SetPixel(1, 0, 0, 0, 0);
-            neo.Image.SetPixel(2, 0, 0, 0, 0);
-            neo.Image.SetPixel(3, 0, 0, 0, 0);
-            neo.Image.SetPixel(4, 0, 0, 0, 0);
-            neo.Image.SetPixel(5, 0, 0, 0, 0);
-            neo.Image.SetPixel(6, 0, 0, 0, 0);
-            neo.Image.SetPixel(7, 0, 0, 0, 0);
-            neo.Image.SetPixel(8, 0, 0, 0, 0);
-            neo.Image.SetPixel(9, 0, 0, 0, 0);
-            neo.Update();
 
             Thread.Sleep(Timeout.Infinite);
         }
@@ -41,6 +30,7 @@ namespace NFAppAtomLite_Testing
         {
             if(jj == 10)
             {
+                Debug.WriteLine("Clearing LEDs...\n Going back from the start.");
                 jj = 0;
                 neo.Image.SetPixel(0, 0, 0, 0, 0);
                 neo.Image.SetPixel(1, 0, 0, 0, 0);
