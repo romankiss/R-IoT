@@ -38,7 +38,7 @@ Example of using a nanoff for showing COM ports:
 <br />
 Example of using a nanoff for showing all targets (microcontrollers):
 
-     nanoff --listtargetss    
+     nanoff --listtargets    
 
 <br />
 <br />
