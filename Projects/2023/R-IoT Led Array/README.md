@@ -16,10 +16,19 @@ Ovládanie LED pásika pomocou AtomLite je inovatívny spôsob dosiahnutia dynam
 ### TODO:
 
 <ul>
-<li>Pulzujúce efekty, prechody farieb a možnosť synchronizácie s hudbou alebo inými udalosťami.</li>
+<li>Možnosť synchronizácie s hudbou alebo inými udalosťami.</li>
 </ul>
 
 ## Náš pokrok:   
+
+<ul>
+<li>Pulzujúce efekty</li>
+<li>Prechody farieb</li>
+<li>Generovanie náhodných farieb</li>
+<li>Časované blikanie</li>
+<li>Ovládanie farby tlačítkom</li>
+</ul>
+
 
 ![ESP32_LED-Array](https://github.com/romankiss/R-IoT/assets/121643952/fb453781-f6b7-4301-8ee0-0360258a43ef)
 
