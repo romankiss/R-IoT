@@ -42,6 +42,18 @@ Example of using a nanoff for showing all targets (microcontrollers):
 
 <br />
 <br />
+NuGet path not found fix:
+
+   1. Navigate to Tools -> Options -> NuGet Package Manager -> Package Sources
+![image](https://github.com/romankiss/R-IoT/assets/121643952/31bf6e2a-6c67-4e39-8422-c1f748aac670)
+   2. Click on the + (PLUS) sign in the right corner
+   3. Type: nuget.org in the name section
+   4. Type: https://api.nuget.org/v3/index.json in the source section
+   5. Check your newly added nuget.org in the package sources
+   6. Update
+
+This should fix your problem.
+
 <br />
 Samples:
 
