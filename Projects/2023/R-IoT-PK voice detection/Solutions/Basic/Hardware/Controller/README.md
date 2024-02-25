@@ -1,8 +1,8 @@
 **References:**
 
 <p style="display:inline-block;">
-  <img  width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/40ae9537-c80b-49c5-803d-bfe5a858fb83">
-  <a href="https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit">ATOM Lite ESP32 IoT Development Kit.</a>
+  <img  width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/405715b9-c4f0-49c8-a58a-9d008c3bf64c">
+  <a href="https://docs.m5stack.com/en/core/AtomS3%20Lite">AtomS3 Lite ESP32 IoT Development Kit.</a>
   <br/><br/>
  <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/dab71889-6844-4671-a300-f376cfcb8c7f">
    <a href="https://shop.m5stack.com/products/atomic-portabc-extension-base"> ATOMIC PortABC Extension Base</a>
@@ -13,9 +13,12 @@
 </p>
 
 
+
+
 <br/><br/><br/><br/>
 
-![image](https://github.com/romankiss/R-IoT/assets/30365471/cebffa4c-8338-4030-a1e4-8667eed18f91)
+![image](https://github.com/romankiss/R-IoT/assets/30365471/883ef6b3-253a-4e21-9e15-722b25f5e035)
+
 
 <br/>
 <br/>
@@ -26,6 +29,7 @@
 <br/>
 <br/>
 
-![image](https://github.com/romankiss/R-IoT/assets/30365471/0de638dc-9079-4741-b5ac-0011a7cef145)
+![image](https://github.com/romankiss/R-IoT/assets/30365471/cd09c6a3-008e-484e-b9ec-f9ecf9dc3a7e)
+
 
 
