@@ -32,4 +32,17 @@
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/cd09c6a3-008e-484e-b9ec-f9ecf9dc3a7e)
 
 
+<br/><br/><br/><br/>
+<h2>Another alternative for ESP32-S3 Controller</h2>
+
+
+<p style="display:inline-block;">
+  <img  width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/c987fd91-b60e-4c3b-ad07-365668f57c4e">
+  <a href="https://www.waveshare.com/product/esp32-s3-zero.htm?sku=25517">ESP32-S3-Zero Mini Development Board.</a>
+  <br/><br/>
+ <img width="10%" src="https://github.com/romankiss/R-IoT/assets/30365471/51c2d04e-d184-4629-9982-f144e892a4b9">
+   <a href="https://github.com/romankiss/R-IoT/assets/30365471/51c2d04e-d184-4629-9982-f144e892a4b9"> Breadboard 170</a>
+  <br/><br/>
+</p>
+
 
