@@ -45,4 +45,13 @@
   <br/><br/>
 </p>
 
+<br/><br/><br/>
+
+<img  width="70%" src="https://github.com/romankiss/R-IoT/assets/30365471/bc66cd68-e93b-48c7-93f4-93e2efd836be">
+
+<br/><br/><br/>
+
+<img  width="80%" src="https://github.com/romankiss/R-IoT/assets/30365471/2b69f706-a400-4325-b9d3-6bc9ca41aaca">
+
+
 
