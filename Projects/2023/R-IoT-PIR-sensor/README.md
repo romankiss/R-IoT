@@ -27,7 +27,8 @@ Detekcia pohybu pomocou PIR senzoru na AtomLite je efektívny spôsob, ako vytvo
 <li>Snímanie pohybu</li>
 </ul>
 
-![ESP32_LED-Array](https://github.com/romankiss/R-IoT/assets/121643952/fb453781-f6b7-4301-8ee0-0360258a43ef)
+![ESP32_PIR](https://github.com/romankiss/R-IoT/assets/121643952/05ad8657-7359-4041-8e8c-0e92f9b83693)
+
 
 (Pripojenie pinov a komponenty sú len ilustračné, výsledky sa môžu líšiť)
 
