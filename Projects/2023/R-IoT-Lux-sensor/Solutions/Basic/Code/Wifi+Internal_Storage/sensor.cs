@@ -14,6 +14,7 @@ namespace websajt
     {
         static double _temp = 0;
         static double _hum = 0;
+        static int HowMany = 1;
         static string _telemetrydataFilePath = null;
         static Aht20 _sensor_temperature = null;
         public static int pocet = 0;
@@ -31,7 +32,7 @@ namespace websajt
         {
             string body = File.ReadAllText(_telemetrydataFilePath);
             Debug.WriteLine($"{_telemetrydataFilePath}:\r\n{body}");
-            websajt.Blink.Blinks(0, 255, 0);
+            websajt.Blink.Blinks(0, 10, 0, 100, 1);
         }
 
         public static void DeleteData()
@@ -39,7 +40,7 @@ namespace websajt
             Debug.WriteLine("Deleting storage");
             if (File.Exists(_telemetrydataFilePath))
                 File.Delete(_telemetrydataFilePath);
-            websajt.Blink.Blinks(255, 0, 0);
+            websajt.Blink.Blinks(10, 0, 0, 100, 1);
 
         }
 
@@ -54,43 +55,13 @@ namespace websajt
                 fs.Write(Encoding.UTF8.GetBytes(data), 0, data.Length);
                 Debug.Write($"FileStorage.Write: {data}");
             }
-            websajt.Blink.Blinks(0, 0, 255);
-            if (pocet < 20)
-            {
-                pocet = 0;
-                byte[] Zisti = File.ReadAllBytes(_telemetrydataFilePath);
-                foreach (byte Z in Zisti)
-                {
-                    if (Z == 10)
-                    {
-                        ++pocet;
-                    }
-                }
-                Debug.WriteLine($"{pocet}");
-            }
-            string dat = null;
-            int i = 0;
-            if (pocet > 19)
-            {
-                byte[] lines = File.ReadAllBytes(_telemetrydataFilePath);
-                foreach (byte s in lines)
-                {
-                    if (i == 1)
-                    {
+            websajt.Blink.Blinks(0, 0, 10, 100, 1);
 
-                        char c = (char)s;
-
-                        dat2 = c.ToString();
-                        dat = dat + dat2;
-                    }
-                    if (s == 10)
-                    {
-                        i = 1;
-                    }
-                }
-                byte[] datas = Encoding.UTF8.GetBytes(dat);
-                File.WriteAllBytes(_telemetrydataFilePath, datas);
-            }
+            string lines = File.ReadAllText(_telemetrydataFilePath);
+            int result = lines.IndexOf('\n');
+            string datas = lines.Substring((result + 1) * HowMany);
+            Debug.WriteLine($"{result}");
+            File.WriteAllText(_telemetrydataFilePath, datas);
         }
         #endregion
 

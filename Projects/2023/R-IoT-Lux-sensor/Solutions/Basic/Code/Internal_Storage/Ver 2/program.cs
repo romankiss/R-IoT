@@ -9,6 +9,7 @@ using nanoFramework.Hardware.Esp32;
 using Iot.Device.Button;
 using nanoFramework.AtomLite;
 using System.Drawing;
+using websajt;
 
 
 namespace BasicFileSystemExample
@@ -27,9 +28,12 @@ namespace BasicFileSystemExample
         static string telemetrydataFilePath = null;
 
         public static int pocet = 0;
+        public static int HowMany = 1;
         public static string dat2 = null;
         public static void Main()
         {
+
+            Blink blink = new Blink();  
             // E = USB storage
             // D = SD Card
             // I = Internal storage
@@ -105,46 +109,23 @@ namespace BasicFileSystemExample
             {
                 fs.Write(Encoding.UTF8.GetBytes(data), 0, data.Length);
                 Debug.Write($"FileStorage.Write: {data}");
+                long size = fs.Length;
+                Debug.WriteLine($"{size}");
+                if (size > 1000) 
+                {
+                    string lines = File.ReadAllText(telemetrydataFilePath);
+                    int result1 = lines.LastIndexOf('\n');
+                    int result = lines.IndexOf('\n');
+                    string datas = lines.Substring(0,(result + 1) * HowMany);
+                    Debug.WriteLine($"{result}");
+                    File.WriteAllText(telemetrydataFilePath, datas);
+                }
+                
             }
 
             websajt.Blink.Blinks(0, 16, 16);
 
-            if (pocet < 20)
-            {
-                pocet = 0;
-                byte[] Zisti = File.ReadAllBytes(telemetrydataFilePath);
-                foreach (byte Z in Zisti)
-                {
-                    if (Z == 10)
-                    {
-                        ++pocet;
-                    }
-                }
-                Debug.WriteLine($"{pocet}");
-            }
-            string dat = null;
-            int i = 0;
-            if (pocet > 19)
-            {
-                byte[] lines = File.ReadAllBytes(telemetrydataFilePath);
-                foreach (byte s in lines)
-                {
-                    if (i == 1)
-                    {
-
-                        char c = (char)s;
-
-                        dat2 = c.ToString();
-                        dat = dat + dat2;
-                    }
-                    if (s == 10)
-                    {
-                        i = 1;
-                    }
-                }
-                byte[] datas = Encoding.UTF8.GetBytes(dat);
-                File.WriteAllBytes(telemetrydataFilePath, datas);
-            }
+            
         }
 
     }
