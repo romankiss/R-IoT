@@ -56,42 +56,6 @@ namespace Display
             bh1750fvi = new Bh1750fvi(i2cdevice1);
             #endregion
 
-            /*
-            #region WIFI
-            //WIFI
-            try
-            {
-                WifiAdapter wifi = WifiAdapter.FindAllAdapters()[0];
-                wifi.AvailableNetworksChanged += Wifi_AvailableNetworksChanged;
-                // give it some time to perform the initial "connect"
-                // trying to scan while the device is still in the connect procedure will throw an exception
-                Thread.Sleep(5000);
-
-                
-                int y = 0;
-                while (y<1)
-                {
-                    y++;    
-                    try
-                    {
-                        Debug.WriteLine("starting Wi-Fi scan");
-                        wifi.ScanAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Failure starting a scan operation: {ex}");
-                    }
-
-                    Thread.Sleep(3000);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("message:" + ex.Message);
-                Debug.WriteLine("stack:" + ex.StackTrace);
-            }
-            #endregion
-            */
             //====================================================//
             
             #region Display
@@ -192,38 +156,7 @@ namespace Display
 
             Debug.WriteLine("----------");
         }
-        /*
-        public static void blink(byte r, byte g, byte b, int period, int count)
-        {
-            neo.Image.SetPixel(0,0,0,10,0);
-            neo.Update;
-        }
-        *//*
-        private static void Wifi_AvailableNetworksChanged(WifiAdapter sender, object e)
-        {
-            Debug.WriteLine("Wifi_AvailableNetworksChanged - get report");
-
-            // Get Report of all scanned Wifi networks
-            WifiNetworkReport report = sender.NetworkReport;
-
-            // Enumerate though networks looking for our network
-            foreach (WifiAvailableNetwork net in report.AvailableNetworks)
-            {
-                // Show all networks found
-                Debug.WriteLine($"Net SSID :{net.Ssid},  BSSID : {net.Bsid},  rssi : {net.NetworkRssiInDecibelMilliwatts.ToString()},  signal : {net.SignalBars.ToString()}");
-
-                // If its our Network then try to connect
-                if (net.Ssid == MYSSID)
-                {
-                    // Disconnect in case we are already connected
-                    sender.Disconnect();
-
-                    // Connect to network
-                    WifiConnectionResult result = sender.Connect(net, WifiReconnectionKind.Automatic, MYPASSWORD);
-                }
-            }
-        }
-        */
+       
         public static void ReadData()
         {
             AtomLite.NeoPixel.Image.SetPixel(0, 0, Color.Green);
