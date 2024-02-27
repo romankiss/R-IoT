@@ -72,8 +72,11 @@ namespace BasicFileSystemExample
                 Debug.WriteLine($" {file}");
             }
 
-            button.Press += (sender, e) => ReadData();
-
+            button.Press += (sender, e) =>
+            {
+                WriteData(luminence.Illuminance);
+                ReadData();
+            };
 
 
             Thread.Sleep(Timeout.Infinite);
@@ -122,3 +125,9 @@ namespace BasicFileSystemExample
 
     }
 }
+
+
+
+
+
+//zabudol som pridat citanie uz to je opravene
