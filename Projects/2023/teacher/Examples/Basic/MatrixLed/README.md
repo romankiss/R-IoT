@@ -9,12 +9,11 @@ https://github.com/romankiss/R-IoT/assets/30365471/1dfcdfa0-eb1b-46b6-97a7-d97cd
 
 <h3>Tool for creating a Font8x8 pixels</h3>
 
-https://xantorohara.github.io/led-matrix-editor/#0000000000a000e0
-
-
 <li><a href="https://xantorohara.github.io/led-matrix-editor/#0000000000a000e0">LED Matrix Editor</a></li>
 
+<h4>Example of pixels for '3' used in the driver</h4>
 
+![image](https://github.com/romankiss/R-IoT/assets/30365471/2bd01149-aafe-4552-b894-1e6a46684bb2)
 
 
 
