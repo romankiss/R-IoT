@@ -20,7 +20,7 @@ https://github.com/romankiss/R-IoT/assets/30365471/1dfcdfa0-eb1b-46b6-97a7-d97cd
 
 
 
-<h2>Usage</h2>
+<h2>Usageo of the SimpleHT16K33 driver</h2>
 
        static SimpleHT16K33 ht16k33 = null;
 
