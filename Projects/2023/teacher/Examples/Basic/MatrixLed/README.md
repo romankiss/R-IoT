@@ -1,9 +1,9 @@
 
 <h2>16x8 LED Matrix SimpleHT16K33 Driver</h2>
 
-![image](https://github.com/romankiss/R-IoT/assets/30365471/bd4ec62f-9547-4d50-8851-4d251419afa4)
+ <img  width="35%" src="https://github.com/romankiss/R-IoT/assets/30365471/bd4ec62f-9547-4d50-8851-4d251419afa4">
 
-
+ 
 https://github.com/romankiss/R-IoT/assets/30365471/1dfcdfa0-eb1b-46b6-97a7-d97cd57363f4
 
 
