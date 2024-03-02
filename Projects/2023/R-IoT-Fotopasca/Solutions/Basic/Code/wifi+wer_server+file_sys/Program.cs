@@ -11,6 +11,7 @@ using System.IO;
 using static websajt.Blink;
 using static websajt.WiFi;
 using static websajt.Server;
+using Iot.Device.Button;
 
 
 namespace websajt
@@ -20,22 +21,44 @@ namespace websajt
 
         static string ssid = null;
         static string password = null;
+        static string file_path = null;
 
 
         public static void Main()
         {
             Debug.WriteLine("Hello from nanoFramework!");
 
-            ssid = "realme 5";//"<YOUR_WIFI_NAME>";
-            password = "qwertzui";//"<YOUR_WIFI_PASSWORD>";
+            ssid = "<YOUR_WIFI_NAME>";  
+            password = "<YOUR_WIFI_PASSWORD>";
+
+            GpioButton button = new GpioButton(buttonPin: 39, debounceTime: TimeSpan.FromMilliseconds(200));
+            button.IsHoldingEnabled = true;
+
+            file_path = "I:\\telemetry_data.json";
+            Storage.init(file_path);
 
             //Blink.set(0, 0, 15, 1000, 5);
 
             bool wifi_sucessful = WiFi.connect(ssid, password);
             if (wifi_sucessful)
             {
-                Server.start();
+                Server.start(file_path);
             }
+
+
+            button.Press += (sender, e) =>
+            {
+                websajt.Storage.new_formated_record(file_path, websajt.Sensor.measure().ToString());//after a button press make a new record 
+                Debug.WriteLine($"content: {websajt.Storage.read(file_path)}");
+                Blink.set(10, 10, 10, 500, 1);
+            };
+
+            button.Holding += (sender, e) =>
+            {
+                websajt.Storage.delete(file_path);//after a long hold delete the records
+                Debug.WriteLine($"Deleting {file_path}");
+                Blink.set(10, 0, 10, 500, 1);
+            };
 
             Thread.Sleep(Timeout.Infinite);
 

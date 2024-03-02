@@ -12,8 +12,10 @@ namespace websajt
 {
     internal class Server
     {
-        public static  void start() 
+        static string file_path = null;
+        public static void start(string telemetry_data_file_path)
         {
+            file_path = telemetry_data_file_path;
             WebServer server = new WebServer(80, HttpProtocol.Http);
 
             // Add a handler for commands that are received by the server.
@@ -33,13 +35,23 @@ namespace websajt
                     "<!DOCTYPE html> <html><head>" +
                     "<title>Hi from nanoFramework Server</title></head>" +
                     "<body>THIS IS A WEB PAGE!</body></html>");
-                Blink.set(0, 15, 0, 500, 2);
+                Blink.set(0, 15, 0, 500, 1);
+            }
+            else if (url.ToLower() == "/telemetry_data")
+            {
+                WebServer.OutPutStream(e.Context.Response,
+                    "<!DOCTYPE html> <html><head>" +
+                    "<title>Hi from nanoFramework Server</title></head>" +
+                    "<body>Telemetry data records: <br>" +
+                    $"{websajt.Storage.read(file_path)}" +
+                    "</body></html>"
+                    );
             }
 
             else
             {
                 WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.NotFound);
-                Blink.set(15, 0, 0, 500, 2);
+                Blink.set(15, 0, 0, 500, 1);
             }
         }
     }

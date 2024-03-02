@@ -18,14 +18,14 @@ namespace websajt
 
 
             #region WiFi
-            
+
             CancellationTokenSource cs = new(60000);
             Debug.WriteLine($"Connecting to {ssid} network ...");
             if (WifiNetworkHelper.ScanAndConnectDhcp(ssid, password, requiresDateTime: true, token: cs.Token))
             {
-               Debug.WriteLine($"Wifi ready - {ssid}, mac:{GetMacId(out string ipaddress)}, ip:{ipaddress}");
-               //Blink.set(0, 15, 0, 1000, 5);
-               return true;
+                Debug.WriteLine($"Wifi ready - {ssid}, mac:{GetMacId(out string ipaddress)}, ip:{ipaddress}");
+                //Blink.set(0, 15, 0, 1000, 5);
+                return true;
             }
             else
             {
