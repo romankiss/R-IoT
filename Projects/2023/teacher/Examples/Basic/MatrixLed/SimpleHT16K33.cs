@@ -1,6 +1,6 @@
-// written by Roman Kiss, February 29th, 2024
+// written by Roman Kiss, February 29th, 2024 version 1.0.0
 // tool for fonts: https://xantorohara.github.io/led-matrix-editor/#0000000000a000e0
-//
+// example: https://github.com/CreepyMemes/SimpleHT16K33
 //
 using System;
 using System.Device.I2c;
@@ -11,18 +11,26 @@ namespace NFAppM5CapsuleS3_MQTT
 {
     public enum BlinkType
     {
-        Off = 0,
-        Slow = 1,
-        Fast = 2
+        Off =  0,       // off
+        Slow = 1,       // 2 Hz blink
+        Fast = 2,       // 1 Hz blink
+        ExtraFast = 3   // 0.5 Hz blink
     }
     
     public class SimpleHT16K33
     {
+        // chip values
+        const byte HT16K33_BLINK_CMD = 0x80;        // BLINK setting
+        const byte HT16K33_TURN_OSCILLATOR = 0x21;  // turn on oscillator
+        const byte HT16K33_BLINK_DISPLAYON = 0x01;  // display on
+        const byte HT16K33_CMD_BRIGHTNESS = 0xE0;   // BRIGHTNESS setting
+        public const byte DefaultI2cAddress = 0x70;        
+        //
         private I2cDevice _i2cDevice = null;
         private AutoResetEvent are = new AutoResetEvent(true); // only one writeString function at the time
         private const int MAX_TEXT_LENGTH = 64;
         private const int MAX_BIG_BUFFER_SIZE = MAX_TEXT_LENGTH * 8; //512; 
-        private byte[] _bigBuffer = new byte[MAX_BIG_BUFFER_SIZE];  
+        private byte[] _bigBuffer = new byte[MAX_BIG_BUFFER_SIZE];
         private int noCirculate = 0;  // flag for circulation of the text 
         //
         // Ascii font 8x8 pixels rotated by right to allow direct stremming in the HT16K33 device
@@ -131,17 +139,17 @@ namespace NFAppM5CapsuleS3_MQTT
 
         public void Init()
         {
-            _i2cDevice.WriteByte(0x21);
+            _i2cDevice.WriteByte(HT16K33_TURN_OSCILLATOR);  //0x21
         }
 
         public void SetBrightness(byte brightness = 0)
         {
-            _i2cDevice.WriteByte((byte)(0xE0 | brightness));
+            _i2cDevice.WriteByte((byte)(HT16K33_CMD_BRIGHTNESS | brightness));   //0xE0
         }
 
         public void SetBlinkRate(BlinkType blinkType = BlinkType.Off)
         {
-            _i2cDevice.WriteByte((byte)(0x80 | 0x01 | ((byte)blinkType << 1)));
+            _i2cDevice.WriteByte((byte)(HT16K33_BLINK_CMD | HT16K33_BLINK_DISPLAYON | ((byte)blinkType << 1)));  //0x80 | 0x01
         }
 
         public void Clear()
@@ -205,6 +213,7 @@ namespace NFAppM5CapsuleS3_MQTT
                         buffer[2 + 2 * col] = bDevice8x8 ? (byte)0x00 : (posLeft > sizeOfBuffer || posLeft < 0) ? (byte)0x00 : _bigBuffer[posLeft];
                     }
                     _i2cDevice.Write(new SpanByte(buffer));
+                    //Debug.WriteLine($"HT16K33: {BitConverter.ToString(buffer)}");
                     Thread.Sleep(scrollingTimeInMs);
                 }
             } while(bCirculate);
@@ -220,7 +229,8 @@ namespace NFAppM5CapsuleS3_MQTT
             int lastPixel = WriteString(s);
             if(!bScrollLastCharacters) 
                 lastPixel -= 15;
-            new Thread(() => writeDisplay(scrollingTimeInMs: msPerLetter, cursorEnd: lastPixel, bDevice8x8: bDevice8x8)).Start();
+            var task = new Thread(() => writeDisplay(scrollingTimeInMs: msPerLetter, cursorEnd: lastPixel, bDevice8x8: bDevice8x8)) { Priority = ThreadPriority.BelowNormal };
+            task.Start();
         }
 
         // Simple show the text in the scrolling mode on the device in the synchronnously manner
@@ -241,7 +251,8 @@ namespace NFAppM5CapsuleS3_MQTT
             // show and circulate text until a new text is comming
             int lastPixel = WriteString(s);
             Interlocked.Increment(ref noCirculate);
-            new Thread(() => writeDisplay(scrollingTimeInMs: msPerLetter, cursorEnd: lastPixel, bCirculate: true, bDevice8x8: bDevice8x8)).Start();
+            var task = new Thread(() => writeDisplay(scrollingTimeInMs: msPerLetter, cursorEnd: lastPixel, bCirculate: true, bDevice8x8: bDevice8x8)) { Priority = ThreadPriority.BelowNormal };
+            task.Start();
         }
         #endregion
     }
