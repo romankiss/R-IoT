@@ -53,9 +53,15 @@ https://github.com/romankiss/R-IoT/assets/30365471/0bbf4594-9123-4d63-ae73-36d8e
 
 
 <br></br>
-<h3>HT16K33 wired to M5CapsuleS3 controller as a PnP IoT Device connected to Azure IoT Central</h3>
+<h3>HT16K33 wired to M5CapsuleS3 Controller as a PnP IoT Device connected to Azure IoT Central</h3>
 
  https://github.com/romankiss/R-IoT/assets/30365471/788edb9b-9fc3-4c75-a8cb-8053cc2f3ab7 
+
+<br></br>
+<h3>HT16K33 wired to Atom Lite Controller as a PnP IoT Device connected to Azure IoT Central</h3>
+
+
+https://github.com/romankiss/R-IoT/assets/30365471/dd19294e-efe6-48c1-9ae1-cd9f13b3eb61
 
 
 
