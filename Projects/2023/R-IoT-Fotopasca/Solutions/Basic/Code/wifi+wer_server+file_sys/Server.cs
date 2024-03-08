@@ -35,7 +35,7 @@ namespace websajt
                     "<!DOCTYPE html> <html><head>" +
                     "<title>Hi from nanoFramework Server</title></head>" +
                     "<body>THIS IS A WEB PAGE!</body></html>");
-                Blink.set(0, 15, 0, 500, 1);
+                Blink.set(0, 15, 0, 1, 1.0, 1);
             }
             else if (url.ToLower() == "/telemetry_data")
             {
@@ -46,6 +46,7 @@ namespace websajt
                     $"{websajt.Storage.read(file_path)}" +
                     "</body></html>"
                     );
+                Blink.set(0, 15, 0, 1, 1.0, 1);
             }
 
             else

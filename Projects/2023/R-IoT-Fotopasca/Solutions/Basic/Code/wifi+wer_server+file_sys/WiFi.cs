@@ -24,13 +24,12 @@ namespace websajt
             if (WifiNetworkHelper.ScanAndConnectDhcp(ssid, password, requiresDateTime: true, token: cs.Token))
             {
                 Debug.WriteLine($"Wifi ready - {ssid}, mac:{GetMacId(out string ipaddress)}, ip:{ipaddress}");
-                //Blink.set(0, 15, 0, 1000, 5);
+
                 return true;
             }
             else
             {
                 Debug.WriteLine($"Can't connect to the network {ssid}, error: {WifiNetworkHelper.Status}");
-                //Blink.set(15, 0, 0, 1000, 5);
 
                 return false;
             }
