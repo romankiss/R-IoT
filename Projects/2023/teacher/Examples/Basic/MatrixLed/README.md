@@ -30,18 +30,16 @@ https://github.com/romankiss/R-IoT/assets/30365471/1dfcdfa0-eb1b-46b6-97a7-d97cd
 <h3>Initialize driver</h3>
 
         #region HT16K33  
-        I2cDevice i2c_ht16k33 = new(new I2cConnectionSettings(1, 0x70)); // Grove connector
-        res = i2c_ht16k33.WriteByte(0x07);
-        if (res.Status == I2cTransferStatus.FullTransfer)
+        ht16k33 = SimpleHT16K33.Create(1, backpackWiring: BackpackWiring.Default);
+        if (ht16k33 != null)
         {
-            ht16k33 = new SimpleHT16K33(i2c_ht16k33);
             ht16k33.Init();
             ht16k33.SetBrightness(10);
             ht16k33.SetBlinkRate();
             ht16k33.Clear();
             ht16k33.ShowMessage("Sensors=OK");
             ht16k33.ShowAndCirculateMessageAsync("wifi", 250);
-        }          
+        }
         #endregion
 
 
