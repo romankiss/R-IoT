@@ -8,7 +8,6 @@ using System;
 using System.Device.Gpio;
 using System.Device.I2c;
 using System.Diagnostics;
-using System.Drawing;
 using System.Threading;
 
 namespace NFAppM5CapsuleS3_MQTT
