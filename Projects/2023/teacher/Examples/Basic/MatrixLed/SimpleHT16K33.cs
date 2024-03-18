@@ -10,7 +10,7 @@ using System.Device.I2c;
 using System.Diagnostics;
 using System.Threading;
 
-namespace NFAppM5CapsuleS3_MQTT
+namespace MyLib
 {
     public static class ArrayExtension
     {
