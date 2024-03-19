@@ -8,6 +8,7 @@ using System.Numerics;
 using Iot.Device.Ssd13xx.Commands.Ssd1306Commands;
 using Iot.Device.Hcsr501;
 using System.Device.Gpio;
+using System.Device.Model;
 using System.Device.Wifi;
 using Iot.Device.Button;
 using Iot.Device.Ws28xx.Esp32;
@@ -17,6 +18,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 using nanoFramework.WebServer;
 
 namespace AccelDisplay
@@ -73,9 +75,6 @@ namespace AccelDisplay
 
         #endregion
 
-
-
-
         #region Networking
 
         static void ConnectWifi(WifiAdapter sender, object e)
@@ -107,71 +106,7 @@ namespace AccelDisplay
 
         }
 
-        static string GetMacId(out string ipaddress)
-        {
-            NetworkInterface[] nis = NetworkInterface.GetAllNetworkInterfaces();
-            if (nis.Length > 0)
-            {
-                NetworkInterface ni = nis[0];
-                ipaddress = ni.IPv4Address;
-                return ByteArrayToHex(ni.PhysicalAddress);
-            }
-            else
-            {
-                ipaddress = string.Empty;
-                return "000000000000";
-            }
-        }
-
         #endregion
-
-
-
-
-        #region DataManipulation
-
-        public static void ReadData()
-        {
-            string body = File.ReadAllText(telemetrydataFilePath);
-            Debug.WriteLine($"{telemetrydataFilePath}:\r\n{body}");
-            Thread.Sleep(100);
-
-        }
-
-        public static void WriteData(string data)
-        {
-            using (FileStream fs = new FileStream(telemetrydataFilePath, FileMode.Append))
-            {
-                fs.Write(Encoding.UTF8.GetBytes(data), 0, data.Length);
-
-            }
-            Thread.Sleep(100);
-
-        }
-
-        public static void DeleteData()
-        {
-            Debug.WriteLine("Deleting storage");
-            if (File.Exists(telemetrydataFilePath))
-                File.Delete(telemetrydataFilePath);
-            Thread.Sleep(100);
-
-        }
-
-        static string ByteArrayToHex(byte[] barray)
-        {
-            string bs = "";
-            for (int i = 0; i < barray.Length; ++i)
-            {
-                bs += barray[i].ToString("X2");
-            }
-            return bs;
-        }
-
-
-
-        #endregion
-
 
 
         public static void Blink(byte r, byte g, byte b, int period, int count)
@@ -188,49 +123,43 @@ namespace AccelDisplay
             }
 
         }
-        /*
+        
         static void ServerCommandReceived(object source, WebServerEventArgs e)
         {
 
-
-            byte[] a = {1, 2};
             var url = e.Context.Request.RawUrl;
             Debug.WriteLine($"Command received: {url}, Method: {e.Context.Request.HttpMethod}");
-            var parameters = WebServer.DecodeParam(e.Context.Request.RawUrl);
+          
 
-            if (e.Context.Request.HttpMethod == HttpMethod.Get.Method)
-            {
+           
                 if (url.ToLower() == "/sayhello")
                 {
                     WebServer.OutPutStream(e.Context.Response, $"Hello from nanoFramework");
                 }
-                else if (url.ToLower() == "/telemetrydata" && File.Exists(telemetrydataFilePath))
+                else
                 {
-                    WebServer.SendFileOverHTTP(e.Context.Response, telemetrydataFilePath, a);
+                    WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.NotFound);
+                }
+
+
+                if (url.ToLower() == "/telemetrydata")
+                {
+                    string body = File.ReadAllText(telemetrydataFilePath);
+                    WebServer.OutPutStream(e.Context.Response, $"{body}");
+
                 }
                 else
                 {
                     WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.NotFound);
                 }
-            }
-            else if (e.Context.Request.HttpMethod == HttpMethod.Delete.Method)
-            {
-                if (url.ToLower() == "/telemetrydata" && File.Exists(telemetrydataFilePath))
-                {
-                    File.Delete(telemetrydataFilePath);
-                    WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.OK);
-                }
-                else
-                    WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.NotFound);
-            }
+            
         }
 
-        */
+        
 
         public static void Main()
         {
             int movementCounter = 0;
-
 
             //Display
             Ssd1306 display = displayConfig();
@@ -256,11 +185,14 @@ namespace AccelDisplay
 
             display.ClearScreen();
 
-
+            //Storage
+            StorageHandler storage = new StorageHandler(telemetrydataFilePath);
+            
             
             try
             {
                 WifiAdapter wifi = WifiAdapter.FindAllAdapters()[0];
+                wifi.ScanAsync();
                 wifi.AvailableNetworksChanged += ConnectWifi;
             }
             catch (Exception ex)
@@ -268,14 +200,14 @@ namespace AccelDisplay
                 Debug.WriteLine("message:" + ex.Message);
                 Debug.WriteLine("stack:" + ex.StackTrace);
             }
-            
 
+            Thread.Sleep(20000);
 
-
-            //server.CommandReceived += ServerCommandReceived;
-            //server.Start();
-            //Debug.WriteLine($"WebServer started.");
-           
+            using (server) {
+            server.CommandReceived += ServerCommandReceived;
+            server.Start();
+            Debug.WriteLine($"WebServer started.");
+            }
 
 
             if (!File.Exists(telemetrydataFilePath))
@@ -286,15 +218,14 @@ namespace AccelDisplay
 
             button.Press += (sender, e) =>
             {
-                button.Holding += (sender, e) => DeleteData();
+                button.Holding += (sender, e) => storage.DeleteData();
 
                 string vString = v.ToString();
                 string mcString = movementCounter.ToString();
                 string data = "\n" + "Movement Counter: " + mcString + " Vector3: " + vString;
-                WriteData(data);
-            
+                storage.WriteData(data);
 
-                ReadData();
+                storage.ReadData();
 
             };
 
@@ -335,10 +266,9 @@ namespace AccelDisplay
 
 
             }
-           
-        }
 
 
+        } 
 
 
     }
