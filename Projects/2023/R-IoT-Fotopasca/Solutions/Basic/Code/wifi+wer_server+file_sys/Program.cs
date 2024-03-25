@@ -57,7 +57,7 @@ namespace websajt
 
             button.Holding += (sender, e) =>
             {
-                websajt.Storage.delete(file_path);//after a long hold delete the records
+                websajt.Storage.clear(file_path);//after a long hold delete the records
                 Debug.WriteLine($"Deleting {file_path}");
                 Blink.set(10, 0, 10, 1, 1, 1);
             };

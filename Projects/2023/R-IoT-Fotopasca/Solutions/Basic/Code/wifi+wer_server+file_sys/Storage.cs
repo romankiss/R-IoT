@@ -51,6 +51,10 @@ namespace websajt
             }
             else { return false; }
         }
+        public static void clear(string file_path)
+        {
+            File.WriteAllText(file_path, "");
+        }
         public static void list_files(string directory_path)
         {
             string[] listFiles = Directory.GetFiles(directory_path);

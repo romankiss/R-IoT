@@ -1,7 +1,7 @@
 ﻿using nanoFramework.WebServer;
 using System;
 using System.Diagnostics;
-
+using System.IO;
 using System.Net;
 
 //using System.Collections.Generic;
@@ -46,6 +46,11 @@ namespace websajt
                     $"{websajt.Storage.read(file_path)}" +
                     "</body></html>"
                     );
+                Blink.set(0, 15, 0, 1, 1.0, 1);
+            }
+            else if (url.ToLower() == "/file")
+            {
+                WebServer.SendFileOverHTTP(e.Context.Response, "I:\\Resources/logo.jpg", content: File.ReadAllBytes("I:\\Resources/logo.jpg"), "jpg");
                 Blink.set(0, 15, 0, 1, 1.0, 1);
             }
 
