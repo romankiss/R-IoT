@@ -20,18 +20,7 @@ namespace PIR
 
         #region PIR
             sensorPIR = new Hcsr501(25);    //ATOMLITE HAT - 25 (I2C OUT)
-            //sensorPIR.IsMotionDetected += (s, e) =>
             sensorPIR.Hcsr501ValueChanged += Motion;
-
-            /*
-            {
-                Debug.WriteLine("test pohyb");
-                if (e.PinValue == PinValue.High)
-                {
-                    Debug.WriteLine("pohyb");
-                }
-            };
-            */
 
             Thread.Sleep(Timeout.Infinite);
 
@@ -40,10 +29,6 @@ namespace PIR
         private static void Motion(object sender, EventArgs e)
         {
             Debug.WriteLine("Pohyb!");
-            if (true)
-            {
-                Debug.WriteLine("Pohyb");
-            }
         }
         #endregion
     }
