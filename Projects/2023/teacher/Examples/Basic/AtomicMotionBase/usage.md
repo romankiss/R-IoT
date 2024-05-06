@@ -5,7 +5,7 @@
 <br></br>
 
 <h4>Example of the controling Tilt servo SG90 connected on the servoChannel=1</h4> 
-Note, that the each pressed button the Tilt is moved for 5 degrees in the range of 0 ~ 180 and then it is back to the 0. 
+Note, that the each pressed button, the Tilt is moved for 5 degrees in the range of 0 ~ 180 angles and then it is returned back to the 0 position. 
 <br></br>
 
     private static void Button_Press(object sender, EventArgs e)
