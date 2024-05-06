@@ -23,9 +23,8 @@ Note, that the each pressed button, the Tilt is moved for 5 degrees in the range
       }
     }
 
-    <h4>Demo: Distance sensor on the Pan/Tilt frame driven by AtomicMotion Base with AtomicLite controller</h4>
+<br></br>
+<h4>Demo: Distance sensor on the Pan/Tilt frame driven by AtomicMotion Base with AtomicLite controller</h4>
 
-    
-`
 https://github.com/romankiss/R-IoT/assets/30365471/06e289ce-b46f-4c6f-b29f-37b52f296eb6
 
