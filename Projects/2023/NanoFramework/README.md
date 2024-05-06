@@ -28,9 +28,13 @@ Now, you can install nanoff (nano Firmware Flasher tool):
 
 <br />
 
-Example of using a nanoff for download a firmware for AtomLite microcontroller:
+Example of using a nanoff for download a firmware for AtomLite (ESP32_PICO) microcontroller:
 
-     nanoff --target ESP32_PICO --serialport COM3 --update
+     nanoff --target ESP32_PICO --serialport COM3 --update --masserase
+<br />
+Example of using a nanoff for download a firmware for AtomS3Lite (ESP32_S3) microcontroller:
+
+     nanoff --target ESP32_S3 --serialport COM29 --update --masserase
 <br />
 Example of using a nanoff for showing COM ports:
 
