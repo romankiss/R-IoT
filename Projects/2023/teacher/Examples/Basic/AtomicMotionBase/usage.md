@@ -4,7 +4,7 @@
 `var servo = M5AtomicMotion.Create(busId:2);`
 <br></br>
 
-<h4>Example of the controling Tilt servo SG90 connected on the servoChannel=1</h4> 
+<h4>Example of the tilting servo SG90 connected on the servoChannel=1</h4> 
 Note, that the each pressed button, the Tilt is moved for 5 degrees in the range of 0 ~ 180 angles and then it is returned back to the 0 position. 
 <br></br>
 
@@ -24,7 +24,7 @@ Note, that the each pressed button, the Tilt is moved for 5 degrees in the range
     }
 
 <br></br>
-<h4>Demo: Distance sensor on the Pan/Tilt frame driven by AtomicMotion Base with AtomicLite controller</h4>
+<h4>Demo: Distance sensor on the Tilt frame driven by AtomicMotion Base with AtomicLite controller</h4>
 
 https://github.com/romankiss/R-IoT/assets/30365471/06e289ce-b46f-4c6f-b29f-37b52f296eb6
 
