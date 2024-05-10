@@ -1,5 +1,5 @@
 
-
+<h4>Create a driver class and handler for UnitEncoder</h4>
 
      #region Encoder
      Configuration.SetPinFunction(19, DeviceFunction.I2C1_DATA);     //AtomicMotionBase SD-G19, G33
