@@ -4,7 +4,7 @@
      #region Encoder
      Configuration.SetPinFunction(19, DeviceFunction.I2C1_DATA);     //AtomicMotionBase SD-G19, G33
      Configuration.SetPinFunction(22, DeviceFunction.I2C1_CLOCK);    //AtomicMotionBase SC-G22, G23
-     sensorEncoder = Encoder.Create(busId:1, pollingTimeInMilliseconds: 50 );
+     Encoder sensorEncoder = Encoder.Create(busId:1, pollingTimeInMilliseconds: 50 );
      if (sensorEncoder != null)
      {
          sensorEncoder.OnChangeValue += (sender, e) =>
