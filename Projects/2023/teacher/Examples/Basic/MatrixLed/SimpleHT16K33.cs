@@ -426,6 +426,37 @@ namespace MyLib
             task.Start();
         }
 
+         // Simple show and circulate array of ulong (matrix8x8) on the device in the background process
+         // the circulatation can be stopped using a next one
+         public void ShowAndCirculateArrayAsync(byte[] byteArray, int msPerLetter = 50, ColorMode colorMode = ColorMode.Default)
+         {
+             // show and circulate array of matrix8x8 until a new request is comming
+             Interlocked.Exchange(ref noCirculate, 0);   // stop circulation
+             Thread.Sleep(msPerLetter);
+             Interlocked.Increment(ref noCirculate);     // enable circulation
+             var task = new Thread(() =>
+             {
+                 writeDisplay(byteArray, scrollingTimeInMs: msPerLetter, cursorEnd: byteArray.Length, bCirculate: true, colorMode: colorMode);
+                 are.Set();
+             })
+             { Priority = ThreadPriority.BelowNormal };
+             task.Start();
+         }
+        
+         // Simple show and circulate array of ulong matrix8x8 on the device in the background process
+         // the circulatation can be stopped using a next one
+         public void ShowAndCirculateArrayAsync(ulong[] matrix8x8, int msPerLetter = 50, ColorMode colorMode = ColorMode.Default)
+         {
+             ShowAndCirculateArrayAsync(matrix8x8.ConvertToByteArray(), msPerLetter, colorMode);
+         }
+        
+         // Simple show and circulate ulong matrix8x8 on the device in the background process
+         // the circulatation can be stopped using a next one
+         public void ShowAndCirculateArrayAsync(ulong matrix8x8, int msPerLetter = 50, ColorMode colorMode = ColorMode.Default)
+         {
+             ShowAndCirculateArrayAsync(BitConverter.GetBytes(matrix8x8), msPerLetter, colorMode);
+         }
+
         // show scrollable byte array on the device in the sync manner
         public void ShowArray(byte[] byteArray, bool bScrollLastCharacters = true, int msPerLetter = 50, ColorMode colorMode = ColorMode.Default)
         {
