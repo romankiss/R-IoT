@@ -18,3 +18,6 @@ Demo project of the Atom Motion Base with a servo catch unit closing itsef when 
 [main program](https://github.com/romankiss/R-IoT/blob/main/Projects/2023/R-IoT-Fotopasca/Solutions/Basic/Code/Atom%20Motion%20Kit/program.cs)     
 [Atom Motion Base lib](https://github.com/romankiss/R-IoT/blob/main/Projects/2023/teacher/Examples/Basic/AtomicMotionBase/M5AtomicMotion.cs)     
 [I2C lib required for atom motion base](https://github.com/romankiss/R-IoT/blob/main/Projects/2023/teacher/Examples/Basic/AtomicMotionBase/I2cDeviceBase.cs)     
+
+## Encoder controlled speed
+[this code](https://github.com/romankiss/R-IoT/blob/main/Projects/2023/R-IoT-Fotopasca/Solutions/Basic/Code/Atom%20Motion%20Kit/program_with_encoder.cs)
