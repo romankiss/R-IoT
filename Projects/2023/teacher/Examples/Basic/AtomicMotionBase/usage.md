@@ -28,3 +28,23 @@ Note, that the each pressed button, the Tilt is moved for 5 degrees in the range
 
 https://github.com/romankiss/R-IoT/assets/30365471/06e289ce-b46f-4c6f-b29f-37b52f296eb6
 
+
+
+
+            #region ToF 
+            I2cDevice i2c_tof = I2cDevice.Create(new I2cConnectionSettings(1, Vl53L0X.DefaultI2cAddress));
+            res = i2c_oled72x40.WriteByte(0x07);
+            if (res.Status == I2cTransferStatus.FullTransfer)
+            {
+                sensorToF = new Vl53L0X(i2c_tof, 1000);
+                if (sensorToF != null)
+                {
+                    sensorToF.HighResolution = true;
+                    sensorToF.Precision = Precision.ShortRange;
+                    sensorToF.MeasurementMode = MeasurementMode.Continuous;
+                    Debug.WriteLine($"Distance: {sensorToF.Distance} mm");
+                    display.WriteText(0, 0, $"ToF:{sensorToF.Distance} ").Show();
+                }
+            }
+            #endregion
+
