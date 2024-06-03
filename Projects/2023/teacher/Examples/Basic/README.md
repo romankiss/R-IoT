@@ -182,7 +182,9 @@ or
 <br></br>
 <br></br>
 
-<h4>[Mini OLED Unit 0.42" 72x40 Display](https://shop.m5stack.com/products/mini-oled-unit-0-42-72x40-display)</h4>
+[Mini OLED Unit 0.42" 72x40 Display](https://shop.m5stack.com/products/mini-oled-unit-0-42-72x40-display)
+
+NuGet Assembly: nanoFramework.Iot.Device.Ssd13xx
 
       #region OLED72x40
       I2cDevice i2c_oled72x40 = I2cDevice.Create(new I2cConnectionSettings(1, 0x3C, I2cBusSpeed.StandardMode));
