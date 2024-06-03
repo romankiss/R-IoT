@@ -179,7 +179,20 @@ or
 ![image](https://github.com/romankiss/R-IoT/assets/30365471/ff4874bd-50c5-43f9-985f-8189601247ca)
 
 
+<br></br>
+<br></br>
 
+<h4>Mini OLED Unit 0.42" 72x40 Display</h4>
+
+      #region OLED72x40
+      I2cDevice i2c_oled72x40 = I2cDevice.Create(new I2cConnectionSettings(1, 0x3C, I2cBusSpeed.StandardMode));
+      var res = i2c_oled72x40.WriteByte(0x07);
+      if (res.Status == I2cTransferStatus.FullTransfer)
+      {
+          display = new Ssd1306(i2c_oled72x40) { Width = 99, Height = 64, Font = new Sinclair8x8(), Orientation = Iot.Device.Ssd13xx.DisplayOrientation.Landscape180 };
+          display.ClearScreen();
+      }
+      #endregion
 
 
 
