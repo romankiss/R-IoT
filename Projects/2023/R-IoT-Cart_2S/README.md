@@ -1,4 +1,4 @@
 Contributors:
 
-Florian Ferdinand
+Florian Ferdinand <br>
 Matej Vyskocil
