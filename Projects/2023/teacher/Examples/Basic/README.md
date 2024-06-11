@@ -199,7 +199,13 @@ NuGet Assembly: nanoFramework.Iot.Device.Ssd13xx
 
 
 
-
+      var i2c_aht20 = AtomLite.GetGrove(Aht20.DefaultI2cAddress);
+      res = i2c_aht20.WriteByte(0x07);
+      if (res.Status == I2cTransferStatus.FullTransfer)
+      {
+          aht20 = new Aht20(i2c_aht20);  //seeed, aht20+BMP280,     = 0x38
+          Debug.WriteLine($"Temp = {aht20.GetTemperature().DegreesCelsius} °C, Hum = {aht20.GetHumidity().Percent} %");
+      }
 
 
 
