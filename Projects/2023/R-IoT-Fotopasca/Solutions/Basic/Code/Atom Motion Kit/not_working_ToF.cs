@@ -1,4 +1,6 @@
-/*    ++++ Exception System.IO.IOException - 0x00000000 (1) ++++
+/* 
+when the pins seem to be corectly connected we get this:
+++++ Exception System.IO.IOException - 0x00000000 (1) ++++
     ++++ Message: ReadStrobe timeout error
     ++++ Iot.Device.Vl53L0X.Vl53L0X::ReadStrobe [IP: 0028] ++++
     ++++ Iot.Device.Vl53L0X.Vl53L0X::GetSpadInfo [IP: 0066] ++++
@@ -7,7 +9,11 @@
     ++++ NFAppAtomLite_Testing.Program::Main [IP: 0030] ++++
 Exception thrown: 'System.IO.IOException' in Iot.Device.Vl53L0X.dll
 An unhandled exception of type 'System.IO.IOException' occurred in Iot.Device.Vl53L0X.dll
-Additional information: ReadStrobe timeout error*/
+Additional information: ReadStrobe timeout error
+
+
+,but when I flip the data with the clock pin I do not get the exception anymore. The measurement always returns 0 - so I guess that is also not correct.
+*/
 
 using Iot.Device.Vl53L0X;
 using nanoFramework.Hardware.Esp32;
