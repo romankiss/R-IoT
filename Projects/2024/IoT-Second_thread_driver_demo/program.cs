@@ -80,6 +80,7 @@ namespace Zko
                 {
                     // to do
                     Debug.WriteLine($"Event happened and send by drver, values: {e.X}, {e.Y}.");
+                    Blink.Blinks(255, 255, 0, 1000, 0.5, 1);
                 };
 
 
