@@ -1,4 +1,8 @@
-﻿using System.Threading;
+// written by Miroslav Chudý, October 17th, 2024,
+// version: 1.0.0.0 October 17th,2024
+
+
+using System.Threading;
 using nanoFramework.Device.Bluetooth.Advertisement;
 using NFAppAtomLite_Testing;
 
