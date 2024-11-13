@@ -24,11 +24,18 @@ namespace NFAppESP32C3_Testing
             Debug.WriteLine($"data= {jsontext}");
 
           
-            // receiver
+            // receiver 1
             SensorData rcvData = JsonConvert.DeserializeObject(jsontext, typeof(SensorData)) as SensorData;
-            string jsontext2 = JsonConvert.SerializeObject(rcvData);
-            Debug.WriteLine($"data= {jsontext2}");
+            jsontext = JsonConvert.SerializeObject(rcvData);
+            Debug.WriteLine($"data= {jsontext}");
 
+
+
+            // receiver 2
+            string jsontext3 = "{\"Hum\":65.00, \"Id\":1234567890, \"Temp\":23.50, \"Desc\":\"nothing\" }";
+            SensorData rcvData2 = JsonConvert.DeserializeObject(jsontext3, typeof(SensorData)) as SensorData;
+            jsontext = JsonConvert.SerializeObject(rcvData2);
+            Debug.WriteLine($"data= {jsontext}");
 
             Thread.Sleep(Timeout.Infinite);
 
