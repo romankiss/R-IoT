@@ -13,6 +13,31 @@ This code takes a measurement of the temperature and humidity of the air and sen
 the Blink class can be found eg. in the upper directory... /R-IoT-Data_Hub/Dummy_LoRa_Node/Blink.cs
 */
 
+
+/*however, after thesting the deserializing(json->class) capabilities while receiving with some test data of: {"Temp":21,"Hum":50}, the following exception is thrown:
+LoRaEvent: +RCV=2000,20,{"Temp":21,"Hum":50},-5,11
+
+{"Temp":21
+    ++++ Exception System.IndexOutOfRangeException - 0xa9000000 (3) ++++
+    ++++ Message: 
+    ++++ nanoFramework.Json.JsonConvert::GetNextTokenInternal [IP: 0203] ++++
+    ++++ nanoFramework.Json.JsonConvert::GetNextToken [IP: 0005] ++++
+    ++++ nanoFramework.Json.JsonConvert::ParseValue [IP: 0006] ++++
+    ++++ nanoFramework.Json.JsonConvert::ParseObject [IP: 0039] ++++
+    ++++ nanoFramework.Json.JsonConvert::Deserialize [IP: 001b] ++++
+    ++++ nanoFramework.Json.JsonConvert::Deserialize [IP: 0011] ++++
+    ++++ nanoFramework.Json.JsonConvert::DeserializeObject [IP: 0015] ++++
+    ++++ nanoFramework.Json.JsonConvert::DeserializeObject [IP: 0008] ++++
+    ++++ DOD.Program+<>c::<Main>b__0_0 [IP: 0027] ++++
+    ++++ DOD.RYLR998+<>c__DisplayClass14_0::<Create>b__0 [IP: 0048] ++++
+    ++++ System.IO.Ports.SerialPort::OnSerialDataReceivedInternal [IP: 0029] ++++
+    ++++ System.IO.Ports.SerialDeviceEventListener::OnEvent [IP: 002e] ++++
+    ++++ nanoFramework.Runtime.Events.EventSink::ProcessEvent [IP: 0023] ++++
+    ++++ nanoFramework.Runtime.Events.EventSink::EventDispatchCallback [IP: 0014] ++++
+Exception thrown: 'System.IndexOutOfRangeException' in nanoFramework.Json.dll
+LoRaEvent: Exception was thrown: System.IndexOutOfRangeException
+
+*/
 namespace DOD
 {
     public class SensorData
