@@ -15,6 +15,7 @@ namespace LoRa//zmeniť podľa potreby
         }
 
         #region Blink
+        //public static Thread BlinkAsync(byte r, byte g, byte b, int periodIntMs = 100, double duty = 0.5, int times = 1)
         public static void Blinks(byte r, byte g, byte b, int periodIntMs = 100, double duty = 0.5, int times = 1)
         {
             /* Vysvetlenie parametrov:
@@ -36,6 +37,8 @@ namespace LoRa//zmeniť podľa potreby
             })
             { Priority = ThreadPriority.BelowNormal };
             Blink_thread.Start();//spustenie vlákna, v ktorom bežia súbežne s hlavným vláknom operácie vykonávajúce efekt blikania LED
+
+            // return Blink_thread; added by RK (we need this reference to abort it)
         }
         #endregion
     }
