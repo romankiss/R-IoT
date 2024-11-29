@@ -60,4 +60,37 @@ namespace LoRa
         }
     }
 
+    // added by RK
+    public class CheckState2
+    {
+        public int id {  get; set; }
+        public SystemData SysData { get; set; }
+        public byte[] LampPhases { get; set; }
+        public byte[] Phases { get; set; }
+    
+        public CheckState2()
+        {
+        }
+        public string SendData()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+    }
+   
+
 }
+
+/*  Usage
+
+var state = new CheckState2()
+{   
+    id =   12345,
+    SysData = new SystemData { bat = 60, errmsg = 0 },
+    LampPhases = new byte[13] { 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    Phases = new byte[3] { 0, 0, 1 }
+};
+string js = state.SendData();
+Debug.Write(js);
+
+*/
+
