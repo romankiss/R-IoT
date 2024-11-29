@@ -90,7 +90,9 @@ var state = new CheckState2()
     Phases = new byte[3] { 0, 0, 1 }
 };
 string js = state.SendData();
-Debug.Write(js);
+Debug.Write($"len={js.Length}, {js}");
 
+// output
+//len=102, {"SysData":{"bat":60,"errmsg":0},"id":12345,"Phases":[0,0,1],"LampPhases":[1,1,1,0,0,0,0,0,0,0,0,0,0]}
 */
 
