@@ -2,7 +2,10 @@
 
 static int loopback_counter = 0;
 static E22 lora = null;
-static ushort BroadcastAddress = 0xFFFF;
+static ushort broadcastAddress = 0xFFFF;
+const ushort loraAddress = 0x0901;  //55;
+const byte loraNetworkId = 0x12;    // 850.125 + 18 = 868.125Mhz
+
 
 
 Configuration.SetPinFunction(pinCOM2_TX, DeviceFunction.COM2_TX);
