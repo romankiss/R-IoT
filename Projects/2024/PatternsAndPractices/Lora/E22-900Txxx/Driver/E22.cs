@@ -90,6 +90,19 @@ namespace NFAppAtomS3_MQTT
             return modem;
         }
 
+        /// <summary>
+        /// Parser of the received raw data to the Packet arguments
+        /// </summary>
+        /// <param name="packet">
+        /// byte[0]=0xC1
+        /// byte[1]=AddH
+        /// byte[2]=AddL
+        /// byte[3]=LenData
+        /// byte[4]=Data_0, Data_1, ....Data_N
+        /// byte[LenData+4]=RSSI
+        /// </param>
+        /// <param name="length">Length of the packet</param>
+        /// <returns>object after parsing</returns>
         public static RcvPacketArgs PacketRcvParser(byte[] packet, int length)
         {
             if ( packet == null) return null;
