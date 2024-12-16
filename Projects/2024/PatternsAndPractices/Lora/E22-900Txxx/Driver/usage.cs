@@ -17,7 +17,7 @@ if (lora != null)
     lora.OnPacketReceived += (sender, e) =>
     {
         Debug.WriteLine($"nFmem_LoRaRcv={Memory.Run(true)}");
-        if (e.Data.StartsWith("6C6F6F706261636B"))
+        if (e.Data.StartsWith("6C6F6F706261636B"))    // loopback
         {
             int counter = Interlocked.Increment(ref loopback_counter);
             lora.SendAsync(e.AddressID, $"Loopback_#{counter:D4}", loraNetworkId);
