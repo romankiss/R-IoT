@@ -106,8 +106,8 @@ namespace NFAppAtomS3_MQTT
         public static RcvPacketArgs PacketRcvParser(byte[] packet, int length)
         {
             if ( packet == null) return null;
-            if (packet[0] != 0xC1) return null;  // signature 0xC1
             if (length < 4) return null;
+            if (packet[0] != 0xC1) return null;  // signature 0xC1
             if (length != packet[3] + 5) return null; // C1, addH, addl, lendata, ..data..., rssi  
 
             ushort addrSender = (ushort)(((ushort)packet[1] << 8) + packet[2]);
