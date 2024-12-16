@@ -69,12 +69,14 @@ namespace NFAppAtomS3_MQTT
                     // C1 ADDH ADDL LEN Byte_0...N RSSI
                     if (e.EventType == SerialData.WatchChar)
                     {
+                        // Simple solution, based on the Watch Character such as 'C1'. Note, that this part must be improved!  
+                        Thread.Sleep(10);
                         numberOfbytes = modem.serialport.BytesToRead;
                         if (numberOfbytes > 0)
                         {
                             modem.serialport.Read(buffer, 0, numberOfbytes);
                             var packet = PacketRcvParser(buffer, numberOfbytes);
-                            Debug.WriteLine($"LoRaRcv[{numberOfbytes}]: {packet?.Packet ?? (null)}");
+                            Debug.WriteLine($"LoRaRcv[{numberOfbytes}]: {packet?.Packet ?? (numberOfbytes != 0 ? BitConverter.ToString(buffer, 0, numberOfbytes) : "(empty)")}");
                             if (modem.OnPacketReceived != null && packet != null)
                                 modem.OnPacketReceived.Invoke(modem, packet);
                         }
