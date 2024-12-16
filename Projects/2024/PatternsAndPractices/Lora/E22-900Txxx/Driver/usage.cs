@@ -1,4 +1,5 @@
 // code snippet
+using Memory = nanoFramework.Runtime.Native.GC;
 
 static int loopback_counter = 0;
 static E22 lora = null;
