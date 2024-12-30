@@ -1,22 +1,34 @@
 // written by Roman Kiss, December 14, 2024,
 // version: 1.0.0.0  12/14/2024  initial version
+//          1.0.1.0  12/26/2024  receiving packet - improvement
+//          1.0.2.0  12/28/2024  new DataReceived handler 
 //
 // Note: This version handles only a Tx/RX mode, such as the M1=0 M0=0
 //
 //
 //
-using nanoFramework.Presentation.Media;
 using System;
 using System.Device.Gpio;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Net;
 using System.Net.Sockets;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 
 
 namespace NFAppAtomS3_MQTT
 {
+    public delegate void OnLoraReceived(object source, RcvLoRaArgs e);
+
+    public class RcvLoRaArgs : EventArgs
+    {
+        public ushort AddressID { get; set; }
+        public short DataLength { get; set; }
+        public byte[] Data { get; set; }
+        public short RSSI { get; set; }
+    }
     public class E22
     {
         SerialPort serialport = null;
@@ -26,17 +38,21 @@ namespace NFAppAtomS3_MQTT
         readonly object _sendLock = new();
         AutoResetEvent are = new AutoResetEvent(false);
         ushort own_address = 0;
-        const int bufferSize = 320;
+        const int readBufferSize = 1024;
+        const int WriteBufferSize = 512;
+        const byte maxPacketLength = 240;
+        const byte PacketHeaderLength = 7;
+        const byte maxPacketDataLength = maxPacketLength - PacketHeaderLength;
 
-        public event OnReceive OnPacketReceived = null;
+        public event OnLoraReceived OnPacketReceived = null;
 
         public E22(string portname = "COM2", int baudRate = 115200, int rst = -1, int m0 = -1, int m1 = -1, int aux = -1, GpioController ioctrl = null)
         {
             serialport = new SerialPort(portname, baudRate: 115200);
             if (serialport != null)
             {
-                serialport.ReadBufferSize = bufferSize; 
-                serialport.WriteBufferSize = bufferSize; 
+                serialport.ReadBufferSize = readBufferSize; 
+                serialport.WriteBufferSize = WriteBufferSize; 
                 serialport.ReadTimeout = 5000;
                 serialport.WatchChar =  (char)0xC1;
             }
@@ -62,61 +78,85 @@ namespace NFAppAtomS3_MQTT
             // internal subscriber
             modem.serialport.DataReceived += (source, e) =>
             {
-                int numberOfbytes = 0;
-                byte[] buffer = new byte[bufferSize];
-                try
+                // C1 ADDH ADDL LEN Byte_0...N EOD RSSI
+                if (e.EventType == SerialData.WatchChar)
                 {
-                    // C1 ADDH ADDL LEN Byte_0...N RSSI
-                    if (e.EventType == SerialData.WatchChar)
+                    int numberOfbytes = 0;
+                    byte[] buffer = new byte[3];  //ADDH, ADDL, LEN  || EOD, RSSI
+                    RcvLoRaArgs packet = new RcvLoRaArgs();
+                    try
                     {
-                        // Simple solution, based on the Watch Character such as 'C1'. Note, that this part must be improved!  
-                        Thread.Sleep(10);
+                     step1: //Sync on the mark 0xC1
                         numberOfbytes = modem.serialport.BytesToRead;
-                        if (numberOfbytes > 0)
+                        var syncbyte = modem.serialport.ReadByte();
+                        Debug.Write($"LoRaRcv[{numberOfbytes}]: {DateTime.UtcNow.ToString("hh:mm:ss.fff")} Starting {syncbyte:X2}");
+                        while (syncbyte != 0xC1)
                         {
-                            modem.serialport.Read(buffer, 0, numberOfbytes);
-                            var packet = PacketRcvParser(buffer, numberOfbytes);
-                            Debug.WriteLine($"LoRaRcv[{numberOfbytes}]: {packet?.Packet ?? (numberOfbytes != 0 ? BitConverter.ToString(buffer, 0, numberOfbytes) : "(empty)")}");
+                            if (syncbyte == -1)
+                            {
+                                // end of the stream. no more bytes - back to the event
+                                Debug.WriteLine("LoRaRcv: Didn't find the sync character 0xC1");
+                                return;
+                            }
+                            Thread.Sleep(0);
+                            syncbyte = modem.serialport.ReadByte();
+                            Debug.Write($".{syncbyte:X2}");
+                        }
+                        Debug.WriteLine("");
+
+                     step2: //Get the Header (3 bytes)
+                        numberOfbytes = modem.serialport.Read(buffer, 0, 3);
+                        packet.AddressID = (ushort)(((ushort)buffer[0] << 8) + buffer[1]);
+                        packet.DataLength = (byte)buffer[2];
+
+                     step3: //Get the Data
+                        if (packet.DataLength > maxPacketDataLength)
+                        {
+                            Debug.WriteLine($"LoRaRcv: Wrong DataLength {packet.DataLength} > {maxPacketDataLength}");
+                            return;
+                        }
+                        if (packet.DataLength > 0)
+                        {
+                            packet.Data = new byte[packet.DataLength];
+                            numberOfbytes = modem.serialport.Read(packet.Data, 0, packet.DataLength);
+                        }
+
+                     step4: //Set the rssi byte
+                        numberOfbytes = modem.serialport.Read(buffer, 0, 2);
+                        packet.RSSI = buffer[1];
+                        if (buffer[0] == 0x00) //EndOfData (should be changed to CRC8)
+                        {
+                            //step5: publishing packet to all subscribers
+                            Debug.WriteLine($"LoRaRcv[{packet.DataLength}] 0x{packet.AddressID:X4} 0x{packet.RSSI:X2}");
+                            Debug.WriteLine($"LoRaRcv[{modem.serialport.BytesToRead}]: Stream");
                             if (modem.OnPacketReceived != null && packet != null)
                                 modem.OnPacketReceived.Invoke(modem, packet);
                         }
+                        else
+                        {
+                            //Error handling: There is a small rcv buffer, so a simple solution is to find a next packet (note, that the 1 (2) packets can be lost)
+                            Debug.WriteLine($"LoRaRcv: Wrong EndOfData 0x{buffer[0]:X2}, Find next packet ...");
+                            goto step1;                            
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"LoRaRcv[{numberOfbytes}]: {ex.InnerException?.Message ?? ex.Message}");
+                    catch (TimeoutException)
+                    {
+                        Debug.WriteLine($"LoRaRcv: Timeout to read requested number of bytes");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"LoRaRcv: {ex.InnerException?.Message ?? ex.Message}");
+                    }
+                    finally
+                    {
+                        // step6: Ending (number of bytes remaining in the stream)
+                        numberOfbytes = modem.serialport.BytesToRead;
+                        Debug.WriteLine($"LoRaRcv[{numberOfbytes}]: {DateTime.UtcNow.ToString("hh:mm:ss.fff")} END");
+                        Debug.WriteLine("");
+                    }
                 }
             };
             return modem;
-        }
-
-        /// <summary>
-        /// Parser of the received raw data to the Packet arguments
-        /// </summary>
-        /// <param name="packet">
-        /// byte[0]=0xC1
-        /// byte[1]=AddH
-        /// byte[2]=AddL
-        /// byte[3]=LenData
-        /// byte[4]=Data_0, Data_1, ....Data_N
-        /// byte[LenData+4]=RSSI
-        /// </param>
-        /// <param name="length">Length of the packet</param>
-        /// <returns>object after parsing</returns>
-        public static RcvPacketArgs PacketRcvParser(byte[] packet, int length)
-        {
-            if ( packet == null) return null;
-            if (length < 4) return null;
-            if (packet[0] != 0xC1) return null;  // signature 0xC1
-            if (length != packet[3] + 5) return null; // C1, addH, addl, lendata, ..data..., rssi  
-
-            ushort addrSender = (ushort)(((ushort)packet[1] << 8) + packet[2]);
-            byte lendata = (byte)packet[3];
-            string raw = new StringBuilder(BitConverter.ToString(packet, 0, length)).Replace("-", "").ToString();
-            string data = raw.Substring(8, (byte)packet[3] * 2);
-            short rssi = (short)packet[length - 1];
-
-            return  new RcvPacketArgs() { AddressID = addrSender, DataLength = lendata, Data = data, RSSI = rssi, Packet = raw };
         }
 
         public bool Send(ushort address = 0xFFFF, byte[] data = null, byte channel = 0x12)
@@ -138,9 +178,10 @@ namespace NFAppAtomS3_MQTT
                 header[5] = (byte)(own_address & 0xFF);
                 header[6] = datalength;
 
-                byte[] bytes = new byte[header.Length + datalength];
+                byte[] bytes = new byte[header.Length + datalength + 1];
                 header.CopyTo(bytes, 0);
                 data?.CopyTo(bytes, header.Length);
+                bytes[header.Length + datalength] = 0x00; // End of Data
 
                 lock (_sendLock)
                 {
@@ -176,3 +217,70 @@ namespace NFAppAtomS3_MQTT
         }
     }
 }
+
+
+
+
+
+/*
+#region Find next packet within the data
+Debug.WriteLine($"LoRaRcv: Wrong EndOfData 0x{buffer[0]:X2}, Find next packet ...");
+for (int ii = 0; ii < packet.DataLength; ii++)
+{
+    if (packet.Data[ii] == 0xC1)
+    {
+        if (ii++ == packet.DataLength) goto step2;
+        byte rest = (byte)(packet.DataLength - ii);
+        //Debug.WriteLine($"LoRaRcv[{rest}]: {BitConverter.ToString(packet.Data, ii, packet.DataLength - ii)}");
+        packet.AddressID = (ushort)(((ushort)packet.Data[ii] << 8));
+        if (ii++ < packet.DataLength)
+        {
+            packet.AddressID += packet.Data[ii];
+            if (ii++ < packet.DataLength)
+            {
+                byte dataLength2 = (byte)packet.Data[ii];
+                if (ii++ < packet.DataLength)
+                {
+                    
+                    byte[] data2 = new byte[dataLength2];
+                    if (packet.DataLength <= dataLength2)
+                    {
+                        //int jj = 0;
+                        //while (ii < packet.DataLength)
+                        //    data2[jj++] = packet.Data[ii++];
+                        int jj = packet.DataLength - ii;
+                        new SpanByte(packet.Data).Slice(ii).CopyTo(data2); 
+                        data2[jj++] = buffer[0];  //EOD
+                        data2[jj++] = buffer[1];  //RSSI
+                        //Debug.WriteLine($"LoRaRcv[{jj}]: {BitConverter.ToString(data2, 0)}");
+                        numberOfbytes = modem.serialport.Read(data2, jj, dataLength2 - jj);  
+                        packet.DataLength = dataLength2;
+                        packet.Data = data2;
+                        //Debug.WriteLine($"LoRaRcv[{packet.DataLength}]: 0x{packet.AddressID:X4} {BitConverter.ToString(packet.Data, 0)}");
+                        goto step4;
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"LoRaRcv: Not implemented yet");
+                    }
+                }
+                packet.DataLength = dataLength2;
+            }
+            else
+            {
+                numberOfbytes = modem.serialport.Read(buffer, 0, 1);
+                packet.DataLength = (byte)buffer[0];
+            }
+        }
+        else
+        {
+            numberOfbytes = modem.serialport.Read(buffer, 0, 2);
+            packet.AddressID += buffer[0];
+            packet.DataLength = (byte)buffer[1];
+        }
+        goto step3;
+    }
+}
+Debug.WriteLine($"LoRaRcv: No packet found within received data.");
+#endregion
+*/
