@@ -2,6 +2,8 @@
 // version: 1.0.0.0  12/14/2024  initial version
 //          1.0.1.0  12/26/2024  receiving packet - improvement
 //          1.0.2.0  12/28/2024  new DataReceived handler 
+//          1.0.3.0  12/31/2024  new DataReceived handler 
+//          1.0.3.1  01/01/2025  fixing bugs in the DataReceived handler 
 //
 // Note: This version handles only a Tx/RX mode, such as the M1=0 M0=0
 //
@@ -38,11 +40,16 @@ namespace NFAppAtomS3_MQTT
         readonly object _sendLock = new();
         AutoResetEvent are = new AutoResetEvent(false);
         ushort own_address = 0;
-        const int readBufferSize = 1024;
-        const int WriteBufferSize = 512;
-        const byte maxPacketLength = 240;
-        const byte PacketHeaderLength = 7;
-        const byte maxPacketDataLength = maxPacketLength - PacketHeaderLength;
+        const int readBufferSize = 512;
+        const int writeBufferSize = 512;
+        const byte maxLoRaPacketLength = 240;   // based on the spec
+        const byte sendPacketHeaderLength = 7;  // toADDH, toADDL, Channel, SOH, fromADDH, fromADDL, LEN
+        const byte rcvPacketHeaderLength = 3;   // fromADDH, fromADDL, LEN
+        const byte maxPacketDataLength = maxLoRaPacketLength - rcvPacketHeaderLength;
+        const byte SOH = 0xC1; // SOH - StartOfHeading  0xC1 (0x01)
+        const byte EOD = 0x00; // EOD - EndOfData
+        //static byte[] buffer = new byte[maxLoRaPacketLength];   // rcv packet buffer
+        static byte[] buffer = new byte[readBufferSize];   // rcv packet buffer
 
         public event OnLoraReceived OnPacketReceived = null;
 
@@ -52,9 +59,8 @@ namespace NFAppAtomS3_MQTT
             if (serialport != null)
             {
                 serialport.ReadBufferSize = readBufferSize; 
-                serialport.WriteBufferSize = WriteBufferSize; 
+                serialport.WriteBufferSize = writeBufferSize; 
                 serialport.ReadTimeout = 5000;
-                serialport.WatchChar =  (char)0xC1;
             }
         }
 
@@ -79,18 +85,15 @@ namespace NFAppAtomS3_MQTT
             modem.serialport.DataReceived += (source, e) =>
             {
                 // C1 ADDH ADDL LEN Byte_0...N EOD RSSI
-                if (e.EventType == SerialData.WatchChar)
+                int numberOfbytes = modem.serialport.BytesToRead;
+                if (numberOfbytes > 0)
                 {
-                    int numberOfbytes = 0;
-                    byte[] buffer = new byte[3];  //ADDH, ADDL, LEN  || EOD, RSSI
-                    RcvLoRaArgs packet = new RcvLoRaArgs();
                     try
                     {
-                     step1: //Sync on the mark 0xC1
-                        numberOfbytes = modem.serialport.BytesToRead;
+                        //step1: Sync on the mark 0xC1
                         var syncbyte = modem.serialport.ReadByte();
                         Debug.Write($"LoRaRcv[{numberOfbytes}]: {DateTime.UtcNow.ToString("hh:mm:ss.fff")} Starting {syncbyte:X2}");
-                        while (syncbyte != 0xC1)
+                        while (syncbyte != SOH) //0xC1)
                         {
                             if (syncbyte == -1)
                             {
@@ -104,39 +107,47 @@ namespace NFAppAtomS3_MQTT
                         }
                         Debug.WriteLine("");
 
-                     step2: //Get the Header (3 bytes)
-                        numberOfbytes = modem.serialport.Read(buffer, 0, 3);
-                        packet.AddressID = (ushort)(((ushort)buffer[0] << 8) + buffer[1]);
-                        packet.DataLength = (byte)buffer[2];
+                        //step2: Get the Header (3 bytes)
+                        numberOfbytes = modem.serialport.Read(buffer, 0, rcvPacketHeaderLength);
+                        ushort addressId = (ushort)(((ushort)buffer[0] << 8) + buffer[1]);
+                        byte dataLength = buffer[2];
 
-                     step3: //Get the Data
-                        if (packet.DataLength > maxPacketDataLength)
+                        //step3: Get the Data
+                        if (dataLength > maxPacketDataLength)
                         {
-                            Debug.WriteLine($"LoRaRcv: Wrong DataLength {packet.DataLength} > {maxPacketDataLength}");
+                            Debug.WriteLine($"LoRaRcv: Wrong DataLength {dataLength} > {maxPacketDataLength}");
                             return;
                         }
-                        if (packet.DataLength > 0)
+                        if (dataLength >= 0)
                         {
-                            packet.Data = new byte[packet.DataLength];
-                            numberOfbytes = modem.serialport.Read(packet.Data, 0, packet.DataLength);
+                            numberOfbytes = modem.serialport.Read(buffer, rcvPacketHeaderLength, dataLength + 2); // EOD + RSSI
                         }
 
-                     step4: //Set the rssi byte
-                        numberOfbytes = modem.serialport.Read(buffer, 0, 2);
-                        packet.RSSI = buffer[1];
-                        if (buffer[0] == 0x00) //EndOfData (should be changed to CRC8)
+                        //step4: Set the rssi byte
+                        byte eod = buffer[rcvPacketHeaderLength + dataLength];
+                        byte rssi = buffer[rcvPacketHeaderLength + dataLength + 1];
+                        // simple check if we have EOD in the position, later this check will replaced CRC8 calculation
+                        if (eod == EOD) //EndOfData
                         {
                             //step5: publishing packet to all subscribers
-                            Debug.WriteLine($"LoRaRcv[{packet.DataLength}] 0x{packet.AddressID:X4} 0x{packet.RSSI:X2}");
+                            Debug.WriteLine($"LoRaRcv[{dataLength}] 0x{addressId:X4} 0x{rssi:X2}");
                             Debug.WriteLine($"LoRaRcv[{modem.serialport.BytesToRead}]: Stream");
-                            if (modem.OnPacketReceived != null && packet != null)
+                            if (modem.OnPacketReceived != null)
+                            {
+                                var packet = new RcvLoRaArgs()
+                                {
+                                    AddressID = addressId,
+                                    DataLength = dataLength,
+                                    Data = dataLength == 0 ? null : new SpanByte(buffer, rcvPacketHeaderLength, dataLength).ToArray(),
+                                    RSSI = rssi
+                                };
                                 modem.OnPacketReceived.Invoke(modem, packet);
+                            }
                         }
                         else
                         {
-                            //Error handling: There is a small rcv buffer, so a simple solution is to find a next packet (note, that the 1 (2) packets can be lost)
-                            Debug.WriteLine($"LoRaRcv: Wrong EndOfData 0x{buffer[0]:X2}, Find next packet ...");
-                            goto step1;                            
+                            //Error exit
+                            Debug.WriteLine($"LoRaRcv: Wrong EndOfData 0x{eod:X2}, Find next packet ...");
                         }
                     }
                     catch (TimeoutException)
@@ -150,8 +161,8 @@ namespace NFAppAtomS3_MQTT
                     finally
                     {
                         // step6: Ending (number of bytes remaining in the stream)
-                        numberOfbytes = modem.serialport.BytesToRead;
-                        Debug.WriteLine($"LoRaRcv[{numberOfbytes}]: {DateTime.UtcNow.ToString("hh:mm:ss.fff")} END");
+                        Debug.WriteLine($"nFmem_LoRaRcv={nanoFramework.Runtime.Native.GC.Run(true)}");
+                        Debug.WriteLine($"LoRaRcv[{modem.serialport.BytesToRead}]: {DateTime.UtcNow.ToString("hh:mm:ss.fff")} END");
                         Debug.WriteLine("");
                     }
                 }
@@ -217,70 +228,3 @@ namespace NFAppAtomS3_MQTT
         }
     }
 }
-
-
-
-
-
-/*
-#region Find next packet within the data
-Debug.WriteLine($"LoRaRcv: Wrong EndOfData 0x{buffer[0]:X2}, Find next packet ...");
-for (int ii = 0; ii < packet.DataLength; ii++)
-{
-    if (packet.Data[ii] == 0xC1)
-    {
-        if (ii++ == packet.DataLength) goto step2;
-        byte rest = (byte)(packet.DataLength - ii);
-        //Debug.WriteLine($"LoRaRcv[{rest}]: {BitConverter.ToString(packet.Data, ii, packet.DataLength - ii)}");
-        packet.AddressID = (ushort)(((ushort)packet.Data[ii] << 8));
-        if (ii++ < packet.DataLength)
-        {
-            packet.AddressID += packet.Data[ii];
-            if (ii++ < packet.DataLength)
-            {
-                byte dataLength2 = (byte)packet.Data[ii];
-                if (ii++ < packet.DataLength)
-                {
-                    
-                    byte[] data2 = new byte[dataLength2];
-                    if (packet.DataLength <= dataLength2)
-                    {
-                        //int jj = 0;
-                        //while (ii < packet.DataLength)
-                        //    data2[jj++] = packet.Data[ii++];
-                        int jj = packet.DataLength - ii;
-                        new SpanByte(packet.Data).Slice(ii).CopyTo(data2); 
-                        data2[jj++] = buffer[0];  //EOD
-                        data2[jj++] = buffer[1];  //RSSI
-                        //Debug.WriteLine($"LoRaRcv[{jj}]: {BitConverter.ToString(data2, 0)}");
-                        numberOfbytes = modem.serialport.Read(data2, jj, dataLength2 - jj);  
-                        packet.DataLength = dataLength2;
-                        packet.Data = data2;
-                        //Debug.WriteLine($"LoRaRcv[{packet.DataLength}]: 0x{packet.AddressID:X4} {BitConverter.ToString(packet.Data, 0)}");
-                        goto step4;
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"LoRaRcv: Not implemented yet");
-                    }
-                }
-                packet.DataLength = dataLength2;
-            }
-            else
-            {
-                numberOfbytes = modem.serialport.Read(buffer, 0, 1);
-                packet.DataLength = (byte)buffer[0];
-            }
-        }
-        else
-        {
-            numberOfbytes = modem.serialport.Read(buffer, 0, 2);
-            packet.AddressID += buffer[0];
-            packet.DataLength = (byte)buffer[1];
-        }
-        goto step3;
-    }
-}
-Debug.WriteLine($"LoRaRcv: No packet found within received data.");
-#endregion
-*/
