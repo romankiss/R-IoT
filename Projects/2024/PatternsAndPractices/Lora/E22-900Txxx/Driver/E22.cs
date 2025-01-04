@@ -3,7 +3,8 @@
 //          1.0.1.0  12/26/2024  receiving packet - improvement
 //          1.0.2.0  12/28/2024  new DataReceived handler 
 //          1.0.3.0  12/31/2024  new DataReceived handler 
-//          1.0.3.1  01/01/2025  fixing bugs in the DataReceived handler 
+//          1.0.3.1  01/01/2025  fixing bug in the DataReceived handler 
+//          1.0.4.0  01/04/2025  adding crc8 code
 //
 // Note: This version handles only a Tx/RX mode, such as the M1=0 M0=0
 //
@@ -18,6 +19,7 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 using System.Threading;
+using NFAppExtensions;
 
 
 namespace NFAppAtomS3_MQTT
@@ -123,17 +125,24 @@ namespace NFAppAtomS3_MQTT
                             numberOfbytes = modem.serialport.Read(buffer, rcvPacketHeaderLength, dataLength + 2); // EOD + RSSI
                         }
 
-                        //step4: Set the rssi byte
-                        byte eod = buffer[rcvPacketHeaderLength + dataLength];
-                        byte rssi = buffer[rcvPacketHeaderLength + dataLength + 1];
-                        // simple check if we have EOD in the position, later this check will replaced CRC8 calculation
-                        if (eod == EOD) //EndOfData
+                        //step4: check if there is a subcriber
+                        if (modem.OnPacketReceived != null)
                         {
-                            //step5: publishing packet to all subscribers
-                            Debug.WriteLine($"LoRaRcv[{dataLength}] 0x{addressId:X4} 0x{rssi:X2}");
-                            Debug.WriteLine($"LoRaRcv[{modem.serialport.BytesToRead}]: Stream");
-                            if (modem.OnPacketReceived != null)
+                            // Set the rssi byte and check the crc if we don't have an EOD byte 
+                            byte eod = buffer[rcvPacketHeaderLength + dataLength];
+                            byte rssi = buffer[rcvPacketHeaderLength + dataLength + 1];
+                            byte crc8 = 0x00;
+                            if (eod != EOD) //EndOfData or Crc8
                             {
+                                // calculate crc8 value of the ADDH+ADDL+LEN+DATA
+                                crc8 = buffer.ComputeChecksum(0, (uint)dataLength + 3);
+                            }
+                            // simple check if we have EOD in the position or compare calculated crc8 byte
+                            if (eod == EOD || eod == crc8) //EndOfData
+                            {
+                                //step5: publishing packet to all subscribers
+                                Debug.WriteLine($"LoRaRcv[{dataLength}] 0x{addressId:X4} rssi=0x{rssi:X2} crc=0x{eod:X2}");
+                                Debug.WriteLine($"LoRaRcv[{modem.serialport.BytesToRead}]: Stream");
                                 var packet = new RcvLoRaArgs()
                                 {
                                     AddressID = addressId,
@@ -143,11 +152,11 @@ namespace NFAppAtomS3_MQTT
                                 };
                                 modem.OnPacketReceived.Invoke(modem, packet);
                             }
-                        }
-                        else
-                        {
-                            //Error exit
-                            Debug.WriteLine($"LoRaRcv: Wrong EndOfData 0x{eod:X2}, Find next packet ...");
+                            else
+                            {
+                                //Error exit
+                                Debug.WriteLine($"LoRaRcv: Wrong EndOfData/CRC8 0x{eod:X2}, Find next packet ...");
+                            }
                         }
                     }
                     catch (TimeoutException)
@@ -192,7 +201,8 @@ namespace NFAppAtomS3_MQTT
                 byte[] bytes = new byte[header.Length + datalength + 1];
                 header.CopyTo(bytes, 0);
                 data?.CopyTo(bytes, header.Length);
-                bytes[header.Length + datalength] = 0x00; // End of Data
+                //bytes[header.Length + datalength] = 0x00; // End of Data
+                bytes[header.Length + datalength] = bytes.ComputeChecksum(4, (uint)datalength + 3);  //ADDH+ADDL+LEN
 
                 lock (_sendLock)
                 {
