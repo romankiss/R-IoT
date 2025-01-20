@@ -1,8 +1,6 @@
 // written by matohappy, January 20, 2025
 // version: 1.0.0.0  01/20/2025  beta version
-//
-// Useful extensions for string, array, etc.
-//
+
 
 using nanoFramework.Hardware.Esp32;
 using System;
