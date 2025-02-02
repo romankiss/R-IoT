@@ -31,3 +31,25 @@ M5Stack:
 
 The NTJD1155LT1G can be ordered from Mouser.sk, its price is 0.38eur/pcs
 
+
+<h3>Another options to messure a battery gauge is using MAX1704x controller</h3>
+
+- see nanoFramework driver (sample):
+
+  https://docs.nanoframework.net/devicesdetails/Max1704x/README.html
+
+- see boards:
+
+  https://www.laskakit.cz/laskakit-fuel-gauge-max17048-bateriovy-meric/
+
+  https://www.aliexpress.com/item/1005007539256740.html?spm=a2g0o.cart.0.0.4c5938daxeOmPA&mp=1
+
+  https://www.aliexpress.com/item/32918580356.html?spm=a2g0o.cart.0.0.4c5938daxeOmPA&mp=1
+
+  <br>
+
+  
+
+
+
+
