@@ -1,7 +1,10 @@
 using System;
+using System.IO;
 using System.IO.Ports;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
+using Microsoft.Win32; // For SaveFileDialog
 
 namespace GUIforGND
 {
@@ -15,10 +18,12 @@ namespace GUIforGND
             InitializeComponent();
             RefreshComPorts(); // Populate COM ports when the window loads
             _serialPort = new SerialPort(); // Initialize SerialPort
-            _serialPort.BaudRate = 115200; // Set baud rate to 115200
             _timer = new DispatcherTimer(); // Initialize Timer
             _timer.Interval = TimeSpan.FromMilliseconds(100); // Set timer interval
             _timer.Tick += Timer_Tick; // Attach timer tick event
+
+            // Set default baud rate selection
+            BaudRateComboBox.SelectedIndex = 4; // Default to 115200
         }
 
         // Method to refresh the list of available COM ports
@@ -51,12 +56,20 @@ namespace GUIforGND
                 return;
             }
 
+            if (BaudRateComboBox.SelectedItem == null)
+            {
+                MessageTextBlock.Text = "Please select a baud rate!";
+                return;
+            }
+
             string selectedPort = ComPortComboBox.SelectedItem.ToString();
+            int selectedBaudRate = int.Parse((BaudRateComboBox.SelectedItem as ComboBoxItem).Content.ToString());
 
             try
             {
                 // Configure the SerialPort
                 _serialPort.PortName = selectedPort;
+                _serialPort.BaudRate = selectedBaudRate; // Set selected baud rate
                 _serialPort.Parity = Parity.None;
                 _serialPort.DataBits = 8;
                 _serialPort.StopBits = StopBits.One;
@@ -65,7 +78,7 @@ namespace GUIforGND
 
                 // Start the timer to read data
                 _timer.Start();
-                MessageTextBlock.Text = $"Reading from {selectedPort}...";
+                MessageTextBlock.Text = $"Reading from {selectedPort} at {selectedBaudRate} baud...";
 
                 // Enable/disable buttons
                 StartButton.IsEnabled = false;
@@ -114,6 +127,32 @@ namespace GUIforGND
 
                 // Append the data to the log with a timestamp
                 Dispatcher.Invoke(() => LogTextBox.AppendText($"{DateTime.Now}: {data}\n"));
+            }
+        }
+
+        // Event handler for the Save Log button
+        private void SaveLogButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Open a SaveFileDialog to choose the file location
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+                    DefaultExt = "txt",
+                    FileName = "Log.txt"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Write the log content to the selected file
+                    File.WriteAllText(saveFileDialog.FileName, LogTextBox.Text);
+                    MessageTextBlock.Text = $"Log saved to {saveFileDialog.FileName}";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageTextBlock.Text = $"Error saving log: {ex.Message}";
             }
         }
 
