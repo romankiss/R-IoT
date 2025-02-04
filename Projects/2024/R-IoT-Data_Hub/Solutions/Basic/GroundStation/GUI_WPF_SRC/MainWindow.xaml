@@ -6,17 +6,29 @@
         <!-- ComboBox for COM Ports -->
         <ComboBox x:Name="ComPortComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0" Width="150"/>
 
+        <!-- ComboBox for Baud Rate Selection -->
+        <ComboBox x:Name="BaudRateComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="180,20,0,0" Width="100">
+            <ComboBoxItem Content="9600"/>
+            <ComboBoxItem Content="19200"/>
+            <ComboBoxItem Content="38400"/>
+            <ComboBoxItem Content="57600"/>
+            <ComboBoxItem Content="115200"/>
+        </ComboBox>
+
         <!-- Button to Refresh COM Ports -->
-        <Button x:Name="RefreshButton" Content="Refresh COM Ports" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="180,20,0,0" Width="120" Click="RefreshButton_Click"/>
+        <Button x:Name="RefreshButton" Content="Refresh COM Ports" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="290,20,0,0" Width="120" Click="RefreshButton_Click"/>
 
         <!-- Button to Start Reading from COM Port -->
-        <Button x:Name="StartButton" Content="Start Reading" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="310,20,0,0" Width="100" Click="StartButton_Click"/>
+        <Button x:Name="StartButton" Content="Start Reading" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="420,20,0,0" Width="100" Click="StartButton_Click"/>
 
         <!-- Button to Disconnect from COM Port -->
-        <Button x:Name="DisconnectButton" Content="Disconnect" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="420,20,0,0" Width="100" Click="DisconnectButton_Click" IsEnabled="False"/>
+        <Button x:Name="DisconnectButton" Content="Disconnect" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="530,20,0,0" Width="100" Click="DisconnectButton_Click" IsEnabled="False"/>
+
+        <!-- Button to Save Log to File -->
+        <Button x:Name="SaveLogButton" Content="Save Log" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="530,60,0,0" Width="100" Click="SaveLogButton_Click"/>
 
         <!-- TextBox for Log Display -->
-        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,70,20,50">
+        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,100,20,50">
             <TextBox x:Name="LogTextBox" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="12"/>
         </ScrollViewer>
 
