@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -12,7 +14,7 @@ namespace GUIforGND
     {
         private SerialPort _serialPort; // SerialPort object for communication
         private DispatcherTimer _timer; // Timer for periodic updates
-
+        readonly object _sendLock = new();//for writing to dev
         public MainWindow()
         {
             InitializeComponent();
@@ -154,6 +156,99 @@ namespace GUIforGND
             {
                 MessageTextBlock.Text = $"Error saving log: {ex.Message}";
             }
+        }
+
+        // Event handler for the Send button
+        private void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_serialPort.IsOpen)
+            {
+                MessageTextBlock.Text = "COM port is not open!";
+                return;
+            }
+
+            string input = InputTextBox.Text.Trim();
+            if (string.IsNullOrEmpty(input))
+            {
+                MessageTextBlock.Text = "Please enter bytes to send!";
+                return;
+            }
+
+            try
+            {
+                // Convert the input string to a byte array
+                /*byte[] data = ParseHexString(input);
+
+                // Send the byte array to the device
+                _serialPort.Write(data, 0, data.Length);*/
+                Send(data: input);
+                MessageTextBlock.Text = $"Sent: {input}";
+            }
+            catch (Exception ex)
+            {
+                MessageTextBlock.Text = $"Error sending data: {ex.Message}";
+            }
+        }
+
+        // Helper method to convert a hex string to a byte array
+        /*private byte[] ParseHexString(string hex)
+        {
+            hex = hex.Replace(" ", ""); // Remove spaces
+            if (hex.Length % 2 != 0)
+            {
+                throw new ArgumentException("Hex string must have an even number of characters.");
+            }
+
+            byte[] bytes = new byte[hex.Length / 2];
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                bytes[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+            }
+            return bytes;
+        }*/
+
+        public bool Send(ushort address = 0xFFFF, byte[] data = null, byte channel = 0x12)
+        {
+            byte[] header = new byte[7];
+
+            try
+            {
+                if (_serialPort == null || !_serialPort.IsOpen) return false;
+                if (data != null && data.Length > 197) return false;
+                byte datalength = (byte)(data == null ? 0 : data.Length);
+                if (header.Length + datalength > 200) return false;
+
+                header[0] = (byte)((address >> 8) & 0xFF);
+                header[1] = (byte)(address & 0xFF);
+                header[2] = channel;    // channel
+                header[3] = 0xC1;       // start mark
+                header[4] = (byte)((0x00 >> 8) & 0xFF);//ownADD
+                header[5] = (byte)(0x0A & 0xFF);//ownADD
+                header[6] = datalength;
+
+                byte[] bytes = new byte[header.Length + datalength + 1];
+                header.CopyTo(bytes, 0);
+                data?.CopyTo(bytes, header.Length);
+                //bytes[header.Length + datalength] = 0x00; // End of Data
+                bytes[header.Length + datalength] = bytes.ComputeChecksum(4, (uint)datalength + 3);  //ADDH+ADDL+LEN
+
+                lock (_sendLock)
+                {
+                    Debug.WriteLine($"LoRaSend[{bytes.Length}]: {BitConverter.ToString(bytes)}");
+                    _serialPort.Write(bytes, 0, bytes.Length);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"LoRaSend: {ex.Message}");
+                return false;
+            }
+        }
+
+        public bool Send(ushort address = 0xFFFF, string data = "Ping", byte channel = 0x12)
+        {
+            return Send(address, Encoding.UTF8.GetBytes(data ??= ""), channel);
         }
 
         // Cleanup when the window is closed
