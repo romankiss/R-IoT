@@ -1,7 +1,7 @@
 <Window x:Class="GUIforGND.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="COM Port Reader" Height="450" Width="600">
+        Title="COM Port Reader" Height="500" Width="600">
     <Grid>
         <!-- ComboBox for COM Ports -->
         <ComboBox x:Name="ComPortComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0" Width="150"/>
@@ -26,6 +26,12 @@
 
         <!-- Button to Save Log to File -->
         <Button x:Name="SaveLogButton" Content="Save Log" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="530,60,0,0" Width="100" Click="SaveLogButton_Click"/>
+
+        <!-- TextBox for User Input -->
+        <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,60,0,0" Width="400" Height="25" Text="Enter data"/>
+
+        <!-- Button to Send Data -->
+        <Button x:Name="SendButton" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="430,60,0,0" Width="80" Click="SendButton_Click"/>
 
         <!-- TextBox for Log Display -->
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,100,20,50">
