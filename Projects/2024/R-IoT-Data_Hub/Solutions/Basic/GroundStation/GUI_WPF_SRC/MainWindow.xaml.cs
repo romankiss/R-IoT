@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
 using System.Text;
+using System.Text.Unicode;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -26,6 +27,8 @@ namespace GUIforGND
 
             // Set default baud rate selection
             BaudRateComboBox.SelectedIndex = 4; // Default to 115200
+            DataInterpretationComboBox.SelectedIndex = 0;//HEX to def.
+            //string[] PacketDataInterpretation = new string[3] {"Hexadecimal bytes with all metadata", "Decimal bytes with all metadata", "Text without metadata"}; //var to know, how to interpret the received and send data for the user
         }
 
         // Method to refresh the list of available COM ports
@@ -124,8 +127,31 @@ namespace GUIforGND
                 byte[] buffer = new byte[bytesToRead]; // Create a buffer of the appropriate size
                 _serialPort.Read(buffer, 0, bytesToRead); // Read all available bytes
 
-                // Convert bytes to a readable format (e.g., hexadecimal)
-                string data = BitConverter.ToString(buffer); // Convert bytes to hex string (e.g., "1A-2B-3C-4D-5E")
+                string data = "";
+
+                if(DataInterpretationComboBox.SelectedIndex == 0)
+                {
+                    // Convert bytes to a readable format (e.g., hexadecimal)
+                    data = BitConverter.ToString(buffer); // Convert bytes to hex string (e.g., "1A-2B-3C-4D-5E")
+                }else if(DataInterpretationComboBox.SelectedIndex == 1)
+                {
+                    //Extract only the data Bytes and convert them to chars to make a text
+                    StringBuilder sb = new StringBuilder();
+                    //< 5th. (index = 4) B; (bytesToRead-1)th. (index = bytesToRead-2) ) is the interval whare the data is
+                    for (int i = 4; i < (bytesToRead - 2); i++)
+                    {
+                        sb.Append((char)buffer[i]);
+                        
+                     
+                    }
+                    data = sb.ToString();
+                }
+                else
+                {
+                    MessageTextBlock.Text = "Invalid format of data interpretation!!!";
+                    return;
+                }
+                
 
                 // Append the data to the log with a timestamp
                 Dispatcher.Invoke(() => LogTextBox.AppendText($"{DateTime.Now}: {data}\n"));
@@ -170,19 +196,31 @@ namespace GUIforGND
             string input = InputTextBox.Text.Trim();
             if (string.IsNullOrEmpty(input))
             {
-                MessageTextBlock.Text = "Please enter bytes to send!";
+                MessageTextBlock.Text = "Please enter data to send in a format specified in the selection!";
                 return;
             }
 
             try
             {
-                // Convert the input string to a byte array
-                /*byte[] data = ParseHexString(input);
-
-                // Send the byte array to the device
-                _serialPort.Write(data, 0, data.Length);*/
-                Send(data: input);
-                MessageTextBlock.Text = $"Sent: {input}";
+                if(DataInterpretationComboBox.SelectedIndex == 0)//hex
+                {
+                    // Convert the input string to a byte array
+                    
+                    SendDataAndWrappWithMeta(data: ParseHexString(input));
+                    MessageTextBlock.Text = $"Sent: {input}";
+                }
+                else if(DataInterpretationComboBox.SelectedIndex == 1)//text
+                {
+                    SendDataAndWrappWithMeta(data: input);
+                    MessageTextBlock.Text = $"Sent: {input}";
+                }
+                else
+                {
+                    MessageTextBlock.Text = "Invalid format of data interpretation!!!";
+                    return;
+                }
+                    // Send the byte array to the device
+                    //_serialPort.Write(data, 0, data.Length); 
             }
             catch (Exception ex)
             {
@@ -191,7 +229,7 @@ namespace GUIforGND
         }
 
         // Helper method to convert a hex string to a byte array
-        /*private byte[] ParseHexString(string hex)
+        private byte[] ParseHexString(string hex)
         {
             hex = hex.Replace(" ", ""); // Remove spaces
             if (hex.Length % 2 != 0)
@@ -205,19 +243,23 @@ namespace GUIforGND
                 bytes[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
             }
             return bytes;
-        }*/
+        }
 
-        public bool Send(ushort address = 0xFFFF, byte[] data = null, byte channel = 0x12)
+        //took from the e22 wrapper written by R.K. - prev. named as Send
+        //takes a bytearray as data and uses also params. like receivers and our own modem address, channel etc. and wrapps the data, adds a chescksum, which is computed using the Extensions.cs and writes an array of bytes to the modem that he understands
+        public bool SendDataAndWrappWithMeta(ushort address = 0xFFFF, byte[] data = null, byte channel = 0x12)
         {
             byte[] header = new byte[7];
 
             try
             {
+                //to prevent overflowing the around 240B big packet limit with a tolerance
                 if (_serialPort == null || !_serialPort.IsOpen) return false;
                 if (data != null && data.Length > 197) return false;
                 byte datalength = (byte)(data == null ? 0 : data.Length);
                 if (header.Length + datalength > 200) return false;
 
+                //building the Byte arr.
                 header[0] = (byte)((address >> 8) & 0xFF);
                 header[1] = (byte)(address & 0xFF);
                 header[2] = channel;    // channel
@@ -232,6 +274,7 @@ namespace GUIforGND
                 //bytes[header.Length + datalength] = 0x00; // End of Data
                 bytes[header.Length + datalength] = bytes.ComputeChecksum(4, (uint)datalength + 3);  //ADDH+ADDL+LEN
 
+                //actualy sending to modem
                 lock (_sendLock)
                 {
                     Debug.WriteLine($"LoRaSend[{bytes.Length}]: {BitConverter.ToString(bytes)}");
@@ -241,14 +284,14 @@ namespace GUIforGND
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"LoRaSend: {ex.Message}");
+                Debug.WriteLine($"EXCEP when LoRaSend: {ex.Message}");
                 return false;
             }
         }
 
-        public bool Send(ushort address = 0xFFFF, string data = "Ping", byte channel = 0x12)
+        public bool SendDataAndWrappWithMeta(ushort address = 0xFFFF, string data = "Ping", byte channel = 0x12)
         {
-            return Send(address, Encoding.UTF8.GetBytes(data ??= ""), channel);
+            return SendDataAndWrappWithMeta(address, Encoding.UTF8.GetBytes(data ??= ""), channel);
         }
 
         // Cleanup when the window is closed
