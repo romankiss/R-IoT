@@ -8,6 +8,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Microsoft.Win32; // For SaveFileDialog
+using LiveCharts;
+using LiveCharts.Wpf;
+using System.Globalization;
 
 namespace GUIforGND
 {
@@ -16,6 +19,12 @@ namespace GUIforGND
         private SerialPort _serialPort; // SerialPort object for communication
         private DispatcherTimer _timer; // Timer for periodic updates
         readonly object _sendLock = new();//for writing to dev
+
+        // Data for the graph
+        public SeriesCollection SeriesCollection { get; set; }
+        public List<string> TimeLabels { get; set; }
+        public ChartValues<double> TemperatureValues { get; set; }
+        public ChartValues<double> HumidityValues { get; set; }
         public MainWindow()
         {
             InitializeComponent();
@@ -28,8 +37,19 @@ namespace GUIforGND
             // Set default baud rate selection
             BaudRateComboBox.SelectedIndex = 4; // Default to 115200
             DataInterpretationComboBox.SelectedIndex = 0;//HEX to def.
-            //string[] PacketDataInterpretation = new string[3] {"Hexadecimal bytes with all metadata", "Decimal bytes with all metadata", "Text without metadata"}; //var to know, how to interpret the received and send data for the user
+                                                         //string[] PacketDataInterpretation = new string[3] {"Hexadecimal bytes with all metadata", "Decimal bytes with all metadata", "Text without metadata"}; //var to know, how to interpret the received and send data for the user
+
+            // Initialize graph data
+            SeriesCollection = new SeriesCollection();
+            TimeLabels = new List<string>();
+            TemperatureValues = new ChartValues<double>();
+            HumidityValues = new ChartValues<double>();
+
+            // Bind the graph data to the UI
+            DataContext = this;
         }
+
+
 
         // Method to refresh the list of available COM ports
         private void RefreshComPorts()
@@ -141,8 +161,6 @@ namespace GUIforGND
                     for (int i = 4; i < (bytesToRead - 2); i++)
                     {
                         sb.Append((char)buffer[i]);
-                        
-                     
                     }
                     data = sb.ToString();
                 }
@@ -155,6 +173,10 @@ namespace GUIforGND
 
                 // Append the data to the log with a timestamp
                 Dispatcher.Invoke(() => LogTextBox.AppendText($"{DateTime.Now}: {data}\n"));
+                LogTextBox.ScrollToEnd();
+
+                // Update the graph
+                UpdateGraph(data);
             }
         }
 
@@ -293,6 +315,45 @@ namespace GUIforGND
         {
             return SendDataAndWrappWithMeta(address, Encoding.UTF8.GetBytes(data ??= ""), channel);
         }
+
+        // Method to update the graph with new data
+        private void UpdateGraph(string data)
+        {
+            if (DataInterpretationComboBox.SelectedIndex == 1) // Text mode
+            {
+                try
+                {
+                    // Parse the data (e.g., "T:12.582969665527344, H:31.1290168762207") THIS IS THE CURRENTLY ONLY SUPPORTED FORMAT!!!!!
+                    string[] parts = data.Split(new[] { 'T', ':', 'H', ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length < 2) return;
+
+                    // Extract temperature and humidity
+                    double temperature = double.Parse(parts[0], CultureInfo.InvariantCulture);
+                    double humidity = double.Parse(parts[1], CultureInfo.InvariantCulture);
+
+                    // Add the data to the graph
+                    Dispatcher.Invoke(() =>
+                    {
+                        TemperatureValues.Add(temperature);
+                        HumidityValues.Add(humidity);
+
+                        // Limit the number of data points to keep the graph readable
+                        const int maxDataPoints = 50;
+                        if (TemperatureValues.Count > maxDataPoints)
+                        {
+                            TemperatureValues.RemoveAt(0);
+                            HumidityValues.RemoveAt(0);
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error parsing data: {ex.Message}");
+                    Dispatcher.Invoke(() => MessageTextBlock.Text = "Error parsing data. Ensure data is in the correct format.");
+                }
+            }   
+        }
+
 
         // Cleanup when the window is closed
         protected override void OnClosed(EventArgs e)
