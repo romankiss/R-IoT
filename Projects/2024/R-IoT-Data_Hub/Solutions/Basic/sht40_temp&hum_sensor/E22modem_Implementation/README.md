@@ -1,0 +1,3 @@
+Sends the temp and hum vals read from the [ENV IV m5stack snsr](https://github.com/romankiss/R-IoT/tree/main/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/sht40_temp%26hum_sensor) using the [lora E22 EBYTE modem](https://github.com/romankiss/R-IoT/tree/main/Projects/2024/PatternsAndPractices/Lora/E22-900Txxx)  
+Also add those files to your project to work properly( ofc change namespaces, install nuggets etc.): https://github.com/romankiss/R-IoT/tree/main/Projects/2024/PatternsAndPractices/Lora/E22-900Txxx/Driver  
+![IMG20250208101704](https://github.com/user-attachments/assets/2ae98813-6e45-43ef-be7f-236cea9a467d)
