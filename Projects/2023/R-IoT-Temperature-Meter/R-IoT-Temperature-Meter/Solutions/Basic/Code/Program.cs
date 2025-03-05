@@ -1,75 +1,111 @@
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Threading;
-using Iot.Device.Button;
+using nanoFramework.WebServer;
+using nanoFramework.Networking;
+using System.Net.NetworkInformation;
+using System.IO;
 using nanoFramework.Hardware.Esp32;
-using System.Device.I2c;
-using Iot.Device.Sht3x;
-using nanoFramework;
-using System.Device.Gpio;
-using WebServerTest;
-//using Your.Mother;
+
 
 
 namespace WebServerTest
 {
-
-
-    public class Program
+    public class Wifi
     {
-
-        static Sht3x sensorTH = null;
-        static string telemetrydataFilePath = null;
-
-
-        public static void Main()
+        static string _ssid = null;
+        static string _password = null;
+        static string _telemetrydataFilePath = null;
+        public Wifi(string ssid, string password, string telemetrydataFilePath)
         {
-            Debug.WriteLine("Hello from nanoFramework!");
+            _ssid = ssid;
+            _password = password;
+            _telemetrydataFilePath = telemetrydataFilePath;
 
-            const string ssid = "Galaxy A35 5G 132C"; //SSID
-            const string password = "123456789"; //Heslo
-            const string DirectoryPath = "I:\\";
-            telemetrydataFilePath = DirectoryPath + "telemetryData.json";
+            WIficonnect();
 
-
-
-            #region Config
-            GpioButton button = new GpioButton(buttonPin: 39, debounceTime: TimeSpan.FromMilliseconds(200));
-            button.IsHoldingEnabled = true;
-
-
-
-
-
-            Configuration.SetPinFunction(22, DeviceFunction.I2C1_CLOCK);
-            Configuration.SetPinFunction(19, DeviceFunction.I2C1_DATA);
-            sensorTH = new(new(new I2cConnectionSettings(1, 0x44)));
-
-
-
-
-
-            #endregion
-
-
-            Wifi wifi = new Wifi(ssid, password, telemetrydataFilePath);
-           // Sensor sensor = new Sensor(sensorTH, telemetrydataFilePath);
-
-
-
-            button.Press += (sender, e) => WebServerTest.Sensor.ReadData();
-
-            button.Holding += (sender, e) => WebServerTest.Sensor.DeleteData();
-
-            Timer pub_Timer = new Timer(WebServerTest.Sensor.WriteData, null, 10000, 10000);
-
-
-            Thread.Sleep(Timeout.Infinite);
-
-            // Browse our samples repository: https://github.com/nanoframework/samples
-            // Check our documentation online: https://docs.nanoframework.net/
-            // Join our lively Discord community: https://discord.gg/gCyBu8T
         }
 
+        public static void WIficonnect()
+        {
+            try
+            {
+                CancellationTokenSource cs = new(90000);
+                Debug.WriteLine($"Connecting to {_ssid} network ...");
+                var success = WifiNetworkHelper.ScanAndConnectDhcp(_ssid, _password, requiresDateTime: true, token: cs.Token);
+                if (success)
+                {
+                    //Blink(0, 10, 0, 100, 2);
+                    Debug.WriteLine($"Wifi ready - {_ssid}, mac:{GetMacId(out string ipaddress)}, ip:{ipaddress}");
+                    // Otherwise, you are connected and have a valid IP and date
+                    Debug.WriteLine($" {WifiNetworkHelper.Status}");
+
+                    WebServer server = new WebServer(80, HttpProtocol.Http);
+
+                    // Add a handler for commands that are received by the server.
+                    server.CommandReceived += ServerCommandReceived;
+
+                    // Start the server.
+                    server.Start();
+                }
+                else
+                {
+                    Debug.WriteLine($"Can't connect to the network {_ssid}, error: {WifiNetworkHelper.Status}");
+                    throw new Exception($"Wifi is not connected.");
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private static void ServerCommandReceived(object source, WebServerEventArgs e)
+        {
+            var url = e.Context.Request.RawUrl;
+            Debug.WriteLine($"Command received: {url}, Method: {e.Context.Request.HttpMethod}");
+
+            if (url.ToLower() == "/sayhello")
+            {
+                //Under construction
+                string body = File.ReadAllText(_telemetrydataFilePath);
+                WebServer.OutPutStream(e.Context.Response, "<!DOCTYPE html> <html><head>" +
+"<title>Hi from nanoFramework Server</title></head><body> <br><p id=\"demo\"></p><p>" + body + "</p></body>" +
+"<script>let text = " + body + ";\r\nconst myArray = text.split();\r\n\r\ndocument.getElementById(\"demo\").innerHTML = myArray;\r\n</script></html>");
+            }
+            else
+            {
+                WebServer.OutputHttpCode(e.Context.Response, HttpStatusCode.NotFound);
+            }
+        }
+
+        #region GetMacId
+        static string GetMacId(out string ipaddress)
+        {
+            NetworkInterface[] nis = NetworkInterface.GetAllNetworkInterfaces();
+            if (nis.Length > 0)
+            {
+                // get the first interface
+                NetworkInterface ni = nis[0];
+                ipaddress = ni.IPv4Address;
+                return ByteArrayToHex(ni.PhysicalAddress);
+            }
+            else
+            {
+                ipaddress = string.Empty;
+                return "000000000000";
+            }
+        }
+        static string ByteArrayToHex(byte[] barray)
+        {
+            string bs = "";
+            for (int i = 0; i < barray.Length; ++i)
+            {
+                bs += barray[i].ToString("X2");
+            }
+            return bs;
+        }
+        #endregion
     }
 }
