@@ -13,7 +13,7 @@ using System.Device.Gpio;
 using System.Device.I2c;
 using System.Text;
 
-namespace NFAppLILYGOS3_MQTT
+namespace NFApp
 {
     public class ToFSense : I2cDeviceBase
     {
