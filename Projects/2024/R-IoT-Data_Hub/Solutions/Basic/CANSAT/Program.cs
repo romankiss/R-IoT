@@ -1,11 +1,13 @@
-using System;
+ using System;
 using System.Device.Gpio;
 using System.Diagnostics;
 using System.Threading;
 using CanSat.E22_900T22D.Wrapper;
 using Iot.Device.Button;
 using nanoFramework.Hardware.Esp32;
-
+using System.Device.I2c;
+using Iot.Device.Sht4x;
+using Iot.Device.Vl53L0X;//for ToF sensor
 
 namespace CanSat
 {
@@ -18,7 +20,10 @@ namespace CanSat
         static ushort broadcastAddress = 0xFFFF;
         const ushort loraAddress = 0x1234;  //55????;
         const byte loraNetworkId = 0x12;    // 850.125 + 18 = 868.125Mhz
-      
+        static Sht4X temp_hum_meter_snsr = null;
+        static Vl53L0X sensorToF = null;
+
+
         public static void Main()
         {
             Debug.WriteLine("Hello from nanoFramework!");
@@ -40,22 +45,64 @@ namespace CanSat
             const int pub_period = 10000;     // miliseconds
             const int pinCOM2_TX = 2;
             const int pinCOM2_RX = 1;
+            const int pinI2C2_SDA = 8;
+            const int pinI2C2_SCL = 7;
+            const int pinI2C1_SDA = 6;
+            const int pinI2C1_SCL = 5;
 
             Blink led = new Blink();//frustrating to discover that this little line is required to init the neo obj
 
             // Button setup
             GpioButton buttonM5 = new GpioButton(buttonPin: pinButton, debounceTime: TimeSpan.FromMilliseconds(333));
 
+            
+
+            try
+            {
+                // Configure the I2C GPIOs used for the bus
+                Configuration.SetPinFunction(pinI2C2_SDA, DeviceFunction.I2C2_DATA);
+                Configuration.SetPinFunction(pinI2C2_SCL, DeviceFunction.I2C2_CLOCK);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Bruh, exeptioon: " + ex.ToString());
+            }
+            I2cConnectionSettings I2C_settings = new(2, Sht4X.I2cDefaultAddress);
+            I2cDevice temp_hum_meter_device = I2cDevice.Create(I2C_settings);
+            Sht4X temp_hum_meter_snsr = new(temp_hum_meter_device);
+
+
+            temp_hum_meter_device.WriteByte(0x96);//send soft reset to avoid initial CRC non-validity
+
+            try//for tof sensor
+            {
+                Debug.WriteLine("now configing");
+                Configuration.SetPinFunction(pinI2C1_SDA, DeviceFunction.I2C1_DATA);//25 6
+                Configuration.SetPinFunction(pinI2C1_SCL, DeviceFunction.I2C1_CLOCK);//21 5
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            I2cDevice i2c_tof = I2cDevice.Create(new I2cConnectionSettings(1, Vl53L0X.DefaultI2cAddress));
+            var res = i2c_tof.WriteByte(0x07);
+            sensorToF = new Vl53L0X(i2c_tof, 500);
+
+            if (sensorToF != null)
+            {
+                sensorToF.HighResolution = false;
+                sensorToF.Precision = Precision.HighPrecision;
+                sensorToF.MeasurementMode = Iot.Device.Vl53L0X.MeasurementMode.Single;
+            }
+            else
+            {
+                Debug.WriteLine("ToF sensor initialization failed.");
+            }
+
+
             // Timer setup
             Timer pubTimer = new Timer((s) => FireTelemetryData(), null, 0, pub_period);
-
-          
-
-
-
-
-
-
 
             Configuration.SetPinFunction(pinCOM2_TX, DeviceFunction.COM2_TX);
             Configuration.SetPinFunction(pinCOM2_RX, DeviceFunction.COM2_RX);
@@ -94,7 +141,10 @@ namespace CanSat
             void FireTelemetryData()
             {
                 // the place to put the code for handling an event from the pubTimer
-                lora.Send(65535, "data");
+                Sht4XSensorData data = temp_hum_meter_snsr.ReadData(Iot.Device.Sht4x.MeasurementMode.NoHeaterHighPrecision);
+                var dist = sensorToF.GetDistanceOnce();
+
+                lora.Send(65535, "T" + Math.Floor( data.Temperature.DegreesCelsius ) + "D" + dist);
                 Blink.Blinks(0, 0, 255, 100, 1, 1);
             }
 
