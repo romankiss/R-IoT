@@ -6,8 +6,11 @@ using CanSat.E22_900T22D.Wrapper;
 using Iot.Device.Button;
 using nanoFramework.Hardware.Esp32;
 using System.Device.I2c;
-using Iot.Device.Sht4x;
+using Iot.Device.Sht4x;//for temperature and humidity sensor
 using Iot.Device.Vl53L0X;//for ToF sensor
+using Iot.Device.Bmxx80;//for pressure sensor
+using Iot.Device.Bmxx80.PowerMode;
+using UnitsNet; // for pressure and temperature units
 
 namespace CanSat
 {
@@ -22,6 +25,7 @@ namespace CanSat
         const byte loraNetworkId = 0x12;    // 850.125 + 18 = 868.125Mhz
         static Sht4X temp_hum_meter_snsr = null;
         static Vl53L0X sensorToF = null;
+        static Bmp280 bmp280 = null; // BMP280 sensor
 
 
         public static void Main()
@@ -101,6 +105,21 @@ namespace CanSat
             }
 
 
+            // Initialize BMP280 sensor
+            try
+            {
+                I2cDevice i2c_bmp280 = I2cDevice.Create(new I2cConnectionSettings(2, 0x76));//on the same bus as sht40 -------beware: 0x76 is the address, not the val stored in the library 
+                bmp280 = new Bmp280(i2c_bmp280);
+                bmp280.SetPowerMode(Bmx280PowerMode.Normal);
+                bmp280.TemperatureSampling = Sampling.UltraHighResolution;
+                bmp280.PressureSampling = Sampling.UltraHighResolution;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception initializing BMP280: " + ex.ToString());
+            }
+
+
             // Timer setup
             Timer pubTimer = new Timer((s) => FireTelemetryData(), null, 0, pub_period);
 
@@ -140,11 +159,18 @@ namespace CanSat
             // Timer handler/callback
             void FireTelemetryData()
             {
+
+                if (temp_hum_meter_snsr == null || sensorToF == null || bmp280 == null)
+                {
+                    Debug.WriteLine("Sensors are not initialized.");
+                    return;
+                }
                 // the place to put the code for handling an event from the pubTimer
                 Sht4XSensorData data = temp_hum_meter_snsr.ReadData(Iot.Device.Sht4x.MeasurementMode.NoHeaterHighPrecision);
                 var dist = sensorToF.GetDistanceOnce();
+                bmp280.TryReadPressure(out var bmpPressure);
 
-                lora.Send(65535, "T" + Math.Floor( data.Temperature.DegreesCelsius ) + "D" + dist);
+                lora.Send(65535, "T" + Math.Floor( data.Temperature.DegreesCelsius ) + "H" + Math.Floor(data.RelativeHumidity.Percent) + "D" + dist + "P" + Math.Floor(bmpPressure.Hectopascals));
                 Blink.Blinks(0, 0, 255, 100, 1, 1);
             }
 
