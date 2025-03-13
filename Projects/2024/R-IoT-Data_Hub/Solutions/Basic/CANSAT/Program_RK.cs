@@ -188,7 +188,10 @@ namespace CanSat
                     }  
 
                     // add more sensors to the payload    
-                  
+
+                    // EOD (End of Data - Payload)
+                    payload += $"\r\n"; 
+                    
                     //
                     Debug.WriteLine($">>> [{DateTime.UtcNow.ToString("hh:mm:ss.fff")}] {payload}");
                     //
