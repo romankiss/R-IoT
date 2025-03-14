@@ -44,12 +44,13 @@ namespace CanSat
         const int pinNeo = 35;
         const int pinNeoPower = -1;
         const int pinLedA = -1;
-        const int pinI2C1_SDA = 5;      // Grove
-        const int pinI2C1_SCK = 6;      // Grove
-        //const int pinCOM2_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  
-        //const int pinCOM2_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
-        const int pinCOM2_TX = 1;       // PORTB-G8, 
-        const int pinCOM2_RX = 2;       // PORTB-G7
+        const int pinI2C1_SDA = 2;      // Grove
+        const int pinI2C1_SCK = 1;      // Grove
+        const int pinCOM3_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  
+        const int pinCOM3_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
+        const int pinCOM2_TX = 8;       // PORTB-G8, 
+        const int pinCOM2_RX = 7;       // PORTB-G7
+        //M5atomBase grove conn. can not be used for i2C, ony for UART
 #endif
 
         //static int loopback_counter = 0;
@@ -78,14 +79,14 @@ namespace CanSat
                 Debug.WriteLine("LED initialization failed.");
             }
             Blink.Blinks(255, 255, 255, 1000, 1, 1);  // it must be async call
-                                               // Button setup
+                                                      // Button setup
             GpioButton buttonM5 = new GpioButton(buttonPin: pinButton, debounceTime: TimeSpan.FromMilliseconds(333));
-            if(buttonM5 == null)
+            if (buttonM5 == null)
             {
                 Debug.WriteLine("Button initialization failed.");
             }
             #endregion
-            //hhhhh
+
 
             #region SENSORS 
             try
@@ -94,7 +95,8 @@ namespace CanSat
                 //ioctrl.OpenPin(pinI2C1_SCK, PinMode.InputPullUp); 
                 Configuration.SetPinFunction(pinI2C1_SDA, DeviceFunction.I2C1_DATA);
                 Configuration.SetPinFunction(pinI2C1_SCK, DeviceFunction.I2C1_CLOCK);
-            }catch
+            }
+            catch
             (Exception ex)
             {
                 Debug.WriteLine("Error initing I2C BUS: " + ex.Message);
@@ -195,7 +197,7 @@ namespace CanSat
                 {
 
                     Debug.WriteLine("");
-                    Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
+                    //Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
 
                     try
                     {
@@ -225,6 +227,8 @@ namespace CanSat
 
                         // add more sensors to the payload    
 
+                        // EOD (End of Data - Payload)
+                        payload += $"\r\n";
                         //
                         Debug.WriteLine($">>> [{DateTime.UtcNow.ToString("hh:mm:ss.fff")}] {payload}");
                         //
@@ -239,7 +243,7 @@ namespace CanSat
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine(ex.InnerException?.Message ?? ex.Message);
+                        Debug.WriteLine("EXCEPTION: " + ex.InnerException?.Message ?? ex.Message);
                         //SetLedByColor(32, 0, 0);
                     }
                     finally
@@ -255,7 +259,6 @@ namespace CanSat
                 Blink.Blinks(0, 20, 0, 250, 2);      // good light
                 Thread.Sleep(Timeout.Infinite);
                 #endregion
-
             }
         }
         public static class Diag
@@ -267,5 +270,6 @@ namespace CanSat
                 Debug.WriteLine($"nF Mem {Memory.Run(compactHeap)} ");
             }
         }
+
     }
 }
