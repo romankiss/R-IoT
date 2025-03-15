@@ -102,3 +102,17 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+/.vs/R-IoT/CopilotIndices
+/.vs
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/CANSAT/.vs/CanSat
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/CANSAT/packages
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/CANSAT/bin/Debug
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/CANSAT/obj/Debug
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/GroundStation/FakeDataFiring/.vs/FakeDataFiring
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/GroundStation/FakeDataFiring/bin/Debug
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/GroundStation/FakeDataFiring/obj/Debug
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/GroundStation/FakeDataFiring/packages
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/GroundStation/Remake of GND receiver/.vs
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/GroundStation/Remake of GND receiver/bin/Debug/net8.0-windows
+/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/GroundStation/Remake of GND receiver/obj

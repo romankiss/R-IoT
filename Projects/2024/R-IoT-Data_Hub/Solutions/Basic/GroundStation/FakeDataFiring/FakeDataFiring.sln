@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "FakeDataFiring", "FakeDataFiring.nfproj", "{27E1C9E8-E8C2-4838-84B9-EDCF4ED8F151}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27E1C9E8-E8C2-4838-84B9-EDCF4ED8F151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27E1C9E8-E8C2-4838-84B9-EDCF4ED8F151}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27E1C9E8-E8C2-4838-84B9-EDCF4ED8F151}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{27E1C9E8-E8C2-4838-84B9-EDCF4ED8F151}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27E1C9E8-E8C2-4838-84B9-EDCF4ED8F151}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27E1C9E8-E8C2-4838-84B9-EDCF4ED8F151}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C597545D-4BDB-4DFA-8663-CF1602661645}
+	EndGlobalSection
+EndGlobal
