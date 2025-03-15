@@ -196,7 +196,7 @@ namespace CanSat
                 void FireTelemetryData()
                 {
 
-                    Debug.WriteLine("");
+                    //Debug.WriteLine("");
                     //Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
 
                     try

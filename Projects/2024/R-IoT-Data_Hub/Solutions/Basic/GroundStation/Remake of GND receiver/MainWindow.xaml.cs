@@ -270,19 +270,50 @@ namespace GUIforGND
                 byte[] buffer = new byte[bytesToRead];
                 _serialPort.Read(buffer, 0, bytesToRead);
 
-                string data = Encoding.UTF8.GetString(buffer);
-                Debug.WriteLine($"Received: {data}");
+                string data = "";
+             
 
-                // Update the log
-                // Parse the data (e.g., "T25.12H48.12P998")
-                double temperature = ExtractValue(data, 'T');
-                double humidity = ExtractValue(data, 'H');
-                double pressure = ExtractValue(data, 'P');
-                double distance = ExtractValue(data, 'D');
+                if (DataInterpretationComboBox.SelectedIndex == 0)
+                {
+                    // Convert bytes to a readable format (e.g., hexadecimal)
+                    data = BitConverter.ToString(buffer); // Convert bytes to hex string (e.g., "1A-2B-3C-4D-5E")
+                }
+                else if (DataInterpretationComboBox.SelectedIndex == 1)
+                {
+                    //Extract only the data Bytes and convert them to chars to make a text
+                    StringBuilder sb = new StringBuilder();
+                    //< 5th. (index = 4) B; (bytesToRead-1)th. (index = bytesToRead-2) ) is the interval whare the data is
+                    for (int i = 4; i < (bytesToRead - 2); i++)
+                    {
+                        sb.Append((char)buffer[i]);
+                    }
+                    data = sb.ToString();
+
+
+                    // Update the log
+                    // Parse the data (e.g., "T25.12H48.12P998")
+                    double temperature = ExtractValue(data, 'T');
+                    double humidity = ExtractValue(data, 'H');
+                    double pressure = ExtractValue(data, 'P');
+                    double distance = ExtractValue(data, 'D');
+                    double counter = ExtractValue(data, '#');
+                    double[] extractions= { temperature, distance, pressure, humidity, counter };
+                    foreach(double val in extractions)
+                    {
+                        Debug.WriteLine(val);
+                    }
+                }
+                else
+                {
+                    MessageTextBlock.Text = "Invalid format of data interpretation!!!";
+                    return;
+                }
+
+
 
                 /*Dispatcher.Invoke(() => LogTextBox.AppendText($"{DateTime.Now}: {$"Temperature: {temperature}, Humidity: {humidity}, Pressure: {pressure}, Distance: {distance}"}\n"));
                 LogTextBox.ScrollToEnd();*/
-                
+
                 // Update the log
                 Dispatcher.Invoke(() => LogTextBox.AppendText($"{DateTime.Now}: {data}\n"));
                 LogTextBox.ScrollToEnd();
@@ -297,7 +328,8 @@ namespace GUIforGND
         private double ExtractValue(string data, char prefix)
         {
             int startIndex = data.IndexOf(prefix);
-            if (startIndex == -1) throw new ArgumentException($"Prefix '{prefix}' not found in data.");
+            if (startIndex == -1) { Debug.WriteLine("Searched var identifier not found in data packet..."); 
+                return -1; }//throw new ArgumentException($"Prefix '{prefix}' not found in data.");
 
             int endIndex = startIndex + 1;
             while (endIndex < data.Length && (char.IsDigit(data[endIndex]) || data[endIndex] == '.'))
