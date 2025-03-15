@@ -5,6 +5,7 @@ using System.Device.Gpio;
 using System.Diagnostics;
 using System.Threading;
 using CanSat.E22_900T22D.Wrapper;
+//using CanSat.Waveshare;
 using Iot.Device.Button;
 using nanoFramework.Hardware.Esp32;
 using System.Device.I2c;
@@ -14,6 +15,7 @@ using Iot.Device.Bmxx80;//for pressure sensor
 using Iot.Device.Bmxx80.PowerMode;
 using UnitsNet; // for pressure and temperature units
 using Memory = nanoFramework.Runtime.Native.GC;
+using Cansat;
 
 namespace CanSat
 {
@@ -59,7 +61,8 @@ namespace CanSat
         static E22 lora = null;
         static ushort BroadcastAddress = 0xFFFF;
         static Sht4X sensorTH = null;
-        static Vl53L0X sensorToF = null;
+        // static Vl53L0X sensorToF = null;
+        static ToFSense sensorToF = null;
         //static ToFSense sensorToF = null;
         static Bmp280 sensorBMP280 = null;
         static GpioController ioctrl = new GpioController();
@@ -123,7 +126,8 @@ namespace CanSat
                 #endregion
 
                 #region ToF
-                I2cDevice i2c_tof = I2cDevice.Create(new I2cConnectionSettings(1, Vl53L0X.DefaultI2cAddress));
+                /* VL53L0X sensor, not used more,,, replaced by the waveshare sensor
+                *I2cDevice i2c_tof = I2cDevice.Create(new I2cConnectionSettings(1, Vl53L0X.DefaultI2cAddress));
                 var resToF = i2c_tof.WriteByte(0x07);
                 sensorToF = new Vl53L0X(i2c_tof, 500);
 
@@ -136,13 +140,24 @@ namespace CanSat
                 else
                 {
                     Debug.WriteLine("ToF sensor initialization failed.");
+                }*/
+
+                // Waveshare ToF Sensor
+                I2cDevice i2c_tof = new(new I2cConnectionSettings(1, ToFSense.DefaultI2cAddress)); // Grove connector
+                var res = i2c_tof.WriteByte(0x07);//check if it is the same as tof, coz here was a mistake previously, instead of i2c_bmp280 was tof used...
+                if (res.Status == I2cTransferStatus.FullTransfer)
+                {
+                    sensorToF = new ToFSense(i2c_tof);
+                    Debug.WriteLine($"sensorTOF: {sensorToF.Distance} mm");
                 }
+
+
                 #endregion
 
 
                 #region BMP280   
                 I2cDevice i2c_bmp280 = new(new I2cConnectionSettings(1, 0x76)); // Grove connector
-                var resBMP280 = i2c_tof.WriteByte(0x07);
+                var resBMP280 = i2c_bmp280.WriteByte(0x07); //.WriteByte(0x07);
                 if (resBMP280.Status == I2cTransferStatus.FullTransfer)
                 {
                     sensorBMP280 = new Bmp280(i2c_bmp280);

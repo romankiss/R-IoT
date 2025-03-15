@@ -23,6 +23,8 @@
     <Compile Include="E22_900T22D\Extensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Waveshare\I2CDevBase.cs" />
+    <Compile Include="Waveshare\ToFsnsr.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Iot.Device.Bmxx80">
