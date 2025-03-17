@@ -212,7 +212,7 @@ namespace CanSat
                 {
 
                     //Debug.WriteLine("");
-                    //Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
+                    Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
 
                     try
                     {

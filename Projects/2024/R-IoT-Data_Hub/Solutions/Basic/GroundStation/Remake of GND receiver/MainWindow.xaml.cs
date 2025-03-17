@@ -377,17 +377,28 @@ namespace GUIforGND
         private double ExtractValue(string data, char prefix)
         {
             int startIndex = data.IndexOf(prefix);
-            if (startIndex == -1) { Debug.WriteLine("Searched var identifier not found in data packet..."); 
-                return -1; }//throw new ArgumentException($"Prefix '{prefix}' not found in data.");
+            if (startIndex == -1)
+            {
+                Debug.WriteLine("Searched var identifier not found in data packet...");
+                return -1;
+            }//throw new ArgumentException($"Prefix '{prefix}' not found in data.");
 
             int endIndex = startIndex + 1;
             while (endIndex < data.Length && (char.IsDigit(data[endIndex]) || data[endIndex] == '.'))
             {
                 endIndex++;
             }
-        
-            string valueString = data.Substring(startIndex + 1, endIndex - startIndex - 1);
-            return double.Parse(valueString, CultureInfo.InvariantCulture);
+            try
+            {
+                string valueString = data.Substring(startIndex + 1, endIndex - startIndex - 1);
+                return double.Parse(valueString, CultureInfo.InvariantCulture);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error parsing the value from the data packet: " + ex.Message);
+                return -1;
+
+            }
         }
 
         // Cleanup when the window is closed
