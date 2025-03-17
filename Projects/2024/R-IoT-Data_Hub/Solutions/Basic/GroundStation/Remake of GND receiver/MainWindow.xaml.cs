@@ -10,16 +10,34 @@ using LiveCharts;
 using LiveCharts.Wpf;
 using Microsoft.Win32;
 using System.Globalization;
+using Npgsql;
+
 
 namespace GUIforGND
 {
     public partial class MainWindow : Window
     {
+        public class SensorData
+        {
+            public double Temperature { get; set; }
+            public double Humidity { get; set; }
+            public double Pressure { get; set; }
+            public double Distance { get; set; }
+            public double Counter { get; set; }
+        }
+
+        public SensorData sensordata { get; set; } = new SensorData();
+        private static string csvFilePath = "C:\\Users\\vlcko\\OneDrive\\Desktop\\sensor_data.csv";
         private SerialPort _serialPort; // SerialPort object for communication
         private DispatcherTimer _timer; // Timer for periodic updates
         readonly object _sendLock = new(); // For thread-safe writing to the device
 
-    
+        // Connection string for your AWS PostgreSQL database
+        string connectionString = "Host=your-aws-endpoint;Username=your-user;Password=your-password;Database=your-db";
+        // SQL query to insert data
+        string query = @"
+            INSERT INTO sensor_data (temperature, humidity, pressure, distance, counter)
+            VALUES (@temperature, @humidity, @pressure, @distance, @counter)";
 
         public MainWindow()
         {
@@ -35,7 +53,16 @@ namespace GUIforGND
 
             // Set default selections
             BaudRateComboBox.SelectedIndex = 4; // Default to 115200
-            DataInterpretationComboBox.SelectedIndex = 0; // Default to Hexadecimal
+            DataInterpretationComboBox.SelectedIndex = 1; // Default to text
+
+            // Check if the file exists, if not, create it and write the header
+            if (!File.Exists(csvFilePath))
+            {
+                using (StreamWriter sw = File.CreateText(csvFilePath))
+                {
+                    sw.WriteLine("Temperature,Humidity,Pressure,Distance,Counter");
+                }
+            }
         }
 
         // Method to refresh the list of available COM ports
@@ -260,6 +287,22 @@ namespace GUIforGND
             }
         }
 
+        public void ConnectToDBButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                connectionString = ConnectionStringTextBox.Text;
+                using var connection = new NpgsqlConnection(connectionString);
+                connection.Open();
+                MessageTextBlock.Text = "Connected to the database!";
+            }
+            catch (Exception ex)
+            {
+                MessageTextBlock.Text = $"Error connecting to the database: {ex.Message}";
+                Debug.WriteLine("Error connecting to the database: " + ex.Message);
+            }
+        }
+
         // Timer tick event to read data from the COM port
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -292,16 +335,15 @@ namespace GUIforGND
 
                     // Update the log
                     // Parse the data (e.g., "T25.12H48.12P998")
-                    double temperature = ExtractValue(data, 'T');
-                    double humidity = ExtractValue(data, 'H');
-                    double pressure = ExtractValue(data, 'P');
-                    double distance = ExtractValue(data, 'D');
-                    double counter = ExtractValue(data, '#');
-                    double[] extractions= { temperature, distance, pressure, humidity, counter };
-                    foreach(double val in extractions)
-                    {
-                        Debug.WriteLine(val);
-                    }
+                    //also note, that i had to get away the \r\n from the end of the data, because the data was not parsed correctly, (removed from the sender side)
+                    sensordata.Temperature = ExtractValue(data, 'T');
+                    sensordata.Humidity = ExtractValue(data, 'H');
+                    sensordata.Pressure = ExtractValue(data, 'P');
+                    sensordata.Distance = ExtractValue(data, 'D');
+                    sensordata.Counter = ExtractValue(data, '#');
+
+                    WriteDataToCsv(sensordata);
+
                 }
                 else
                 {
@@ -323,6 +365,13 @@ namespace GUIforGND
         }
 
 
+        private static void WriteDataToCsv(SensorData data)
+        {
+            using (StreamWriter sw = File.AppendText(csvFilePath))
+            {
+                sw.WriteLine($"\"{data.Temperature}\",\"{data.Humidity}\",\"{data.Pressure}\",\"{data.Distance}\",{data.Counter}"); //vals need to be stored in prentecies ("), because the parsing saves them with a comma (,) and the csv would interpret it as a new column
+            }
+        }
 
         // Helper method to extract a value after a specific letter
         private double ExtractValue(string data, char prefix)
@@ -336,7 +385,7 @@ namespace GUIforGND
             {
                 endIndex++;
             }
-
+        
             string valueString = data.Substring(startIndex + 1, endIndex - startIndex - 1);
             return double.Parse(valueString, CultureInfo.InvariantCulture);
         }
@@ -349,6 +398,7 @@ namespace GUIforGND
                 _serialPort.Close();
             }
             _timer.Stop();
+            
             base.OnClosed(e);
         }
     }

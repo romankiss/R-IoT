@@ -57,7 +57,7 @@ namespace CanSat
 
         //static int loopback_counter = 0;
         static int pub_counter = 0;
-        const int pub_period = 3000;     // miliseconds
+        const int pub_period = 900;     // miliseconds
         static E22 lora = null;
         static ushort BroadcastAddress = 0xFFFF;
         static Sht4X sensorTH = null;
@@ -243,7 +243,7 @@ namespace CanSat
                         // add more sensors to the payload    
 
                         // EOD (End of Data - Payload)
-                        payload += $"\r\n";
+                        //payload += $"\r\n";
                         //
                         Debug.WriteLine($">>> [{DateTime.UtcNow.ToString("hh:mm:ss.fff")}] {payload}");
                         //

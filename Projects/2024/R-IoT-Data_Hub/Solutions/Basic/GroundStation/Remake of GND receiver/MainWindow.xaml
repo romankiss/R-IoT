@@ -4,44 +4,61 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         Title="COM Port Reader" Height="769" Width="729">
     <Grid>
-        <!-- ComboBox for COM Ports -->
-        <ComboBox x:Name="ComPortComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0" Width="150"/>
 
-        <!-- ComboBox for Baud Rate Selection -->
-        <ComboBox x:Name="BaudRateComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="180,20,0,0" Width="100">
-            <ComboBoxItem Content="9600"/>
-            <ComboBoxItem Content="19200"/>
-            <ComboBoxItem Content="38400"/>
-            <ComboBoxItem Content="57600"/>
-            <ComboBoxItem Content="115200"/>
-        </ComboBox>
+        <!-- GroupBox for Port Settings -->
+        <GroupBox Header="Port Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Padding="10">
+            <StackPanel Orientation="Horizontal">
+                <!-- ComboBox for COM Ports -->
+                <ComboBox x:Name="ComPortComboBox" Width="150" Margin="0,0,10,0"/>
 
-        <!-- Button to Refresh COM Ports -->
-        <Button x:Name="RefreshButton" Content="Refresh COM Ports" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="290,20,0,0" Width="120" Click="RefreshButton_Click"/>
+                <!-- ComboBox for Baud Rate Selection -->
+                <ComboBox x:Name="BaudRateComboBox" Width="100" Margin="0,0,10,0">
+                    <ComboBoxItem Content="9600"/>
+                    <ComboBoxItem Content="19200"/>
+                    <ComboBoxItem Content="38400"/>
+                    <ComboBoxItem Content="57600"/>
+                    <ComboBoxItem Content="115200"/>
+                </ComboBox>
 
-        <!-- Button to Start Reading from COM Port -->
-        <Button x:Name="StartButton" Content="Start Reading" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="420,20,0,0" Width="100" Click="StartButton_Click"/>
+                <!-- Button to Refresh COM Ports -->
+                <Button x:Name="RefreshButton" Content="Refresh COM Ports" Width="120" Margin="0,0,10,0" Click="RefreshButton_Click"/>
 
-        <!-- Button to Disconnect from COM Port -->
-        <Button x:Name="DisconnectButton" Content="Disconnect" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="530,20,0,0" Width="100" Click="DisconnectButton_Click" IsEnabled="False"/>
+                <!-- Button to Start Reading from COM Port -->
+                <Button x:Name="StartButton" Content="Start Reading" Width="100" Margin="0,0,10,0" Click="StartButton_Click"/>
 
-        <!-- Button to Save Log to File -->
-        <Button x:Name="SaveLogButton" Content="Save Log" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="530,60,0,0" Width="100" Click="SaveLogButton_Click"/>
+                <!-- Button to Disconnect from COM Port -->
+                <Button x:Name="DisconnectButton" Content="Disconnect" Width="100" Click="DisconnectButton_Click" IsEnabled="False"/>
+            </StackPanel>
+        </GroupBox>
 
-        <!-- TextBox for User Input -->
-        <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,60,0,0" Width="295" Height="20" Text="Enter data"/>
+        <!-- GroupBox for Data Settings -->
+        <GroupBox Header="Data Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,80,0,0" Padding="10" Width="642">
+            <StackPanel Orientation="Horizontal">
+                <!-- ComboBox for Data Interpretation Selection -->
+                <ComboBox x:Name="DataInterpretationComboBox" Width="150" Margin="0,0,10,0" RenderTransformOrigin="0.507,-0.226">
+                    <ComboBoxItem Content="Hexadecimal bytes with all metadata"/>
+                    <ComboBoxItem Content="Text without metadata"/>
+                </ComboBox>
 
-        <!-- Button to Send Data -->
-        <Button x:Name="SendButton" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="430,60,0,0" Width="80" Click="SendButton_Click"/>
+                <!-- TextBox for User Input -->
+                <TextBox x:Name="InputTextBox" Width="200" Height="20" Margin="0,0,10,0" Text="Enter data"/>
 
-        <!-- ComboBox for Data Interpretation Selection -->
-        <ComboBox x:Name="DataInterpretationComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,60,0,0" Width="100" RenderTransformOrigin="0.507,-0.226">
-            <ComboBoxItem Content="Hexadecimal bytes with all metadata"/>
-            <ComboBoxItem Content="Text without metadata"/>
-        </ComboBox>
+                <!-- Button to Send Data -->
+                <Button x:Name="SendButton" Content="Send" Width="80" Margin="0,0,10,0" Click="SendButton_Click"/>
 
+                <!-- Button to Save Log to File -->
+                <Button x:Name="SaveLogButton" Content="Save Log" Width="100" Click="SaveLogButton_Click"/>
+            </StackPanel>
+        </GroupBox>
 
-        <TabControl x:Name="ConsoleGraphTabControl" Margin="0,87,0,61">
+        <GroupBox Header="DB Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="10" Margin="10,150,0,0" Width="642">
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="ConnectionStringTextBox" Width="494" Height="20" Margin="0,0,10,0" Text="Enter connection string"/>
+                <Button x:Name="ConnectToDBButton" Content="Connect to DB" Width="100" Click="ConnectToDBButton_Click"/>
+            </StackPanel>
+        </GroupBox>
+
+        <TabControl x:Name="ConsoleGraphTabControl" Margin="0,218,0,61">
             <TabItem Header="Console log">
                 <!-- TextBox for Log Display -->
                 <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="20,100,20,50">
@@ -50,15 +67,7 @@
             </TabItem>
         </TabControl>
 
-
-
-
-
         <!-- TextBlock to Display Status -->
         <TextBlock x:Name="MessageTextBlock" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20,0,0,20" Text=""/>
-
-
-
-
     </Grid>
 </Window>
