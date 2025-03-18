@@ -123,7 +123,7 @@ namespace CanSat
                 {
                     Debug.WriteLine("TH sensor initialization failed.");
                 }
-            } //RK
+            }
                 #endregion
 
                 #region ToF
@@ -275,7 +275,7 @@ namespace CanSat
                 Blink.Blinks(0, 20, 0, 250, 2);      // good light
                 Thread.Sleep(Timeout.Infinite);
                 #endregion
-          // } RK
+          
         }
         public static class Diag
         {
