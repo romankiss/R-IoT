@@ -11,6 +11,7 @@ using LiveCharts.Wpf;
 using Microsoft.Win32;
 using System.Globalization;
 using Npgsql;
+using System.Text.RegularExpressions;
 
 
 namespace GUIforGND
@@ -19,18 +20,20 @@ namespace GUIforGND
     {
         public class SensorData
         {
-            public double Temperature { get; set; }
-            public double Humidity { get; set; }
-            public double Pressure { get; set; }
-            public double Distance { get; set; }
-            public double Counter { get; set; }
+            public float Temperature { get; set; }
+            public float Humidity { get; set; }
+            public int Pressure { get; set; }
+            public int Distance { get; set; }
+            public int Counter { get; set; }
         }
 
         public SensorData sensordata { get; set; } = new SensorData();
-        private static string csvFilePath = "C:\\Users\\vlcko\\OneDrive\\Desktop\\sensor_data.csv";
+       
+        private static string csvFilePath = "C:\\Users\\"+ Environment.UserName+"\\OneDrive\\Desktop\\sensor_data_" + DateTime.Now.ToString("dd. MM. yyyy HH-mm") + ".csv";
         private SerialPort _serialPort; // SerialPort object for communication
         private DispatcherTimer _timer; // Timer for periodic updates
         readonly object _sendLock = new(); // For thread-safe writing to the device
+        public static Dictionary<string, string> telemetryData { get; set; } = new Dictionary<string, string>();
 
         // Connection string for your AWS PostgreSQL database
         string connectionString = "Host=your-aws-endpoint;Username=your-user;Password=your-password;Database=your-db";
@@ -60,9 +63,11 @@ namespace GUIforGND
             {
                 using (StreamWriter sw = File.CreateText(csvFilePath))
                 {
-                    sw.WriteLine("Temperature,Humidity,Pressure,Distance,Counter");
+                    sw.WriteLine("Counter, Temperature, Humidity, Distance, Pressure");
                 }
             }
+
+
         }
 
         // Method to refresh the list of available COM ports
@@ -333,16 +338,39 @@ namespace GUIforGND
                     data = sb.ToString();
 
 
+
+                    // extracting a telemetry data
+                    // sample
+                    //string input = "#123T22.33H10.05P0.12345D-1\r\n";
+                    // creating a telemetryData dictionary
+                    try
+                    {
+                        var values = Regex.Split(data, @"([#\r\nA-Z]+)").Where(s => s != String.Empty && s != "\r\n").ToArray();
+                        telemetryData = Enumerable.Range(0, values.Length / 2).ToDictionary(i => values[2 * i], i => values[2 * i + 1]);
+                        // usage
+                        bool isTemperatureExtracted = float.TryParse(telemetryData["T"], out float temperature);
+                        bool isHumidityExtracted = float.TryParse(telemetryData["H"], out float humidity);
+                        bool isPressureExtracted = int.TryParse(telemetryData["P"], out int pressure);
+                        bool isDistanceExtracted = int.TryParse(telemetryData["D"], out int distance);
+                        bool isCounterExtracted = int.TryParse(telemetryData["#"], out int counter);
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.WriteLine("Error parsing the value from the data packet: " + ex.Message);
+                    }
+
+
+
                     // Update the log
                     // Parse the data (e.g., "T25.12H48.12P998")
                     //also note, that i had to get away the \r\n from the end of the data, because the data was not parsed correctly, (removed from the sender side)
-                    sensordata.Temperature = ExtractValue(data, 'T');
+                   /* sensordata.Temperature = ExtractValue(data, 'T');
                     sensordata.Humidity = ExtractValue(data, 'H');
                     sensordata.Pressure = ExtractValue(data, 'P');
                     sensordata.Distance = ExtractValue(data, 'D');
-                    sensordata.Counter = ExtractValue(data, '#');
+                    sensordata.Counter = ExtractValue(data, '#');*/
 
-                    WriteDataToCsv(sensordata);
+                    WriteDataToCsv();
 
                 }
                 else
@@ -365,11 +393,14 @@ namespace GUIforGND
         }
 
 
-        private static void WriteDataToCsv(SensorData data)
+        private static void WriteDataToCsv()
         {
             using (StreamWriter sw = File.AppendText(csvFilePath))
             {
-                sw.WriteLine($"\"{data.Temperature}\",\"{data.Humidity}\",\"{data.Pressure}\",\"{data.Distance}\",{data.Counter}"); //vals need to be stored in prentecies ("), because the parsing saves them with a comma (,) and the csv would interpret it as a new column
+                // simple csv record
+                string csv = string.Join(",", telemetryData.Values) + "\r\n";
+                sw.Write(csv);
+                //sw.WriteLine($"\"{data.Temperature}\",\"{data.Humidity}\",\"{data.Pressure}\",\"{data.Distance}\",{data.Counter}"); //vals need to be stored in prentecies ("), because the parsing saves them with a comma (,) and the csv would interpret it as a new column
             }
         }
 
