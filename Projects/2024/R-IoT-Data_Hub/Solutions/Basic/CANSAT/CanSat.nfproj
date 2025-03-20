@@ -20,6 +20,7 @@
   <ItemGroup>
     <Compile Include="Base.cs" />
     <Compile Include="Blink.cs" />
+    <Compile Include="Buzz.cs" />
     <Compile Include="E22_900T22D\Wrapper.cs" />
     <Compile Include="E22_900T22D\Extensions.cs" />
     <Compile Include="Program.cs" />

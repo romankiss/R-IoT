@@ -68,19 +68,9 @@ namespace CanSat
         //static ToFSense sensorToF = null;
         static Bmp280 sensorBMP280 = null;
         static GpioController ioctrl = new GpioController();
-        public static M5AtomicMotion m5base = null;
+        
 
-        public static void MakeABuzz(int duration = 1000)
-        {
-            if (m5base == null)
-            {
-                Debug.WriteLine("Motion base not initialized.");
-                return;
-            }
-            m5base.SetMotorSpeed(1, 100);
-            Thread.Sleep(duration);
-            m5base.SetMotorSpeed(1, 0);
-        }
+        
 
         public static void Main()
         {
@@ -104,17 +94,8 @@ namespace CanSat
                 Debug.WriteLine("Button initialization failed.");
             }
 
-            try
-            {
-                Configuration.SetPinFunction(pinI2C2_SCK, DeviceFunction.I2C2_CLOCK);
-                Configuration.SetPinFunction(pinI2C2_SDA, DeviceFunction.I2C2_DATA);
-            }catch (Exception ex)
-            {
-                Debug.WriteLine("Error initing I2C2 BUS: " + ex.Message);
-            }
-            //the base is hardwired to be on the second i2c bus
-            I2cDevice motionBaseDev = new I2cDevice(new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress));
-            m5base = M5AtomicMotion.Create(motionBaseDev);
+            Buzz bz = new Buzz();
+            Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);
             #endregion
 
 
@@ -233,12 +214,13 @@ namespace CanSat
                 FireTelemetryData();
             };
 
-            m5base.SetMotorSpeed(1, 50);
+            Buzz.MakeABuzz(1000, 50);
+           
 
             // Timer handler/callback
             void FireTelemetryData()
             {
-
+                Buzz.MakeABuzz(10, 50);
                 //Debug.WriteLine("");
                 Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
 
