@@ -48,8 +48,8 @@ namespace CanSat
         const int pinLedA = -1;
         const int pinI2C1_SDA = 2;      // Grove
         const int pinI2C1_SCK = 1;      // Grove
-        const int pinI2C2_SDA = 25;      // second i2C bus is being used to comm. with the base, that has the buzzer connected on the motor pins --- these pins wont work coz i have again forgot to translate  the pinout from atom lite numbering to s3 lite
-        const int pinI2C2_SCK = 21;        //also note, that the base MUST be on the second bus due to hardwiring reasons
+        const int pinI2C2_SDA = 38;      // second i2C bus is being used to comm. with the base, that has the buzzer connected on the motor pins 
+        const int pinI2C2_SCK = 39;        //also note, that the base MUST be on the second bus due to hardwiring reasons
         const int pinCOM3_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  
         const int pinCOM3_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
         const int pinCOM2_TX = 8;       // PORTB-G8, 
@@ -68,12 +68,24 @@ namespace CanSat
         //static ToFSense sensorToF = null;
         static Bmp280 sensorBMP280 = null;
         static GpioController ioctrl = new GpioController();
-        public static M5AtomicMotion motionbase = null;
+        public static M5AtomicMotion m5base = null;
 
+        public static void MakeABuzz(int duration = 1000)
+        {
+            if (m5base == null)
+            {
+                Debug.WriteLine("Motion base not initialized.");
+                return;
+            }
+            m5base.SetMotorSpeed(1, 100);
+            Thread.Sleep(duration);
+            m5base.SetMotorSpeed(1, 0);
+        }
 
         public static void Main()
         {
             Debug.WriteLine("Hello from nanoFramework! TEST");
+
 
 
             #region setup
@@ -94,208 +106,209 @@ namespace CanSat
 
             try
             {
-                // Configure the I2C GPIOs used for the bus
-                Configuration.SetPinFunction(pinI2C2_SDA, DeviceFunction.I2C2_DATA);
                 Configuration.SetPinFunction(pinI2C2_SCK, DeviceFunction.I2C2_CLOCK);
-
-                //the base is hardwired to be on the second i2c bus
-                I2cDevice motionBaseDev = new I2cDevice(new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress));
-                motionbase = M5AtomicMotion.Create(motionBaseDev);
-            }
-            catch (Exception ex)
+                Configuration.SetPinFunction(pinI2C2_SDA, DeviceFunction.I2C2_DATA);
+            }catch (Exception ex)
             {
+                Debug.WriteLine("Error initing I2C2 BUS: " + ex.Message);
+            }
+            //the base is hardwired to be on the second i2c bus
+            I2cDevice motionBaseDev = new I2cDevice(new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress));
+            m5base = M5AtomicMotion.Create(motionBaseDev);
+            #endregion
+
+
+            #region SENSORS 
+            try
+            {
+                //ioctrl.OpenPin(pinI2C1_SDA, PinMode.InputPullUp);  
+                //ioctrl.OpenPin(pinI2C1_SCK, PinMode.InputPullUp); 
+                Configuration.SetPinFunction(pinI2C1_SDA, DeviceFunction.I2C1_DATA);
+                Configuration.SetPinFunction(pinI2C1_SCK, DeviceFunction.I2C1_CLOCK);
+            }
+            catch
+            (Exception ex)
+            {
+                Debug.WriteLine("Error initing I2C BUS: " + ex.Message);
+            }
+
+
+
+            #region T&H 
+            I2cDevice i2c_th = new(new I2cConnectionSettings(1, Sht4X.I2cDefaultAddress));     // Grove connector
+            var resTH = i2c_th.WriteByte(0x07);
+            if (resTH.Status == I2cTransferStatus.FullTransfer)
+            {
+                sensorTH = new Sht4X(i2c_th);
+                i2c_th.WriteByte(0x96);         //send soft reset to avoid initial CRC non-validity
+                var data = sensorTH?.ReadData(Iot.Device.Sht4x.MeasurementMode.NoHeaterMediumPrecision);
+                if (data != null)
                 {
-                    Debug.WriteLine("Unable to config, or create the second i2c bus or the base dev. on it... EX: " + ex.Message);
+                    Debug.WriteLine($"sensorTH: temperature[C]={data.Temperature.DegreesCelsius:F2}, humidity[%]={data.RelativeHumidity.Percent:F2}");
                 }
-                #endregion
+                else
+                {
+                    Debug.WriteLine("TH sensor initialization failed.");
+                }
+            }
+            #endregion
+
+            #region ToF
+            /* VL53L0X sensor, not used more,,, replaced by the waveshare sensor
+            *I2cDevice i2c_tof = I2cDevice.Create(new I2cConnectionSettings(1, Vl53L0X.DefaultI2cAddress));
+            var resToF = i2c_tof.WriteByte(0x07);
+            sensorToF = new Vl53L0X(i2c_tof, 500);
+
+            if (sensorToF != null)
+            {
+                sensorToF.HighResolution = false;
+                sensorToF.Precision = Precision.HighPrecision;
+                sensorToF.MeasurementMode = Iot.Device.Vl53L0X.MeasurementMode.Single;
+            }
+            else
+            {
+                Debug.WriteLine("ToF sensor initialization failed.");
+            }*/
+
+            // Waveshare ToF Sensor
+            I2cDevice i2c_tof = new(new I2cConnectionSettings(1, ToFSense.DefaultI2cAddress)); // Grove connector
+            var res = i2c_tof.WriteByte(0x07);//check if it is the same as tof, coz here was a mistake previously, instead of i2c_bmp280 was tof used...
+            if (res.Status == I2cTransferStatus.FullTransfer)
+            {
+                sensorToF = new ToFSense(i2c_tof);
+                Debug.WriteLine($"sensorTOF: {sensorToF.Distance} mm");
+            }
 
 
-                #region SENSORS 
+            #endregion
+
+
+            #region BMP280   
+            I2cDevice i2c_bmp280 = new(new I2cConnectionSettings(1, 0x76)); // Grove connector
+            var resBMP280 = i2c_bmp280.WriteByte(0x07); //.WriteByte(0x07);
+            if (resBMP280.Status == I2cTransferStatus.FullTransfer)
+            {
+                sensorBMP280 = new Bmp280(i2c_bmp280);
+                if (sensorBMP280 != null)
+                {
+                    sensorBMP280.SetPowerMode(Bmx280PowerMode.Normal);
+                    sensorBMP280.TemperatureSampling = Sampling.UltraHighResolution;
+                    sensorBMP280.PressureSampling = Sampling.UltraHighResolution;
+                    sensorBMP280.TryReadPressure(out var bmpPressure);
+                    Debug.WriteLine($"sensorBMP: {bmpPressure.Hectopascals:F2}hPa");
+                }
+                else
+                {
+                    Debug.WriteLine("BMP280 sensor initialization failed.");
+                }
+            }
+            #endregion
+            #endregion
+
+            #region LoRa E22           
+            Configuration.SetPinFunction(pinCOM2_TX, DeviceFunction.COM2_TX);
+            Configuration.SetPinFunction(pinCOM2_RX, DeviceFunction.COM2_RX);
+            lora = E22.Create("COM2", loraAddress: loraAddress);
+            if (lora != null)
+            {
+                lora.OnPacketReceived += (sender, e) =>
+                {
+                    Debug.WriteLine(e.Data.ToString());
+                    Blink.Blinks(0, 255, 0, 100, 1, 1);  // it must be async call                 
+                };
+            }
+            else
+            {
+                Debug.WriteLine("LoRa initialization failed.");
+            }
+            #endregion
+
+
+            Timer pubTimer = new Timer((s) => FireTelemetryData(), null, 0, pub_period);
+
+            // Button handler/callback
+            buttonM5.Press += (sender, e) =>
+            {
+                // the place to put the code for handling an event from the buttonM5
+                FireTelemetryData();
+            };
+
+            m5base.SetMotorSpeed(1, 50);
+
+            // Timer handler/callback
+            void FireTelemetryData()
+            {
+
+                //Debug.WriteLine("");
+                Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
+
                 try
                 {
-                    //ioctrl.OpenPin(pinI2C1_SDA, PinMode.InputPullUp);  
-                    //ioctrl.OpenPin(pinI2C1_SCK, PinMode.InputPullUp); 
-                    Configuration.SetPinFunction(pinI2C1_SDA, DeviceFunction.I2C1_DATA);
-                    Configuration.SetPinFunction(pinI2C1_SCK, DeviceFunction.I2C1_CLOCK);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("Error initing I2C BUS: " + e.Message);
-                }
+                    int counter = Interlocked.Increment(ref pub_counter);
+                    string payload = $"#{counter}";
+                    //SetLedByColor(0, 0, 2, 50);
 
-
-
-                #region T&H 
-                I2cDevice i2c_th = new(new I2cConnectionSettings(1, Sht4X.I2cDefaultAddress));     // Grove connector
-                var resTH = i2c_th.WriteByte(0x07);
-                if (resTH.Status == I2cTransferStatus.FullTransfer)
-                {
-                    sensorTH = new Sht4X(i2c_th);
-                    i2c_th.WriteByte(0x96);         //send soft reset to avoid initial CRC non-validity
-                    var data = sensorTH?.ReadData(Iot.Device.Sht4x.MeasurementMode.NoHeaterMediumPrecision);
-                    if (data != null)
+                    if (sensorTH != null)
                     {
-                        Debug.WriteLine($"sensorTH: temperature[C]={data.Temperature.DegreesCelsius:F2}, humidity[%]={data.RelativeHumidity.Percent:F2}");
+                        var data = sensorTH.ReadData(Iot.Device.Sht4x.MeasurementMode.NoHeaterMediumPrecision);
+                        if (data != null)
+                        {
+                            var temperature = data.Temperature.DegreesCelsius;
+                            var humidity = data.RelativeHumidity.Percent;
+                            payload += $"T{temperature:F2}H{humidity:F2}";
+                        }
                     }
-                    else
+                    if (sensorToF != null)
                     {
-                        Debug.WriteLine("TH sensor initialization failed.");
+                        payload += $"D{sensorToF.Distance}";
                     }
-                }
-                #endregion
-
-                #region ToF
-                /* VL53L0X sensor, not used more,,, replaced by the waveshare sensor
-                *I2cDevice i2c_tof = I2cDevice.Create(new I2cConnectionSettings(1, Vl53L0X.DefaultI2cAddress));
-                var resToF = i2c_tof.WriteByte(0x07);
-                sensorToF = new Vl53L0X(i2c_tof, 500);
-
-                if (sensorToF != null)
-                {
-                    sensorToF.HighResolution = false;
-                    sensorToF.Precision = Precision.HighPrecision;
-                    sensorToF.MeasurementMode = Iot.Device.Vl53L0X.MeasurementMode.Single;
-                }
-                else
-                {
-                    Debug.WriteLine("ToF sensor initialization failed.");
-                }*/
-
-                // Waveshare ToF Sensor
-                I2cDevice i2c_tof = new(new I2cConnectionSettings(1, ToFSense.DefaultI2cAddress)); // Grove connector
-                var res = i2c_tof.WriteByte(0x07);//check if it is the same as tof, coz here was a mistake previously, instead of i2c_bmp280 was tof used...
-                if (res.Status == I2cTransferStatus.FullTransfer)
-                {
-                    sensorToF = new ToFSense(i2c_tof);
-                    Debug.WriteLine($"sensorTOF: {sensorToF.Distance} mm");
-                }
-
-
-                #endregion
-
-
-                #region BMP280   
-                I2cDevice i2c_bmp280 = new(new I2cConnectionSettings(1, 0x76)); // Grove connector
-                var resBMP280 = i2c_bmp280.WriteByte(0x07); //.WriteByte(0x07);
-                if (resBMP280.Status == I2cTransferStatus.FullTransfer)
-                {
-                    sensorBMP280 = new Bmp280(i2c_bmp280);
                     if (sensorBMP280 != null)
                     {
-                        sensorBMP280.SetPowerMode(Bmx280PowerMode.Normal);
-                        sensorBMP280.TemperatureSampling = Sampling.UltraHighResolution;
-                        sensorBMP280.PressureSampling = Sampling.UltraHighResolution;
                         sensorBMP280.TryReadPressure(out var bmpPressure);
-                        Debug.WriteLine($"sensorBMP: {bmpPressure.Hectopascals:F2}hPa");
+                        payload += $"P{bmpPressure.Hectopascals:F2}";
+                    }
+
+                    // add more sensors to the payload    
+
+                    // EOD (End of Data - Payload)
+                    //payload += $"\r\n";
+                    //
+                    Debug.WriteLine($">>> [{DateTime.UtcNow.ToString("hh:mm:ss.fff")}] {payload}");
+                    //
+                    if (lora != null && lora.IsOpen)
+                    {
+                        lora.Send(address: BroadcastAddress, data: payload);
                     }
                     else
-                    {
-                        Debug.WriteLine("BMP280 sensor initialization failed.");
-                    }
+                        Debug.WriteLine($"Device is not ready to publish message");
+
+                    //SetLedByColor(Color.Black);
                 }
-                #endregion
-                #endregion
-
-                #region LoRa E22           
-                Configuration.SetPinFunction(pinCOM2_TX, DeviceFunction.COM2_TX);
-                Configuration.SetPinFunction(pinCOM2_RX, DeviceFunction.COM2_RX);
-                lora = E22.Create("COM2", loraAddress: loraAddress);
-                if (lora != null)
+                catch (Exception ex)
                 {
-                    lora.OnPacketReceived += (sender, e) =>
-                    {
-                        Debug.WriteLine(e.Data.ToString());
-                        Blink.Blinks(0, 255, 0, 100, 1, 1);  // it must be async call                 
-                    };
+                    Debug.WriteLine("EXCEPTION: " + ex.InnerException?.Message ?? ex.Message);
+                    //SetLedByColor(32, 0, 0);
                 }
-                else
+                finally
                 {
-                    Debug.WriteLine("LoRa initialization failed.");
-                }
-                #endregion
-
-
-                Timer pubTimer = new Timer((s) => FireTelemetryData(), null, 0, pub_period);
-
-                // Button handler/callback
-                buttonM5.Press += (sender, e) =>
-                {
-                    // the place to put the code for handling an event from the buttonM5
-                    FireTelemetryData();
-                };
-
-
-
-                // Timer handler/callback
-                void FireTelemetryData()
-                {
-
-                    //Debug.WriteLine("");
-                    Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
-
-                    try
-                    {
-                        int counter = Interlocked.Increment(ref pub_counter);
-                        string payload = $"#{counter}";
-                        //SetLedByColor(0, 0, 2, 50);
-
-                        if (sensorTH != null)
-                        {
-                            var data = sensorTH.ReadData(Iot.Device.Sht4x.MeasurementMode.NoHeaterMediumPrecision);
-                            if (data != null)
-                            {
-                                var temperature = data.Temperature.DegreesCelsius;
-                                var humidity = data.RelativeHumidity.Percent;
-                                payload += $"T{temperature:F2}H{humidity:F2}";
-                            }
-                        }
-                        if (sensorToF != null)
-                        {
-                            payload += $"D{sensorToF.Distance}";
-                        }
-                        if (sensorBMP280 != null)
-                        {
-                            sensorBMP280.TryReadPressure(out var bmpPressure);
-                            payload += $"P{bmpPressure.Hectopascals:F2}";
-                        }
-
-                        // add more sensors to the payload    
-
-                        // EOD (End of Data - Payload)
-                        //payload += $"\r\n";
-                        //
-                        Debug.WriteLine($">>> [{DateTime.UtcNow.ToString("hh:mm:ss.fff")}] {payload}");
-                        //
-                        if (lora != null && lora.IsOpen)
-                        {
-                            lora.Send(address: BroadcastAddress, data: payload);
-                        }
-                        else
-                            Debug.WriteLine($"Device is not ready to publish message");
-
-                        //SetLedByColor(Color.Black);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine("EXCEPTION: " + ex.InnerException?.Message ?? ex.Message);
-                        //SetLedByColor(32, 0, 0);
-                    }
-                    finally
-                    {
-                        Debug.WriteLine($"nFmem_FireEnd={Memory.Run(true)}");
-                        Debug.WriteLine("");
-                    }
+                    Debug.WriteLine($"nFmem_FireEnd={Memory.Run(true)}");
+                    Debug.WriteLine("");
                 }
 
-                #region Ready for IoT (last step)
-                Diag.PrintMemory("READY", true);
-                //timer_watchdog?.Dispose();
-                Blink.Blinks(0, 20, 0, 250, 2);      // good light
-                Thread.Sleep(Timeout.Infinite);
-                #endregion
-
+                
             }
+            
+
+            #region Ready for IoT (last step)
+            Diag.PrintMemory("READY", true);
+            //timer_watchdog?.Dispose();
+            Blink.Blinks(0, 20, 0, 250, 2);      // good light
+            Thread.Sleep(Timeout.Infinite);
+            #endregion
+
         }
+
+
         public static class Diag
         {
             public static void PrintMemory(string msg, bool compactHeap = false)
@@ -304,18 +317,6 @@ namespace CanSat
                 Debug.WriteLine($"{msg}-> Total Mem {totalSize} Total Free {totalFreeSize} Largest Block {largestBlock}");
                 Debug.WriteLine($"nF Mem {Memory.Run(compactHeap)} ");
             }
-        }
-
-        public static void MakeABuzz(int duration = 1000)
-        {
-            if(motionbase == null)
-            {
-                Debug.WriteLine("Motion base not initialized.");
-                return;
-            }
-            motionbase.SetMotorSpeed(1, 100);
-            Thread.Sleep(duration);
-            motionbase.SetMotorSpeed(1, 0);
         }
 
     }
