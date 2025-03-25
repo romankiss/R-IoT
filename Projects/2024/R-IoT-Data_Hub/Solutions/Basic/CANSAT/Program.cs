@@ -68,9 +68,9 @@ namespace CanSat
         //static ToFSense sensorToF = null;
         static Bmp280 sensorBMP280 = null;
         static GpioController ioctrl = new GpioController();
-        
+        static string file_path = string.Empty;
 
-        
+
 
         public static void Main()
         {
@@ -94,8 +94,15 @@ namespace CanSat
                 Debug.WriteLine("Button initialization failed.");
             }
 
-            Buzz bz = new Buzz();
-            Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);
+            file_path = "I:\\Measurement_" + DateTime.UtcNow.ToString("dd-MM-yyyy_HH-mm") + ".csv";
+            Storage.init(file_path);
+            Storage.list_files("I:\\", true);
+            //Storage.PrintStorageInfo("I:\\");
+            Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");
+            Storage.read(file_path);
+
+            /* Buzz bz = new Buzz();
+             Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);*/
             #endregion
 
 
@@ -214,13 +221,13 @@ namespace CanSat
                 FireTelemetryData();
             };
 
-            Buzz.MakeABuzz(1000, 50);
+            //Buzz.MakeABuzz(1000, 50);
            
 
             // Timer handler/callback
             void FireTelemetryData()
             {
-                Buzz.MakeABuzz(10, 50);
+                //Buzz.MakeABuzz(10, 50);
                 //Debug.WriteLine("");
                 Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
 
