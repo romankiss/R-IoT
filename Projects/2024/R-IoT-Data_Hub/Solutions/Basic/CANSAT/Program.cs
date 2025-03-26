@@ -60,6 +60,7 @@ namespace CanSat
         //static int loopback_counter = 0;
         static int pub_counter = 0;
         const int pub_period = 900;     // miliseconds
+        const bool saveDataToLocalStorage = false;
         static E22 lora = null;
         static ushort BroadcastAddress = 0xFFFF;
         static Sht4X sensorTH = null;
@@ -69,6 +70,16 @@ namespace CanSat
         static Bmp280 sensorBMP280 = null;
         static GpioController ioctrl = new GpioController();
         static string file_path = string.Empty;
+
+        public static class SensorData
+        {
+            public static DateTime Time { get; set; }
+            public static int Counter { get; set; }
+            public static double Temperature { get; set; }
+            public static double Humidity { get; set; }
+            public static double Distance { get; set; }
+            public static double Pressure { get; set; }
+        }
 
 
 
@@ -94,12 +105,16 @@ namespace CanSat
                 Debug.WriteLine("Button initialization failed.");
             }
 
-            file_path = "I:\\Measurement_" + DateTime.UtcNow.ToString("dd-MM-yyyy_HH-mm") + ".csv";
-            Storage.init(file_path);
-            Storage.list_files("I:\\", true);
-            //Storage.PrintStorageInfo("I:\\");
-            Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");
-            Storage.read(file_path);
+            if (saveDataToLocalStorage)
+            {
+                file_path = "I:\\Measurement_" + DateTime.UtcNow.ToString("dd-MM-yyyy_HH-mm") + ".csv";
+                Storage.init(file_path);
+                Storage.list_files("I:\\", true);
+                //Storage.PrintStorageInfo("I:\\");
+                Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");
+                Storage.read(file_path);
+            }
+
 
             /* Buzz bz = new Buzz();
              Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);*/
