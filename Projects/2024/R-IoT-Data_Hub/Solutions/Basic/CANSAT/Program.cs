@@ -105,16 +105,12 @@ namespace CanSat
                 Debug.WriteLine("Button initialization failed.");
             }
 
-            if (saveDataToLocalStorage)
-            {
-                file_path = "I:\\Measurement_" + DateTime.UtcNow.ToString("dd-MM-yyyy_HH-mm") + ".csv";
-                Storage.init(file_path);
-                Storage.list_files("I:\\", true);
-                //Storage.PrintStorageInfo("I:\\");
-                Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");
-                Storage.read(file_path);
-            }
-
+            file_path = "I:\\Measurement_" + DateTime.UtcNow.ToString("dd-MM-yyyy_HH-mm") + ".csv";
+            Storage.init(file_path);
+            Storage.list_files("I:\\", true);
+            //Storage.PrintStorageInfo("I:\\");
+            Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");
+            Storage.read(file_path);
 
             /* Buzz bz = new Buzz();
              Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);*/
