@@ -46,11 +46,11 @@ namespace CanSat
         const int pinNeo = 35;
         const int pinNeoPower = -1;
         const int pinLedA = -1;
-        const int pinI2C1_SDA = 2;      // Grove
+        const int pinI2C1_SDA = 2;      // Grove  the first i2C bus is being used to comm. with the Temp., Hum. and Press sensors as well as the dist. sensor
         const int pinI2C1_SCK = 1;      // Grove
         const int pinI2C2_SDA = 38;      // second i2C bus is being used to comm. with the base, that has the buzzer connected on the motor pins 
         const int pinI2C2_SCK = 39;        //also note, that the base MUST be on the second bus due to hardwiring reasons
-        const int pinCOM3_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  
+        const int pinCOM3_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  COM3 will hopefully be used for the GPS module
         const int pinCOM3_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
         const int pinCOM2_TX = 8;       // PORTB-G8, 
         const int pinCOM2_RX = 7;       // PORTB-G7
@@ -114,6 +114,39 @@ namespace CanSat
                 Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");
                 Storage.read(file_path);
             }
+
+            // Initialize the GPS module (defaults to COM2, TX=17, RX=16)
+            var gps = new M5GPS(uartPort: "COM3", pinCOM3_RX, pinCOM3_TX); //check for correct tx/rx connection
+
+            // Subscribe to GPS data events
+            gps.GpsDataReceived += (sender, e) =>
+            {
+                Debug.WriteLine($"GPS Data Received - Fix: {e.HasFix}");
+                if (e.HasFix)
+                {
+                    Debug.WriteLine($"Time: {e.FixTime}");
+                    Debug.WriteLine($"Latitude: {e.Latitude}°, Longitude: {e.Longitude}°");
+                    Debug.WriteLine($"Altitude: {e.Altitude}m");
+                    Debug.WriteLine($"Speed: {e.Speed}knots, Course: {e.Course}°");
+                    Debug.WriteLine($"Satellites: {e.SatellitesInUse} in use, {e.SatellitesInView} in view");
+                }
+                else
+                {
+                    Debug.WriteLine("Waiting for GPS fix...");
+                }
+            };
+
+            // Start the GPS module
+            gps.Start();
+
+            // Keep the program running
+            while (true)
+            {
+                Thread.Sleep(1000);
+            }
+
+            // To stop the GPS (this won't be reached in this example)
+            // gps.Stop();
             /* Buzz bz = new Buzz();
              Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);*/
             #endregion

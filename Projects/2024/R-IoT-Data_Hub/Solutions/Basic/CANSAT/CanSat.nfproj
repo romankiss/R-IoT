@@ -23,6 +23,7 @@
     <Compile Include="Buzz.cs" />
     <Compile Include="E22_900T22D\Wrapper.cs" />
     <Compile Include="E22_900T22D\Extensions.cs" />
+    <Compile Include="GPS_M5Stack.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage.cs" />
