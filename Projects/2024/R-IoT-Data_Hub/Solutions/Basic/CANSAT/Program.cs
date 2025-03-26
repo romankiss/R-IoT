@@ -98,7 +98,8 @@ namespace CanSat
             Storage.init(file_path);
             Storage.list_files("I:\\", true);
             //Storage.PrintStorageInfo("I:\\");
-            Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");
+            //Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");    
+            File.AppendAllText(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");  //Added by RK for test purpose
             Storage.read(file_path);
 
             /* Buzz bz = new Buzz();
