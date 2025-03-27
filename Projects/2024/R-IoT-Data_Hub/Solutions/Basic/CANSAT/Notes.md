@@ -42,3 +42,11 @@ var distance = telemetryData["D"];
 string csv = string.Join(",", telemetryData.Values) + "\r\n";
 </pre>
 
+4. Adding GPS Reader 
+</br>
+The following link shows a support for UART GPS (M5Stack, E108 GN02D, GN03D, etc.) Reader with a GGA parser:
+</br>
+https://github.com/romankiss/R-IoT/tree/d16b5e20ffb81b1302e4cf6bcd1e4b18cde1d2d9/Projects/2024/PatternsAndPractices/GPS
+
+
+
