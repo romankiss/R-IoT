@@ -29,7 +29,7 @@ namespace GUIforGND
 
         public SensorData sensordata { get; set; } = new SensorData();
        
-        private static string csvFilePath = "C:\\Users\\"+ Environment.UserName+"\\OneDrive\\Desktop\\sensor_data_" + DateTime.Now.ToString("dd. MM. yyyy HH-mm") + ".csv";
+        private static string csvFilePath = "C:\\Users\\"+ Environment.UserName+"\\Desktop\\sensor_data_" + DateTime.Now.ToString("dd. MM. yyyy HH-mm") + ".csv";
         private SerialPort _serialPort; // SerialPort object for communication
         private DispatcherTimer _timer; // Timer for periodic updates
         readonly object _sendLock = new(); // For thread-safe writing to the device

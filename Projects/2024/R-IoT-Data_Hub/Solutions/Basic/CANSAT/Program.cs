@@ -16,6 +16,7 @@ using Iot.Device.Bmxx80.PowerMode;
 using UnitsNet; // for pressure and temperature units
 using Memory = nanoFramework.Runtime.Native.GC;
 using Cansat;
+using CanSat.E22_900T22D.Extensions;
 
 namespace CanSat
 {
@@ -76,7 +77,7 @@ namespace CanSat
         {
             Debug.WriteLine("Hello from nanoFramework! TEST");
 
-
+            Thread.Sleep(5000);
 
             #region setup
 
