@@ -1,361 +1,132 @@
-﻿using System;
-using System.Text;
-using System.Threading;
-using nanoFramework.Hardware.Esp32;
+﻿// GPS Reader for GNGGA data
+// written by Roman Kiss, March 27, 2025,
+// version: 1.0.0.0  3/27/2025  initial version
+//
+//
+//
+//
+//
+//using NFAppLoRaE22;
+using System;
+using System.Device.Gpio;
+using System.Diagnostics;
 using System.IO.Ports;
+using System.Text;
 
 namespace CanSat
 {
-    /// <summary>
-    /// Represents the M5Stack GPS v1.1 module
-    /// </summary>
-    public class M5GPS
+    public delegate void OnGpsReceived(object source, RcvGpsArgs e);
+    public delegate void OnGpsUnknownReceived(object source, RcvGpsArgs e);
+
+    public class RcvGpsArgs : EventArgs
     {
-        private readonly SerialPort _serialPort;
-        private Thread _readingThread;
-        private bool _isRunning;
+        public string data { get; set; }
+    }
 
-        // GPS Data Properties
-        public double Latitude { get; private set; }
-        public double Longitude { get; private set; }
-        public double Altitude { get; private set; }
-        public DateTime FixTime { get; private set; }
-        public int SatellitesInView { get; private set; }
-        public int SatellitesInUse { get; private set; }
-        public double Speed { get; private set; } // in knots
-        public double Course { get; private set; } // in degrees
-        public bool HasFix { get; private set; }
+    public class GPS
+    {
+        SerialPort _serialport = null;
+        static string _rcvdata = string.Empty;
+        static readonly object _rcvLock = new();
+        //
+        const int readBufferSize = 512;
+        const int readTimeout = 6000;
+        const char watchChar = '$';
+        const int receivedBytesThreshold = 6;
+        //
+        public event OnGpsReceived OnGpsReceived_GNGGA = null;
+        public event OnGpsUnknownReceived OnGpsReceived_Unknown = null;
 
-        // Event for when new GPS data is available
-        public event EventHandler<GpsDataReceivedEventArgs> GpsDataReceived;
+        public bool IsOpen => _serialport != null ? _serialport.IsOpen : false;
 
-        /// <summary>
-        /// Initializes a new instance of the M5GPS class
-        /// </summary>
-        /// <param name="uartPort">The UART port number (default is COM2)</param>
-        /// <param name="txPin">The TX pin number (default is GPIO 17)</param>
-        /// <param name="rxPin">The RX pin number (default is GPIO 16)</param>
-        public M5GPS(string uartPort = "COM2", int txPin = 17, int rxPin = 16)
+        protected GPS(string portname = "COM1", int baudRate = 9600)
         {
-            // Configure the UART pins
-            Configuration.SetPinFunction(txPin, DeviceFunction.COM2_TX);
-            Configuration.SetPinFunction(rxPin, DeviceFunction.COM2_RX);
-
-            // Initialize the serial port
-            _serialPort = new SerialPort(uartPort)
+            _serialport = new SerialPort(portname, baudRate: baudRate);
+            if (_serialport != null)
             {
-                BaudRate = 9600,
-                Parity = Parity.None,
-                StopBits = StopBits.One,
-                Handshake = Handshake.None,
-                DataBits = 8,
-                ReadTimeout = 1000,
-                WriteTimeout = 1000
-            };
-        }
-
-        /// <summary>
-        /// Starts the GPS module and begins reading data
-        /// </summary>
-        public void Start()
-        {
-            if (_isRunning) return;
-
-            _serialPort.Open();
-            _isRunning = true;
-            _readingThread = new Thread(ReadData);
-            _readingThread.Start();
-        }
-
-        /// <summary>
-        /// Stops the GPS module
-        /// </summary>
-        public void Stop()
-        {
-            if (!_isRunning) return;
-
-            _isRunning = false;
-
-            // Remove the nullable timeout parameter
-            if (_readingThread != null)
-            {
-                _readingThread.Join(1000); // Use non-nullable timeout
+                _serialport.ReadBufferSize = readBufferSize;
+                _serialport.ReadTimeout = readTimeout;
+                _serialport.WatchChar = watchChar;
+                _serialport.ReceivedBytesThreshold = receivedBytesThreshold;
             }
-
-            _serialPort.Close();
         }
 
-        private void ReadData()
+        public void Close()
         {
-            StringBuilder sentenceBuilder = new StringBuilder();
+            Debug.WriteLine($"GPS: Closing and Disposing");
+            _serialport?.Close();
+            _serialport?.Dispose();
+            _serialport = null;
+        }
 
-            while (_isRunning)
+        public static GPS Create(string portname = "COM1", int baudRate = 9600)
+        {
+            var gps = new GPS(portname, baudRate);
+            if (gps != null)
             {
-                try
+                gps._serialport.DataReceived += (s, e) =>
                 {
-                    if (_serialPort.BytesToRead > 0)
+                    if (e.EventType == SerialData.WatchChar)
                     {
-                        char c = (char)_serialPort.ReadByte();
-
-                        if (c == '$')
+                        string str = gps._serialport.ReadLine();
+                        if (str.StartsWith("$GNGGA"))
                         {
-                            sentenceBuilder.Clear();
-                            sentenceBuilder.Append(c);
-                        }
-                        else if (c == '\n')
-                        {
-                            string sentence = sentenceBuilder.ToString();
-                            if (sentence.StartsWith("$"))
+                            //Debug.WriteLine(str);
+                            lock (_rcvLock)
                             {
-                                ProcessNmeaSentence(sentence);
+                                _rcvdata = str.Substring(0);
                             }
-                            sentenceBuilder.Clear();
+                            gps.OnGpsReceived_GNGGA?.Invoke(gps, new RcvGpsArgs() { data = str.Substring(0) });
                         }
                         else
                         {
-                            sentenceBuilder.Append(c);
+                            gps.OnGpsReceived_Unknown?.Invoke(gps, new RcvGpsArgs() { data = str.Substring(0) });
                         }
                     }
-                    else
-                    {
-                        Thread.Sleep(10);
-                    }
-                }
-                catch
-                {
-                    // Ignore errors for robustness
-                }
+                };
+                gps._serialport.Open();
+                Debug.WriteLine("GPS: SerialPort is opened.");
             }
+            return gps;
         }
 
-        private void ProcessNmeaSentence(string sentence)
+        // https://openrtk.readthedocs.io/en/latest/communication_port/nmea.html
+        public bool TryParseGNGGA(out float latitude, out float longitude, out float altitude, string text = null)
         {
-            string[] parts = sentence.Split(',');
+            latitude = longitude = altitude = 0.0F;
+            if (string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(_rcvdata))
+            {
+                lock (_rcvLock)
+                {
+                    text = _rcvdata.Substring(0);
+                    _rcvdata = string.Empty;
+                }
+            }
 
-            try
-            {
-                if (parts[0] == "$GPGGA")
-                {
-                    ProcessGpggaSentence(parts);
-                }
-                else if (parts[0] == "$GPRMC")
-                {
-                    ProcessGprmcSentence(parts);
-                }
-                else if (parts[0] == "$GPGSV")
-                {
-                    ProcessGpgsvSentence(parts);
-                }
-            }
-            catch
-            {
-                // Ignore parsing errors
-            }
+            if (string.IsNullOrEmpty(text) || !text.StartsWith("$GNGGA"))
+                return false;
+
+            Debug.Write($"{text}");
+
+            var parts = text.Split(',');
+            if (!float.TryParse(parts[2], out latitude))
+                return false;
+            if (!float.TryParse(parts[4], out longitude))
+                return false;
+            if (!float.TryParse(parts[9], out altitude))
+                return false;
+
+            int latDD = (int)latitude / 100;
+            float latMM = latitude - latDD * 100;
+            latitude = latDD + latMM / 60;
+            if (parts[3] == "S") latitude = -latitude;
+
+            int lonDD = (int)longitude / 100;
+            float lonMM = longitude - lonDD * 100;
+            longitude = lonDD + lonMM / 60;
+            if (parts[5] == "W") longitude = -longitude;
+
+            return true;
         }
-
-        private void ProcessGpggaSentence(string[] parts)
-        {
-            // $GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47
-            if (parts.Length < 10) return;
-
-            // Time
-            if (!string.IsNullOrEmpty(parts[1]))
-            {
-                try
-                {
-                    int time = int.Parse(parts[1]);
-                    int hour = time / 10000;
-                    int minute = (time % 10000) / 100;
-                    int second = time % 100;
-
-                    FixTime = new DateTime(/*
-                        DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,*/
-                        hour, minute, second);
-                }
-                catch { }
-            }
-
-            // Latitude
-            if (!string.IsNullOrEmpty(parts[2]) && !string.IsNullOrEmpty(parts[3]))
-            {
-                try
-                {
-                    double lat = double.Parse(parts[2]);
-                    double degrees = Math.Floor(lat / 100);
-                    double minutes = lat - (degrees * 100);
-                    Latitude = degrees + (minutes / 60);
-                    if (parts[3] == "S") Latitude *= -1;
-                }
-                catch { }
-            }
-
-            // Longitude
-            if (!string.IsNullOrEmpty(parts[4]) && !string.IsNullOrEmpty(parts[5]))
-            {
-                try
-                {
-                    double lon = double.Parse(parts[4]);
-                    double degrees = Math.Floor(lon / 100);
-                    double minutes = lon - (degrees * 100);
-                    Longitude = degrees + (minutes / 60);
-                    if (parts[5] == "W") Longitude *= -1;
-                }
-                catch { }
-            }
-
-            // Fix quality
-            HasFix = parts[6] == "1";
-
-            // Satellites in use
-            if (!string.IsNullOrEmpty(parts[7]))
-            {
-                try
-                {
-                    SatellitesInUse = int.Parse(parts[7]);
-                }
-                catch { }
-            }
-
-            // Altitude
-            if (!string.IsNullOrEmpty(parts[9]))
-            {
-                try
-                {
-                    Altitude = double.Parse(parts[9]);
-                }
-                catch { }
-            }
-
-            RaiseGpsDataReceivedEvent();
-        }
-
-        private void ProcessGprmcSentence(string[] parts)
-        {
-            // $GPRMC,123519,A,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A
-            if (parts.Length < 10) return;
-
-            // Time and date
-            if (!string.IsNullOrEmpty(parts[1]) && !string.IsNullOrEmpty(parts[9]))
-            {
-                try
-                {
-                    int time = int.Parse(parts[1]);
-                    int hour = time / 10000;
-                    int minute = (time % 10000) / 100;
-                    int second = time % 100;
-
-                    int date = int.Parse(parts[9]);
-                    int day = date / 10000;
-                    int month = (date % 10000) / 100;
-                    int year = 2000 + (date % 100);
-
-                    FixTime = new DateTime(year, month, day, hour, minute, second);
-                }
-                catch { }
-            }
-
-            // Status (A=active, V=void)
-            HasFix = parts[2] == "A";
-
-            // Latitude
-            if (!string.IsNullOrEmpty(parts[3]) && !string.IsNullOrEmpty(parts[4]))
-            {
-                try
-                {
-                    double lat = double.Parse(parts[3]);
-                    double degrees = Math.Floor(lat / 100);
-                    double minutes = lat - (degrees * 100);
-                    Latitude = degrees + (minutes / 60);
-                    if (parts[4] == "S") Latitude *= -1;
-                }
-                catch { }
-            }
-
-            // Longitude
-            if (!string.IsNullOrEmpty(parts[5]) && !string.IsNullOrEmpty(parts[6]))
-            {
-                try
-                {
-                    double lon = double.Parse(parts[5]);
-                    double degrees = Math.Floor(lon / 100);
-                    double minutes = lon - (degrees * 100);
-                    Longitude = degrees + (minutes / 60);
-                    if (parts[6] == "W") Longitude *= -1;
-                }
-                catch { }
-            }
-
-            // Speed (in knots)
-            if (!string.IsNullOrEmpty(parts[7]))
-            {
-                try
-                {
-                    Speed = double.Parse(parts[7]);
-                }
-                catch { }
-            }
-
-            // Course (in degrees)
-            if (!string.IsNullOrEmpty(parts[8]))
-            {
-                try
-                {
-                    Course = double.Parse(parts[8]);
-                }
-                catch { }
-            }
-
-            RaiseGpsDataReceivedEvent();
-        }
-
-        private void ProcessGpgsvSentence(string[] parts)
-        {
-            // $GPGSV,2,1,08,01,40,083,46,02,17,308,41,12,07,344,39,14,22,228,45*75
-            if (parts.Length < 4) return;
-
-            // Total satellites in view
-            if (!string.IsNullOrEmpty(parts[3]))
-            {
-                try
-                {
-                    SatellitesInView = int.Parse(parts[3]);
-                }
-                catch { }
-            }
-        }
-
-        private void RaiseGpsDataReceivedEvent()
-        {
-            var args = new GpsDataReceivedEventArgs
-            {
-                Latitude = Latitude,
-                Longitude = Longitude,
-                Altitude = Altitude,
-                FixTime = FixTime,
-                SatellitesInView = SatellitesInView,
-                SatellitesInUse = SatellitesInUse,
-                Speed = Speed,
-                Course = Course,
-                HasFix = HasFix
-            };
-
-            GpsDataReceived?.Invoke(this, args);
-        }
-    }
-
-    /// <summary>
-    /// Event arguments for GPS data received events
-    /// </summary>
-    public class GpsDataReceivedEventArgs : EventArgs
-    {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public double Altitude { get; set; }
-        public DateTime FixTime { get; set; }
-        public int SatellitesInView { get; set; }
-        public int SatellitesInUse { get; set; }
-        public double Speed { get; set; } // in knots
-        public double Course { get; set; } // in degrees
-        public bool HasFix { get; set; }
     }
 }

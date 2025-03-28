@@ -50,8 +50,8 @@ namespace CanSat
         const int pinI2C1_SCK = 1;      // Grove
         const int pinI2C2_SDA = 38;      // second i2C bus is being used to comm. with the base, that has the buzzer connected on the motor pins 
         const int pinI2C2_SCK = 39;        //also note, that the base MUST be on the second bus due to hardwiring reasons
-        const int pinCOM3_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  COM3 will hopefully be used for the GPS module
-        const int pinCOM3_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
+        const int pinCOM1_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  COM3 will hopefully be used for the GPS module
+        const int pinCOM1_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
         const int pinCOM2_TX = 8;       // PORTB-G8, 
         const int pinCOM2_RX = 7;       // PORTB-G7
         //M5atomBase grove conn. can not be used for i2C, ony for UART
@@ -59,7 +59,7 @@ namespace CanSat
 
         //static int loopback_counter = 0;
         static int pub_counter = 0;
-        const int pub_period = 900;     // miliseconds
+        const int pub_period = 500;     // miliseconds
         const bool saveDataToLocalStorage = false;
         static E22 lora = null;
         static ushort BroadcastAddress = 0xFFFF;
@@ -70,6 +70,9 @@ namespace CanSat
         static Bmp280 sensorBMP280 = null;
         static GpioController ioctrl = new GpioController();
         static string file_path = string.Empty;
+        static GPS sensorGPS = null;
+
+
 
         public static class SensorData
         {
@@ -77,8 +80,9 @@ namespace CanSat
             public static int Counter { get; set; }
             public static double Temperature { get; set; }
             public static double Humidity { get; set; }
-            public static double Distance { get; set; }
+            public static int Distance { get; set; }
             public static double Pressure { get; set; }
+            
         }
 
 
@@ -116,10 +120,10 @@ namespace CanSat
             }
 
             // Initialize the GPS module (defaults to COM2, TX=17, RX=16)
-            var gps = new M5GPS(uartPort: "COM3", pinCOM3_RX, pinCOM3_TX); //check for correct tx/rx connection
+            //var gps = new M5GPS(uartPort: "COM3", pinCOM3_RX, pinCOM3_TX); //check for correct tx/rx connection
 
             // Subscribe to GPS data events
-            gps.GpsDataReceived += (sender, e) =>
+            /*gps.GpsDataReceived += (sender, e) =>
             {
                 Debug.WriteLine($"GPS Data Received - Fix: {e.HasFix}");
                 if (e.HasFix)
@@ -146,7 +150,7 @@ namespace CanSat
             }
 
             // To stop the GPS (this won't be reached in this example)
-            // gps.Stop();
+            // gps.Stop();*/
             /* Buzz bz = new Buzz();
              Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);*/
             #endregion
@@ -237,10 +241,43 @@ namespace CanSat
                 }
             }
             #endregion
+
+
+            #region GPS
+            Configuration.SetPinFunction(pinCOM1_RX, DeviceFunction.COM1_RX);
+            Configuration.SetPinFunction(pinCOM1_TX, DeviceFunction.COM1_TX);
+            sensorGPS = GPS.Create("COM1", 9600);
+            if (sensorGPS != null)
+            {
+                bool isValid = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
+                if (isValid)
+                {
+                    Debug.WriteLine($"GPS: {lat}, {lon}, {alt}");
+                }
+                else
+                {
+                    Debug.WriteLine("GPS initialization failed.");
+                }
+                sensorGPS.OnGpsReceived_Unknown += (s, e) =>
+                {
+                    Debug.WriteLine("GPS received unknown: " + e.data);
+                };
+                sensorGPS.OnGpsReceived_GNGGA += (s, e) =>
+                {
+                    Debug.WriteLine($"GPS received GNGGA: {e.data}");
+                    Debug.WriteLine($"GPS: {lat}, {lon}, {alt}");
+                };
+
+            }
+            #endregion
             #endregion
 
-            #region LoRa E22           
-            Configuration.SetPinFunction(pinCOM2_TX, DeviceFunction.COM2_TX);
+
+
+
+
+        #region LoRa E22           
+        Configuration.SetPinFunction(pinCOM2_TX, DeviceFunction.COM2_TX);
             Configuration.SetPinFunction(pinCOM2_RX, DeviceFunction.COM2_RX);
             lora = E22.Create("COM2", loraAddress: loraAddress);
             if (lora != null)
