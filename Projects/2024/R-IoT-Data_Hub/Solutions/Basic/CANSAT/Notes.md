@@ -47,6 +47,22 @@ string csv = string.Join(",", telemetryData.Values) + "\r\n";
 The following link shows a support for UART GPS (M5Stack, E108 GN02D, GN03D, etc.) Reader with a GGA parser:
 </br>
 https://github.com/romankiss/R-IoT/tree/d16b5e20ffb81b1302e4cf6bcd1e4b18cde1d2d9/Projects/2024/PatternsAndPractices/GPS
+</br>
+4a. The following is the connection pins for LoRa and GPS on the Atom Motion (working test):
+<pre>
+const int pinI2C1_SDA = 2;      // Grove
+const int pinI2C1_SCK = 1;      // Grove
+const int pinCOM2_TX = 6;       // PORTC-G6, LoRa 
+const int pinCOM2_RX = 5;       // PORTC-G5,      
+const int pinCOM1_TX = 8;       // PORTB-G8, GPS
+const int pinCOM1_RX = 7;       // PORTB-G7
+</pre>
+
+
+
+
+
+
 
 
 
