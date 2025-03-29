@@ -59,7 +59,7 @@ namespace CanSat
             _serialport = null;
         }
 
-        public static GPS Create(string portname = "COM1", int baudRate = 9600)
+        public static GPS Create(string portname = "COM1", int baudRate = 115200)
         {
             var gps = new GPS(portname, baudRate);
             if (gps != null)
