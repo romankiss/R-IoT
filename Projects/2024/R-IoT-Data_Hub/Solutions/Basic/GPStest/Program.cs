@@ -27,10 +27,12 @@ namespace GPStest
             sensorGPS = GPS.Create("COM1", 115200);
             if (sensorGPS != null)
             {
-                bool isValid = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
+                //bool isValid = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
                 sensorGPS.OnGpsReceived_GNGGA += (s, e) =>
                 {
                     Debug.WriteLine(e.data);
+                    bool isValid = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
+                    Debug.WriteLine($"GPS: lat:{lat}, long:{lon}, alt:{alt}");
                 };
             }
             #endregion
