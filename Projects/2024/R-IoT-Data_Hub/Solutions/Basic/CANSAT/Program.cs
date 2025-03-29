@@ -129,9 +129,9 @@ namespace CanSat
                 if (e.HasFix)
                 {
                     Debug.WriteLine($"Time: {e.FixTime}");
-                    Debug.WriteLine($"Latitude: {e.Latitude}°, Longitude: {e.Longitude}°");
+                    Debug.WriteLine($"Latitude: {e.Latitude}Â°, Longitude: {e.Longitude}Â°");
                     Debug.WriteLine($"Altitude: {e.Altitude}m");
-                    Debug.WriteLine($"Speed: {e.Speed}knots, Course: {e.Course}°");
+                    Debug.WriteLine($"Speed: {e.Speed}knots, Course: {e.Course}Â°");
                     Debug.WriteLine($"Satellites: {e.SatellitesInUse} in use, {e.SatellitesInView} in view");
                 }
                 else
@@ -246,7 +246,7 @@ namespace CanSat
             #region GPS
             Configuration.SetPinFunction(pinCOM1_RX, DeviceFunction.COM1_RX);
             Configuration.SetPinFunction(pinCOM1_TX, DeviceFunction.COM1_TX);
-            sensorGPS = GPS.Create("COM1", 9600);
+            sensorGPS = GPS.Create("COM1", 9600);   // version 1.0 9600, version 1.1 115200 (added by RK)
             if (sensorGPS != null)
             {
                 bool isValid = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
