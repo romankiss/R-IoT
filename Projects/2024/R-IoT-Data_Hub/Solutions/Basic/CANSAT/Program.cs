@@ -83,7 +83,16 @@ namespace CanSat
             public static double Humidity { get; set; }
             public static int Distance { get; set; }
             public static double Pressure { get; set; }
-            
+
+            // GPS Data as a nested struct
+            public static GpsData GPS { get; set; }
+
+            public struct GpsData
+            {
+                public double Latitude { get; set; }
+                public double Longitude { get; set; }
+                public double Altitude { get; set; }
+            }
         }
 
 
@@ -158,6 +167,9 @@ namespace CanSat
 
 
             #region SENSORS 
+
+            
+
             try
             {
                 //ioctrl.OpenPin(pinI2C1_SDA, PinMode.InputPullUp);  
@@ -245,6 +257,8 @@ namespace CanSat
 
 
             #region GPS
+
+            // GPS is event driven in comparison to other sensors 
             if (useGPS)
             {
                 Configuration.SetPinFunction(pinCOM1_RX, DeviceFunction.COM1_RX);
@@ -252,23 +266,20 @@ namespace CanSat
                 sensorGPS = GPS.Create("COM1", 115200);
                 if (sensorGPS != null)
                 {
-                    bool isValid = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
-                    if (isValid)
-                    {
-                        Debug.WriteLine($"GPS: {lat}, {lon}, {alt}");
-                    }
-                    else
-                    {
-                        Debug.WriteLine("GPS initialization failed.");
-                    }
-                    /*sensorGPS.OnGpsReceived_Unknown += (s, e) =>
-                    {
-                        Debug.WriteLine("GPS received unknown: " + e.data);
-                    };*/
+                    
+
                     sensorGPS.OnGpsReceived_GNGGA += (s, e) =>
                     {
-                        Debug.WriteLine($"GPS received GNGGA: {e.data}");
+                        bool isValid = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
+                        //Debug.WriteLine($"GPS received GNGGA: {e.data}");
                         Debug.WriteLine($"GPS: {lat}, {lon}, {alt}");
+                        SensorData.GPS = new SensorData.GpsData
+                        {
+                            Latitude = lat,
+                            Longitude = lon,
+                            Altitude = alt
+                        };
+
                     };
 
                 }
@@ -333,17 +344,25 @@ namespace CanSat
                             var temperature = data.Temperature.DegreesCelsius;
                             var humidity = data.RelativeHumidity.Percent;
                             payload += $"T{temperature:F2}H{humidity:F2}";
+                            SensorData.Temperature = temperature;
+                            SensorData.Humidity = humidity;
                         }
                     }
                     if (sensorToF != null)
                     {
-                        payload += $"D{sensorToF.Distance}";
+                        var d = sensorToF.Distance;
+                        payload += $"D{d}";
+                        SensorData.Distance = d;
                     }
                     if (sensorBMP280 != null)
                     {
                         sensorBMP280.TryReadPressure(out var bmpPressure);
                         payload += $"P{bmpPressure.Hectopascals:F2}";
+                        SensorData.Pressure = bmpPressure.Hectopascals;
                     }
+                    payload += $"LA{SensorData.GPS.Latitude}";//add latitude to the payload
+                    payload += $"LO{SensorData.GPS.Longitude}";//add longitude to the payload
+                    payload += $"AL{SensorData.GPS.Altitude}";//add altitude to the payload
 
                     // add more sensors to the payload    
 
