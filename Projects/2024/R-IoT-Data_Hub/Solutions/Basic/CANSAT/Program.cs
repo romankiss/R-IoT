@@ -71,6 +71,7 @@ namespace CanSat
         static GpioController ioctrl = new GpioController();
         static string file_path = string.Empty;
         static GPS sensorGPS = null;
+        static bool useGPS = true;
 
 
 
@@ -244,31 +245,35 @@ namespace CanSat
 
 
             #region GPS
-            Configuration.SetPinFunction(pinCOM1_RX, DeviceFunction.COM1_RX);
-            Configuration.SetPinFunction(pinCOM1_TX, DeviceFunction.COM1_TX);
-            sensorGPS = GPS.Create("COM1", 9600);
-            if (sensorGPS != null)
+            if (useGPS)
             {
-                bool isValid = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
-                if (isValid)
+                Configuration.SetPinFunction(pinCOM1_RX, DeviceFunction.COM1_RX);
+                Configuration.SetPinFunction(pinCOM1_TX, DeviceFunction.COM1_TX);
+                sensorGPS = GPS.Create("COM1", 115200);
+                if (sensorGPS != null)
                 {
-                    Debug.WriteLine($"GPS: {lat}, {lon}, {alt}");
-                }
-                else
-                {
-                    Debug.WriteLine("GPS initialization failed.");
-                }
-                sensorGPS.OnGpsReceived_Unknown += (s, e) =>
-                {
-                    Debug.WriteLine("GPS received unknown: " + e.data);
-                };
-                sensorGPS.OnGpsReceived_GNGGA += (s, e) =>
-                {
-                    Debug.WriteLine($"GPS received GNGGA: {e.data}");
-                    Debug.WriteLine($"GPS: {lat}, {lon}, {alt}");
-                };
+                    bool isValid = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
+                    if (isValid)
+                    {
+                        Debug.WriteLine($"GPS: {lat}, {lon}, {alt}");
+                    }
+                    else
+                    {
+                        Debug.WriteLine("GPS initialization failed.");
+                    }
+                    /*sensorGPS.OnGpsReceived_Unknown += (s, e) =>
+                    {
+                        Debug.WriteLine("GPS received unknown: " + e.data);
+                    };*/
+                    sensorGPS.OnGpsReceived_GNGGA += (s, e) =>
+                    {
+                        Debug.WriteLine($"GPS received GNGGA: {e.data}");
+                        Debug.WriteLine($"GPS: {lat}, {lon}, {alt}");
+                    };
 
+                }
             }
+            
             #endregion
             #endregion
 
