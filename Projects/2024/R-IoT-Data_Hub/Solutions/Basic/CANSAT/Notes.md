@@ -57,6 +57,13 @@ const int pinCOM2_RX = 5;       // PORTC-G5,
 const int pinCOM1_TX = 8;       // PORTB-G8, GPS
 const int pinCOM1_RX = 7;       // PORTB-G7
 </pre>
+</br>
+4b. GPS output during the cold start and after:
+</br>
+<pre>
+ $GNGGA,070814.000,,,,,0,00,25.5,,,,,,*70
+ $GNGGA,070815.998,4836.05441,N,01750.18459,E,1,07,3.2,205.9,M,0.0,M,,*76
+</pre>
 
 
 
