@@ -264,7 +264,7 @@ namespace CanSat
                 Configuration.SetPinFunction(pinCOM1_RX, DeviceFunction.COM1_RX);
                 Configuration.SetPinFunction(pinCOM1_TX, DeviceFunction.COM1_TX);
                 sensorGPS = GPS.Create("COM1", 115200);
-                if (sensorGPS != null)
+                /* if (sensorGPS != null)
                 {
                     
 
@@ -282,9 +282,9 @@ namespace CanSat
 
                     };
 
-                }
+                }*/
             }
-            
+
             #endregion
             #endregion
 
@@ -292,8 +292,8 @@ namespace CanSat
 
 
 
-        #region LoRa E22           
-        Configuration.SetPinFunction(pinCOM2_TX, DeviceFunction.COM2_TX);
+            #region LoRa E22           
+            Configuration.SetPinFunction(pinCOM2_TX, DeviceFunction.COM2_TX);
             Configuration.SetPinFunction(pinCOM2_RX, DeviceFunction.COM2_RX);
             lora = E22.Create("COM2", loraAddress: loraAddress);
             if (lora != null)
@@ -360,10 +360,24 @@ namespace CanSat
                         payload += $"P{bmpPressure.Hectopascals:F2}";
                         SensorData.Pressure = bmpPressure.Hectopascals;
                     }
-                    payload += $"LA{SensorData.GPS.Latitude}";//add latitude to the payload
-                    payload += $"LO{SensorData.GPS.Longitude}";//add longitude to the payload
-                    payload += $"AL{SensorData.GPS.Altitude}";//add altitude to the payload
 
+                    bool isValidGPS = false;
+                    if (sensorGPS != null && sensorGPS.IsOpen)
+                    {
+                        // threadsafe parsing the GNGGA data received by serialport handler
+                        isValidGPS = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
+                        if (isValidGPS)
+                        {
+                            payload += $"LA{lat}";    //add latitude to the payload
+                            payload += $"LO{lon}";    //add longitude to the payload
+                            payload += $"AL{alt}";    //add altitude to the payload
+
+                            // or
+                            // payload += $"L{lat},{lon}";    //add latitude and longitude to the payload
+                            // payload += $"A{alt}";          //add altitude to the payload
+                        }
+
+                    }
                     // add more sensors to the payload    
 
                     // EOD (End of Data - Payload)
