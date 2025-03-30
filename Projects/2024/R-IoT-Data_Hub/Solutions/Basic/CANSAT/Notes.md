@@ -64,6 +64,12 @@ const int pinCOM1_RX = 7;       // PORTB-G7
  $GNGGA,070814.000,,,,,0,00,25.5,,,,,,*70
  $GNGGA,070815.998,4836.05441,N,01750.18459,E,1,07,3.2,205.9,M,0.0,M,,*76
 </pre>
+</br>
+4c. Usage of the GPS for CanSat project, see the following link:
+</br>
+https://github.com/romankiss/R-IoT/blob/main/Projects/2024/PatternsAndPractices/GPS/usage.cs
+</br>
+Note, that the serialport receiver has a resposibility only to cache a GGA raw data in the threadsafe manner, without their parsing. The parsing of the GGA raw cached data is threadsafe during its publishing and after that they are clean-up for next data, in other words, the location is zero.
 
 
 
