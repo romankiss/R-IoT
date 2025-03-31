@@ -186,22 +186,29 @@ namespace CanSat
 
 
             #region T&H 
-            I2cDevice i2c_th = new(new I2cConnectionSettings(1, Sht4X.I2cDefaultAddress));     // Grove connector
-            var resTH = i2c_th.WriteByte(0x07);
-            if (resTH.Status == I2cTransferStatus.FullTransfer)
+            try
             {
-                sensorTH = new Sht4X(i2c_th);
-                i2c_th.WriteByte(0x96);         //send soft reset to avoid initial CRC non-validity
-                var data = sensorTH?.ReadData(Iot.Device.Sht4x.MeasurementMode.NoHeaterMediumPrecision);
-                if (data != null)
+                I2cDevice i2c_th = new(new I2cConnectionSettings(1, Sht4X.I2cDefaultAddress));     // Grove connector
+                var resTH = i2c_th.WriteByte(0x07);
+                if (resTH.Status == I2cTransferStatus.FullTransfer)
                 {
-                    Debug.WriteLine($"sensorTH: temperature[C]={data.Temperature.DegreesCelsius:F2}, humidity[%]={data.RelativeHumidity.Percent:F2}");
+                    sensorTH = new Sht4X(i2c_th);
+                    i2c_th.WriteByte(0x96);         //send soft reset to avoid initial CRC non-validity
+                    var data = sensorTH?.ReadData(Iot.Device.Sht4x.MeasurementMode.NoHeaterMediumPrecision);
+                    if (data != null)
+                    {
+                        Debug.WriteLine($"sensorTH: temperature[C]={data.Temperature.DegreesCelsius:F2}, humidity[%]={data.RelativeHumidity.Percent:F2}");
+                    }
+                    else
+                    {
+                        Debug.WriteLine("TH sensor initialization failed.");
+                    }
                 }
-                else
-                {
-                    Debug.WriteLine("TH sensor initialization failed.");
-                }
+            }catch(Exception ex)
+            {
+                Debug.WriteLine("Error initing T&H sensor: " + ex.Message);
             }
+
             #endregion
 
             #region ToF
