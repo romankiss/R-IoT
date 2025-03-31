@@ -368,9 +368,9 @@ namespace CanSat
                         isValidGPS = sensorGPS.TryParseGNGGA(out float lat, out float lon, out float alt);
                         if (isValidGPS)
                         {
-                            payload += $"LA{lat}";    //add latitude to the payload
-                            payload += $"LO{lon}";    //add longitude to the payload
-                            payload += $"AL{alt}";    //add altitude to the payload
+                            payload += $"X{lat}";    //add latitude to the payload
+                            payload += $"Y{lon}";    //add longitude to the payload
+                            payload += $"Z{alt}";    //add altitude to the payload
 
                             // or
                             // payload += $"L{lat},{lon}";    //add latitude and longitude to the payload
