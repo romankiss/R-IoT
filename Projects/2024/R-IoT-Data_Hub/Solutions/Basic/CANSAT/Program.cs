@@ -59,14 +59,13 @@ namespace CanSat
 
         //static int loopback_counter = 0;
         static int pub_counter = 0;
-        const int pub_period = 500;     // miliseconds
+        const int pub_period = 800;     // miliseconds
         const bool saveDataToLocalStorage = false;
         static E22 lora = null;
         static ushort BroadcastAddress = 0xFFFF;
         static Sht4X sensorTH = null;
         // static Vl53L0X sensorToF = null;
         static ToFSense sensorToF = null;
-        //static ToFSense sensorToF = null;
         static Bmp280 sensorBMP280 = null;
         static GpioController ioctrl = new GpioController();
         static string file_path = string.Empty;
@@ -111,7 +110,11 @@ namespace CanSat
             {
                 Debug.WriteLine("LED initialization failed.");
             }
-            Blink.Blinks(255, 255, 255, 1000, 1, 1);  // it must be async call
+            else
+            {
+                Blink.Blinks(255, 255, 255, 1000, 1, 1);  // it must be async call
+            }
+                
                                                       // Button setup
             GpioButton buttonM5 = new GpioButton(buttonPin: pinButton, debounceTime: TimeSpan.FromMilliseconds(333));
             if (buttonM5 == null)
@@ -128,39 +131,6 @@ namespace CanSat
                 Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");
                 Storage.read(file_path);
             }
-
-            // Initialize the GPS module (defaults to COM2, TX=17, RX=16)
-            //var gps = new M5GPS(uartPort: "COM3", pinCOM3_RX, pinCOM3_TX); //check for correct tx/rx connection
-
-            // Subscribe to GPS data events
-            /*gps.GpsDataReceived += (sender, e) =>
-            {
-                Debug.WriteLine($"GPS Data Received - Fix: {e.HasFix}");
-                if (e.HasFix)
-                {
-                    Debug.WriteLine($"Time: {e.FixTime}");
-                    Debug.WriteLine($"Latitude: {e.Latitude}°, Longitude: {e.Longitude}°");
-                    Debug.WriteLine($"Altitude: {e.Altitude}m");
-                    Debug.WriteLine($"Speed: {e.Speed}knots, Course: {e.Course}°");
-                    Debug.WriteLine($"Satellites: {e.SatellitesInUse} in use, {e.SatellitesInView} in view");
-                }
-                else
-                {
-                    Debug.WriteLine("Waiting for GPS fix...");
-                }
-            };
-
-            // Start the GPS module
-            gps.Start();
-
-            // Keep the program running
-            while (true)
-            {
-                Thread.Sleep(1000);
-            }
-
-            // To stop the GPS (this won't be reached in this example)
-            // gps.Stop();*/
             /* Buzz bz = new Buzz();
              Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);*/
             #endregion
@@ -353,20 +323,20 @@ namespace CanSat
                             payload += $"T{temperature:F2}H{humidity:F2}";
                             SensorData.Temperature = temperature;
                             SensorData.Humidity = humidity;
-                        }
-                    }
+                        }else payload += $"T-1H-1";
+                    }else payload += $"T-1H-1";
                     if (sensorToF != null)
                     {
                         var d = sensorToF.Distance;
                         payload += $"D{d}";
                         SensorData.Distance = d;
-                    }
+                    }else payload += $"D-1";
                     if (sensorBMP280 != null)
                     {
                         sensorBMP280.TryReadPressure(out var bmpPressure);
                         payload += $"P{bmpPressure.Hectopascals:F2}";
                         SensorData.Pressure = bmpPressure.Hectopascals;
-                    }
+                    }else payload += $"P-1";
 
                     bool isValidGPS = false;
                     if (sensorGPS != null && sensorGPS.IsOpen)
@@ -383,8 +353,10 @@ namespace CanSat
                             // payload += $"L{lat},{lon}";    //add latitude and longitude to the payload
                             // payload += $"A{alt}";          //add altitude to the payload
                         }
+                        else payload += $"X-1Y-1Z-1";
 
                     }
+                    else payload += $"X-1Y-1Z-1";
                     // add more sensors to the payload    
 
                     // EOD (End of Data - Payload)
