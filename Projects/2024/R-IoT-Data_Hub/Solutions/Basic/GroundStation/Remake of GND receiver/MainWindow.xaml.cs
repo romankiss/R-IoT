@@ -40,47 +40,54 @@ namespace Remake_of_GND_receiver
             _serialPortManager.ErrorOccurred += OnSerialError;
         }
 
-        private async void OnSerialDataReceived(object sender, byte[] data)
+       private async void OnSerialDataReceived(object sender, byte[] data)
         {
-            int index = -1;
-            await Application.Current.Dispatcher.InvokeAsync(() =>
+            try
             {
-                index = DataInterpretationComboBox.SelectedIndex;
-            });
-                string str;
-                switch (index)
+                int _dataInterpretationMode = -1;
+                await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
-                    case 0:
+                    _dataInterpretationMode = DataInterpretationComboBox.SelectedIndex;
+                });
+                // Skip if data is too short (e.g., missing header/footer)
+                if (data.Length < 6) return; // Adjust minimum length as needed
+
+                string str;
+                switch (_dataInterpretationMode) // Cache this value instead of reading UI
+                {
+                    case 0: // Hex
                         str = BitConverter.ToString(data);
                         break;
-                    case 1:
-                        var sb = new StringBuilder();
-                        for (int i = 4; i < (data.Length - 2); i++)
-                        {
-                            sb.Append((char)data[i]);
-                        }
-                        str = sb.ToString();
+                    case 1: // Text
+                            // Skip first 4 bytes (header) and last 2 bytes (footer/checksum)
+                        int dataLength = data.Length - 6;
+                        if (dataLength <= 0) return;
+                        str = Encoding.ASCII.GetString(data, 3, dataLength-2);
                         break;
                     default:
-                        throw new NotImplementedException();
+                        throw new NotSupportedException($"Unsupported data mode: {_dataInterpretationMode}");
                 }
 
-                // Ensure UI update happens on the main thread
+                // Update UI
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     LogTextBox.AppendText($"{DateTime.Now}: {str}\n");
-                    LogTextBox.ScrollToEnd(); // Optional: Auto-scroll
+                    LogTextBox.ScrollToEnd();
                 });
 
+                // Parse and save telemetry
                 var telemetryData = _telemetryProcessor.ParseData(str);
                 if (telemetryData.Count > 0)
                 {
-                    if(useFile)await _fileLogger.LogToCsvAsync(telemetryData);
+                    if (useFile) await _fileLogger.LogToCsvAsync(telemetryData);
                     if (useDB) await _databaseManager.SaveTelemetryAsync(telemetryData);
                 }
-
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error processing data: {ex.Message}");
+            }
         }
-
         private void OnSerialError(object sender, string errorMessage)
         {
             Dispatcher.Invoke(() => MessageTextBlock.Text = errorMessage);
