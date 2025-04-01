@@ -52,7 +52,7 @@ namespace Remake_of_GND_receiver
                 // Skip if data is too short (e.g., missing header/footer)
                 if (data.Length < 6) return; // Adjust minimum length as needed
 
-                string str;
+                string str = String.Empty;
                 switch (_dataInterpretationMode) // Cache this value instead of reading UI
                 {
                     case 0: // Hex
@@ -123,16 +123,25 @@ namespace Remake_of_GND_receiver
             DisconnectButton.IsEnabled = false;
         }
 
-        public void SendButton_Click(object sender, RoutedEventArgs e)
+        public async void SendButton_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
-            /*if (!_serialPortManager.IsConnected)
+            if (!_serialPortManager.IsConnected)
             {
                 MessageTextBlock.Text = "Serial port not connected!";
                 return;
             }
-            var data = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-            _serialPortManager.SendAsync(data);*/
+
+            try
+            {
+                var text = InputTextBox.Text;
+                var data = Encoding.ASCII.GetBytes(text);
+                await _serialPortManager.SendAsync(data);
+                MessageTextBlock.Text = "Message sent successfully";
+            }
+            catch (Exception ex)
+            {
+                MessageTextBlock.Text = $"Send failed: {ex.Message}";
+            }
         }
         public async void SaveLogButton_Click(object sender, RoutedEventArgs e)
         {

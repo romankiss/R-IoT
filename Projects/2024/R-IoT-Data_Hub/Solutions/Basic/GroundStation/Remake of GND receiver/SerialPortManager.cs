@@ -10,6 +10,7 @@ public class SerialPortManager : IDisposable
     const int SOH = 0xC1;
     const int rcvPacketHeaderLength = 3;
     const int maxPacketDataLength = 128;
+    const int packetTrailerLength = 4;// \r\n bytes + checksum bytes = 4 bytes total
     private SerialPort _serialPort;
     private readonly object _sendLock = new();
 
@@ -87,60 +88,87 @@ public class SerialPortManager : IDisposable
 
     private void OnDataReceived(object sender, SerialDataReceivedEventArgs e)
     {
-        //byte[] line = _serialPort.ReadExisting().Select(c => (byte)c).ToArray(); option one
-        //byte[] line = _serialPort.ReadLine(); //option two
-        // C1 ADDH ADDL LEN Byte_0...N EOD RSSI
-        byte[] buffer = new byte[256];
-        int numberOfbytes = _serialPort.BytesToRead;
-        if (numberOfbytes > 0)
+        try
         {
-            try
-            {
-                //step1: Sync on the mark 0xC1
-                var syncbyte = _serialPort.ReadByte();
-                Debug.Write($"LoRaRcv[{numberOfbytes}]: {DateTime.UtcNow.ToString("hh:mm:ss.fff")} Starting {syncbyte:X2}");
-                while (syncbyte != SOH) //0xC1)
-                {
-                    if (syncbyte == -1)
-                    {
-                        // end of the stream. no more bytes - back to the event
-                        Debug.WriteLine("LoRaRcv: Didn't find the sync character 0xC1");
-                        return;
-                    }
-                    Thread.Sleep(0);
-                    syncbyte = _serialPort.ReadByte();
-                    Debug.Write($".{syncbyte:X2}");
-                }
-                Debug.WriteLine("");
+            // 1. Get the total bytes available
+            int bytesAvailable = _serialPort.BytesToRead;
+            if (bytesAvailable <= 0) return;
 
-                //step2: Get the Header (3 bytes)
-                numberOfbytes = _serialPort.Read(buffer, 0, rcvPacketHeaderLength);
-                ushort addressId = (ushort)(((ushort)buffer[0] << 8) + buffer[1]);
-                byte dataLength = buffer[2];
+            // 2. Read all available bytes at once
+            byte[] buffer = new byte[bytesAvailable];
+            int bytesRead = _serialPort.Read(buffer, 0, bytesAvailable);
 
-                //step3: Get the Data
-                if (dataLength > maxPacketDataLength)
-                {
-                    Debug.WriteLine($"LoRaRcv: Wrong DataLength {dataLength} > {maxPacketDataLength}");
-                    return;
-                }
-                if (dataLength >= 0)
-                {
-                    numberOfbytes = _serialPort.Read(buffer, rcvPacketHeaderLength, dataLength);
-                    //buffer[dataLength - 1] = new byte();
-                    //buffer[dataLength - 2] = new byte();
-                    DataReceived?.Invoke(this, buffer);
-
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorOccurred?.Invoke(this, $"Error reading data: {ex.Message}");
-            }
+            // 3. Process the received data
+            ProcessReceivedData(buffer, bytesRead);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ErrorOccurred?.Invoke(this, $"Port not open: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            ErrorOccurred?.Invoke(this, $"Error reading data: {ex.Message}");
         }
     }
 
+    private void ProcessReceivedData(byte[] buffer, int bytesRead)
+    {
+        // 1. Add new data to the buffer
+        lock (_readBuffer)
+        {
+            _readBuffer.AddRange(buffer.Take(bytesRead));
+        }
 
+        // 2. Process complete packets
+        while (TryExtractPacket(out byte[] packet))
+        {
+            DataReceived?.Invoke(this, packet);
+        }
+    }
+
+    private bool TryExtractPacket(out byte[] packet)
+    {
+        packet = null;
+        lock (_readBuffer)
+        {
+            // 1. Find start of packet (0xC1)
+            int startIndex = _readBuffer.IndexOf(SOH);
+            if (startIndex < 0) return false;
+
+            // Remove any garbage before the start marker
+            if (startIndex > 0)
+            {
+                _readBuffer.RemoveRange(0, startIndex);
+                Debug.WriteLine($"Removed {startIndex} bytes of preamble");
+            }
+
+            // 2. Check if we have enough data for header
+            if (_readBuffer.Count < rcvPacketHeaderLength + 1) // +1 for SOH
+                return false;
+
+            // 3. Parse header (after SOH)
+            ushort addressId = (ushort)((_readBuffer[1] << 8) + _readBuffer[2]);
+            byte dataLength = _readBuffer[3];
+
+            // 4. Check if we have complete packet
+            int totalPacketLength = 1 + rcvPacketHeaderLength + dataLength + 2; // SOH + header + data + footer
+            if (_readBuffer.Count < totalPacketLength)
+                return false;
+
+            // 5. Extract the complete packet
+            packet = _readBuffer.GetRange(1, totalPacketLength-packetTrailerLength).ToArray();
+            _readBuffer.RemoveRange(0, totalPacketLength);
+
+            // 6. Validate packet
+            if (dataLength > maxPacketDataLength)
+            {
+                Debug.WriteLine($"Invalid packet length: {dataLength}");
+                return false;
+            }
+
+            return true;
+        }
+    }
 
 
     public void Dispose()
