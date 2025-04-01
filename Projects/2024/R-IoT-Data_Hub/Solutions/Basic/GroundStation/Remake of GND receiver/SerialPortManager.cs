@@ -127,6 +127,8 @@ public class SerialPortManager : IDisposable
                 if (dataLength >= 0)
                 {
                     numberOfbytes = _serialPort.Read(buffer, rcvPacketHeaderLength, dataLength);
+                    //buffer[dataLength - 1] = new byte();
+                    //buffer[dataLength - 2] = new byte();
                     DataReceived?.Invoke(this, buffer);
 
                 }

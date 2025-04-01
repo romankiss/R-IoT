@@ -60,9 +60,9 @@ namespace Remake_of_GND_receiver
                         break;
                     case 1: // Text
                             // Skip first 4 bytes (header) and last 2 bytes (footer/checksum)
-                        int dataLength = data.Length - 6;
+                        int dataLength = data.Length;
                         if (dataLength <= 0) return;
-                        str = Encoding.ASCII.GetString(data, 3, dataLength-2);
+                        str = Encoding.ASCII.GetString(data, 3, dataLength-4);
                         break;
                     default:
                         throw new NotSupportedException($"Unsupported data mode: {_dataInterpretationMode}");
