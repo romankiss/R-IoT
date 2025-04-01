@@ -16,7 +16,7 @@ namespace Remake_of_GND_receiver
 
         public const bool useDB = false;
         public const bool useFile = true;
-        public const string fileHeader = "Counter,Temperature,Humidity,Pressure,Distance,Latitude,Longitude,Altitude\n";
+        public const string fileHeader = "Counter,Temperature,Humidity,Distance,Pressure,Latitude,Longitude,Altitude\n";
 
         public MainWindow()
         {
