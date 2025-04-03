@@ -71,6 +71,7 @@ namespace CanSat
         static string file_path = string.Empty;
         static GPS sensorGPS = null;
         static bool useGPS = true;
+        static Blink led = null; // LED object for blinking
 
 
 
@@ -112,7 +113,7 @@ namespace CanSat
             }
             else
             {
-                Blink.Blinks(255, 255, 255, 1000, 1, 1);  // it must be async call
+                led.BlinkLedAsync(255, 255, 255, 1000, 1, 1);  // it must be async call
             }
                 
                                                       // Button setup
@@ -278,7 +279,7 @@ namespace CanSat
                 lora.OnPacketReceived += (sender, e) =>
                 {
                     Debug.WriteLine(e.Data.ToString());
-                    Blink.Blinks(0, 255, 0, 100, 1, 1);  // it must be async call                 
+                    led.BlinkLedAsync(0, 255, 0, 100, 1, 1);  // it must be async call                 
                 };
             }
             else
@@ -295,6 +296,7 @@ namespace CanSat
             {
                 // the place to put the code for handling an event from the buttonM5
                 FireTelemetryData();
+                led.BlinkLedAsync(0, 0, 255, 100, 1, 1);  // it must be async call
             };
 
             //Buzz.MakeABuzz(1000, 50);
@@ -352,6 +354,7 @@ namespace CanSat
                             // or
                             // payload += $"L{lat},{lon}";    //add latitude and longitude to the payload
                             // payload += $"A{alt}";          //add altitude to the payload
+                            led.BlinkLedAsync(0, 255, 255, 100, 0.5, 1);  // it must be async call
                         }
                         else payload += $"X-1Y-1Z-1";
 
@@ -391,7 +394,7 @@ namespace CanSat
             #region Ready for IoT (last step)
             Diag.PrintMemory("READY", true);
             //timer_watchdog?.Dispose();
-            Blink.Blinks(0, 20, 0, 250, 2);      // good light
+            led.BlinkLedAsync(0, 20, 0, 250, 1,2);      // good light
             Thread.Sleep(Timeout.Infinite);
             #endregion
 

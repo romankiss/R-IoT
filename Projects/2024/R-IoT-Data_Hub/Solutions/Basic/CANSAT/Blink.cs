@@ -1,64 +1,137 @@
-﻿/*Trieda pre jednoduché blikanie trojfarebnou LEDkou vo veľajšom vlákne.*/
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading;
-using Iot.Device.Ws28xx.Esp32;//ovládanie LED
+using Iot.Device.Ws28xx.Esp32;
 
-namespace CanSat//zmeniť podľa potreby
+namespace CanSat
 {
-    internal class Blink
+    internal class Blink : IDisposable
     {
-        static Sk6812 neo = null;//vytvorenie objektu s názvom neo, ktorý je triedy Sk6812
-        public Blink()
+        private static Sk6812 _neo;
+        private static readonly object _lock = new object();
+        private bool _disposed = false;
+
+        public Blink(int gpioPin = 35, int pixelCount = 1)
         {
-            neo = new Sk6812(35, 1);//konštruktor triedy Blink, priradenie ovládaču 35. GPIO pin na ktorom je LED
+            if (_neo == null)
+            {
+                _neo = new Sk6812(gpioPin, pixelCount);
+            }
         }
 
-        #region Blink
-        //public static Thread BlinkAsync(byte r, byte g, byte b, int periodIntMs = 100, double duty = 0.5, int times = 1)
-        public static void Blinks(byte r, byte g, byte b, int periodIntMs = 100, double duty = 0.5, int times = 1)
+        public void BlinkLed(byte r, byte g, byte b, int periodInMs = 100,
+                           double dutyCycle = 0.5, int times = 1)
         {
-            /* Vysvetlenie parametrov:
-             * r, g, b: farebný kód (0-255);
-             * periodIntMs: perióda blikania v ms;
-             * duty: podiel zapnutého stavu LED počas 1 periódy;
-             * times: počet opakovaní bliknutia;
-             */
-            
+            ValidateParameters(dutyCycle, periodInMs);
 
-            if (neo?.Image != null)
+            lock (_lock)
+            {
+                try
                 {
-                    for (int i = times; i > 0; --i)
+                    for (int i = 0; i < times; i++)
                     {
-                        neo.Image.SetPixel(0, 0, r, g, b);
-                        neo.Update();
-                        Thread.Sleep((int)(periodIntMs * duty));
-                        neo.Image.Clear();
-                        neo.Update();
-                        if (i > 1) Thread.Sleep((int)(periodIntMs * (1 - duty)));
+                        SetLedColor(r, g, b);
+                        Thread.Sleep((int)(periodInMs * dutyCycle));
+
+                        TurnOffLed();
+
+                        if (i < times - 1)
+                        {
+                            Thread.Sleep((int)(periodInMs * (1 - dutyCycle)));
+                        }
                     }
                 }
-            else
+                catch (Exception ex)
                 {
-                        // Handle the null case, e.g., log an error or throw an exception
-                    throw new InvalidOperationException("The neo object or its Image property is not initialized.");
-                }    
-
-                
-            
+                    Debug.WriteLine($"LED blink failed: {ex.Message}");
+                    throw;
+                }
+            }
         }
-        public static Thread BlinksAsync(byte r, byte g, byte b, int periodIntMs = 100, double duty = 0.5, int times = 1)
+
+        public Thread BlinkLedAsync(byte r, byte g, byte b, int periodInMs = 100,
+                                  double dutyCycle = 0.5, int times = 1)
         {
-            var Blink_thread = new Thread(() =>
-            {//definíca nového vlákna
-                Blink.Blinks(r, g, b, periodIntMs, duty, times);
+            var blinkThread = new Thread(() =>
+            {
+                try
+                {
+                    BlinkLed(r, g, b, periodInMs, dutyCycle, times);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Async LED blink failed: {ex.Message}");
+                }
             })
-            { Priority = ThreadPriority.BelowNormal};
-            Blink_thread.Start();//spustenie vlákna, v ktorom bežia súbežne s hlavným vláknom operácie vykonávajúce efekt blikania LED
+            {
+                Priority = ThreadPriority.BelowNormal,
+                //IsBackground = true
+            };
 
-            return Blink_thread; //added by RK (we need this reference to abort it)
+            blinkThread.Start();
+            return blinkThread;
         }
 
-        #endregion
+        private void SetLedColor(byte r, byte g, byte b)
+        {
+            if (_neo?.Image == null)
+                throw new InvalidOperationException("LED controller not initialized");
+
+            _neo.Image.SetPixel(0, 0, r, g, b);
+            _neo.Update();
+        }
+
+        private void TurnOffLed()
+        {
+            if (_neo?.Image == null)
+                throw new InvalidOperationException("LED controller not initialized");
+
+            _neo.Image.Clear();
+            _neo.Update();
+        }
+
+        private void ValidateParameters(double dutyCycle, int periodInMs)
+        {
+            if (dutyCycle <= 0 || dutyCycle > 1)
+                throw new ArgumentOutOfRangeException(
+                    nameof(dutyCycle), "Duty cycle must be between 0 and 1");
+
+            if (periodInMs <= 0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(periodInMs), "Period must be greater than 0");
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // Turn off LED before disposal
+                    try
+                    {
+                        TurnOffLed();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error turning off LED during disposal: {ex.Message}");
+                    }
+
+                    // No Dispose() call needed for Sk6812
+                }
+                _disposed = true;
+            }
+        }
+
+        ~Blink()
+        {
+            Dispose(false);
+        }
     }
 }
