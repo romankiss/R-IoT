@@ -44,7 +44,7 @@ public class FileLogger
             Debug.WriteLine("CSV file path is not set.");
             return;
         }
-        string csvLine = string.Join(",", telemetryData.Values) + "\n";
+        string csvLine = DateTime.Now +"," +string.Join(",", telemetryData.Values) + "\n";
         try
         {
             await File.AppendAllTextAsync(_csvFilePath, csvLine);
