@@ -11,10 +11,10 @@ namespace Remake_of_GND_receiver
     {
         private readonly SerialPortManager _serialPortManager;
         private readonly TelemetryProcessor _telemetryProcessor;
-        private readonly DatabaseManager _databaseManager;
+        private DatabaseManager _databaseManager;
         private readonly FileLogger _fileLogger;
 
-        public const bool useDB = false;
+        public const bool useDB = true;
         public const bool useFile = true;
         public const string fileHeader = "Timestamp,Counter,DevID,Temperature,Humidity,Distance,Pressure,Latitude,Longitude,Altitude\n";
 
@@ -26,10 +26,11 @@ namespace Remake_of_GND_receiver
             BaudRateComboBox.SelectedIndex = 4;//115200
             ComPortComboBox.SelectedIndex = 0;//some port
             DisconnectButton.IsEnabled = false;
+            ConnectToDBButton.IsEnabled = useDB;
 
             _serialPortManager = new SerialPortManager();
             _telemetryProcessor = new TelemetryProcessor();
-            if (useDB)_databaseManager = new DatabaseManager("Host=your-aws-endpoint;Username=your-user;Password=your-password;Database=your-db");
+            //if (useDB)_databaseManager = new DatabaseManager("Host=your-aws-endpoint;Username=your-user;Password=your-password;Database=your-db");
             if(useFile)_fileLogger = new FileLogger(null,
                 $"C:\\Users\\{Environment.UserName}\\Desktop\\sensor_data_{DateTime.Now:dd.MM.yyyy_HH-mm}.csv",
                 fileHeader
@@ -80,7 +81,7 @@ namespace Remake_of_GND_receiver
                 if (telemetryData.Count > 0)
                 {
                     if (useFile) await _fileLogger.LogToCsvAsync(telemetryData);
-                    if (useDB) await _databaseManager.SaveTelemetryAsync(telemetryData);
+                    if (useDB && _databaseManager!=null) await _databaseManager.SaveTelemetryAsync(telemetryData);
                 }
             }
             catch (Exception ex)
@@ -150,8 +151,14 @@ namespace Remake_of_GND_receiver
         }
         public void ConnectToDBButton_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+           // throw new NotImplementedException();
             //await _databaseManager.ConnectAsync();
+            if(ConnectionStringTextBox.Text == null)
+            {
+                MessageTextBlock.Text = "Connection string is empty!";
+                return;
+            }
+            _databaseManager = new DatabaseManager(ConnectionStringTextBox.Text);
         }
 
         protected override void OnClosed(EventArgs e)
