@@ -24,7 +24,7 @@ namespace CanSat
 
 #if XIASEEED_S3
         //https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
-        const string deviceId = "device2.00";
+        const int deviceId = 1;
         const ushort loraAddress = 0x905;
         const byte loraNetworkId = 0x12;  // 850.125 + 18 = 868.125Mhz
         const int pinButton = 0;
@@ -39,7 +39,7 @@ namespace CanSat
         const int pinCOM1_RX = 2;
 #elif AtomS3Lite
         // 
-        const string deviceId = "device1.00";
+        const int deviceId = 1;//redefining to an int instead of a string to save bytes in transmission
         const ushort loraAddress = 0x1234;
         const byte loraNetworkId = 0x12;  // 850.125 + 18 = 868.125Mhz
         const int pinButton = 41;
@@ -313,6 +313,7 @@ namespace CanSat
                 {
                     int counter = Interlocked.Increment(ref pub_counter);
                     string payload = $"#{counter}";
+                    payload += $"I{deviceId}"; // add device ID to the payload
                     //SetLedByColor(0, 0, 2, 50);
 
                     if (sensorTH != null)
