@@ -151,14 +151,27 @@ namespace Remake_of_GND_receiver
         }
         public void ConnectToDBButton_Click(object sender, RoutedEventArgs e)
         {
-           // throw new NotImplementedException();
+            // throw new NotImplementedException();
             //await _databaseManager.ConnectAsync();
-            if(ConnectionStringTextBox.Text == null)
+            /* if(ConnectionStringTextBox.Text == null)
             {
                 MessageTextBlock.Text = "Connection string is empty!";
                 return;
             }
-            _databaseManager = new DatabaseManager(ConnectionStringTextBox.Text);
+            _databaseManager = new DatabaseManager(ConnectionStringTextBox.Text);*/
+            ConnStrGatherer gatherer = null;
+            if (ConnectionStringFilePathTextBox.Text.StartsWith("C:"))
+            {
+                gatherer = new ConnStrGatherer(ConnectionStringFilePathTextBox.Text); // For custom path
+            }
+            else
+            {
+                gatherer = new ConnStrGatherer(); // Uses default path
+            }
+                
+                                                  // 
+            string connectionString = gatherer.GetConnectionString();
+            _databaseManager = new DatabaseManager(connectionString);
         }
 
         protected override void OnClosed(EventArgs e)

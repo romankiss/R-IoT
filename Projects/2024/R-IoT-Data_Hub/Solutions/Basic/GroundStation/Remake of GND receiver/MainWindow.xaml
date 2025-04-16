@@ -53,7 +53,7 @@
 
         <GroupBox Header="DB Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="10" Margin="10,150,0,0" Width="642">
             <StackPanel Orientation="Horizontal">
-                <TextBox x:Name="ConnectionStringTextBox" Width="494" Height="20" Margin="0,0,10,0" Text="Enter connection string"/>
+                <TextBox x:Name="ConnectionStringFilePathTextBox" Width="494" Height="20" Margin="0,0,10,0" Text="Enter connection string file path (.txt)"/>
                 <Button x:Name="ConnectToDBButton" Content="Connect to DB" Width="100" Click="ConnectToDBButton_Click"/>
             </StackPanel>
         </GroupBox>
