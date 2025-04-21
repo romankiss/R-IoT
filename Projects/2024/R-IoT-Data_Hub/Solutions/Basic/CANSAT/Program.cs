@@ -72,6 +72,11 @@ namespace CanSat
         static GPS sensorGPS = null;
         static bool useGPS = true;
         static Blink led = null; // LED object for blinking
+        static Timer pubTimer;
+        static int currentPubPeriod = 10000; // Default to 10 seconds (10000 ms)
+        const int fastPubPeriod = 1000;      // Fast mode (1 second)
+        const int slowPubPeriod = 10000;     // Slow mode (10 seconds)
+        const int distanceThreshold = 100;   // Threshold in mm
 
 
 
@@ -289,8 +294,7 @@ namespace CanSat
             #endregion
 
 
-            Timer pubTimer = new Timer((s) => FireTelemetryData(), null, 0, pub_period);
-
+            
             // Button handler/callback
             buttonM5.Press += (sender, e) =>
             {
@@ -305,6 +309,23 @@ namespace CanSat
             // Timer handler/callback
             void FireTelemetryData()
             {
+                //adjust the pub period
+                if (sensorToF != null)
+                {
+                    var currentDistance = sensorToF.Distance;
+                    if (currentDistance > distanceThreshold && currentPubPeriod != fastPubPeriod)
+                    {
+                        currentPubPeriod = fastPubPeriod;
+                        pubTimer.Change(0, currentPubPeriod); // Change to fast mode
+                        Debug.WriteLine("Switched to fast publishing mode (1s)");
+                    }
+                    else if (currentDistance <= distanceThreshold && currentPubPeriod != slowPubPeriod)
+                    {
+                        currentPubPeriod = slowPubPeriod;
+                        pubTimer.Change(0, currentPubPeriod); // Change to slow mode
+                        Debug.WriteLine("Switched to slow publishing mode (10s)");
+                    }
+                }
                 //Buzz.MakeABuzz(10, 50);
                 //Debug.WriteLine("");
                 Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
@@ -390,14 +411,15 @@ namespace CanSat
 
                 
             }
-            
+            pubTimer = new Timer((s) => FireTelemetryData(), null, 0, currentPubPeriod);
 
             #region Ready for IoT (last step)
             Diag.PrintMemory("READY", true);
             //timer_watchdog?.Dispose();
             led.BlinkLedAsync(0, 20, 0, 250, 1,2);      // good light
-            Thread.Sleep(Timeout.Infinite);
             #endregion
+            Thread.Sleep(Timeout.Infinite);
+            
 
         }
 
