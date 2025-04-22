@@ -309,11 +309,13 @@ namespace CanSat
             // Timer handler/callback
             void FireTelemetryData()
             {
+                #region adjust publication period
                 //adjust the pub period
+                //based on the distance from the ToF sensor, if we are too close to an object, we will publish less often, because we are probably on the ground or in the "launching drone cage"... if the dist. is greater than the threshold, we will publish more often, because we are probably in the air (excepto for -1: out of range or sensor error )
                 if (sensorToF != null)
                 {
                     var currentDistance = sensorToF.Distance;
-                    if (currentDistance > distanceThreshold && currentPubPeriod != fastPubPeriod)
+                    if (currentDistance == -1 || (currentDistance > distanceThreshold && currentPubPeriod != fastPubPeriod))
                     {
                         currentPubPeriod = fastPubPeriod;
                         pubTimer.Change(0, currentPubPeriod); // Change to fast mode
@@ -326,6 +328,7 @@ namespace CanSat
                         Debug.WriteLine("Switched to slow publishing mode (10s)");
                     }
                 }
+                #endregion
                 //Buzz.MakeABuzz(10, 50);
                 //Debug.WriteLine("");
                 Debug.WriteLine($"nFmem_FireStart={Memory.Run(true)}");
