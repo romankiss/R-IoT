@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <NanoFrameworkProjectSystemPath>$(MSBuildExtensionsPath)\nanoFramework\v1.0\</NanoFrameworkProjectSystemPath>
+  </PropertyGroup>
+  <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.Default.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.Default.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{11A8DD76-328B-46DF-9F39-F559912D0360};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>d51ac137-81a0-43d2-853b-877710b9094d</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>CanSatU1</RootNamespace>
+    <AssemblyName>CanSatU1</AssemblyName>
+    <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
+  <ItemGroup>
+    <Compile Include="Base.cs" />
+    <Compile Include="Blink.cs" />
+    <Compile Include="Buzz.cs" />
+    <Compile Include="E22-900T22D\Extensions.cs" />
+    <Compile Include="E22-900T22D\Wrapper.cs" />
+    <Compile Include="GPSM5Stack.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Storage.cs" />
+    <Compile Include="Waveshare\I2CDevBase.cs" />
+    <Compile Include="Waveshare\ToFSns.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Iot.Device.Bmxx80">
+      <HintPath>packages\nanoFramework.Iot.Device.Bmxx80.1.2.869\lib\Iot.Device.Bmxx80.dll</HintPath>
+    </Reference>
+    <Reference Include="Iot.Device.Button">
+      <HintPath>packages\nanoFramework.Iot.Device.Button.1.2.864\lib\Iot.Device.Button.dll</HintPath>
+    </Reference>
+    <Reference Include="Iot.Device.Common.WeatherHelper">
+      <HintPath>packages\nanoFramework.Iot.Device.Common.WeatherHelper.1.2.865\lib\Iot.Device.Common.WeatherHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Iot.Device.Sht4x">
+      <HintPath>packages\nanoFramework.Iot.Device.Sht4x.1.0.293\lib\Iot.Device.Sht4x.dll</HintPath>
+    </Reference>
+    <Reference Include="Iot.Device.Vl53L0X">
+      <HintPath>packages\nanoFramework.Iot.Device.Vl53L0X.1.2.864\lib\Iot.Device.Vl53L0X.dll</HintPath>
+    </Reference>
+    <Reference Include="Iot.Device.Ws28xx.Esp32">
+      <HintPath>packages\nanoFramework.Iot.Device.Ws28xx.Esp32.1.2.864\lib\Iot.Device.Ws28xx.Esp32.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib">
+      <HintPath>packages\nanoFramework.CoreLibrary.1.17.11\lib\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="nanoFramework.Graphics.Core">
+      <HintPath>packages\nanoFramework.Graphics.Core.1.2.45\lib\nanoFramework.Graphics.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="nanoFramework.Hardware.Esp32">
+      <HintPath>packages\nanoFramework.Hardware.Esp32.1.6.34\lib\nanoFramework.Hardware.Esp32.dll</HintPath>
+    </Reference>
+    <Reference Include="nanoFramework.Hardware.Esp32.Rmt">
+      <HintPath>packages\nanoFramework.Hardware.Esp32.Rmt.2.0.35\lib\nanoFramework.Hardware.Esp32.Rmt.dll</HintPath>
+    </Reference>
+    <Reference Include="nanoFramework.Runtime.Events">
+      <HintPath>packages\nanoFramework.Runtime.Events.1.11.32\lib\nanoFramework.Runtime.Events.dll</HintPath>
+    </Reference>
+    <Reference Include="nanoFramework.Runtime.Native">
+      <HintPath>packages\nanoFramework.Runtime.Native.1.7.11\lib\nanoFramework.Runtime.Native.dll</HintPath>
+    </Reference>
+    <Reference Include="nanoFramework.System.Text">
+      <HintPath>packages\nanoFramework.System.Text.1.3.42\lib\nanoFramework.System.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers.Binary.BinaryPrimitives">
+      <HintPath>packages\nanoFramework.System.Buffers.Binary.BinaryPrimitives.1.2.862\lib\System.Buffers.Binary.BinaryPrimitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Device.Gpio">
+      <HintPath>packages\nanoFramework.System.Device.Gpio.1.1.57\lib\System.Device.Gpio.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Device.I2c">
+      <HintPath>packages\nanoFramework.System.Device.I2c.1.1.29\lib\System.Device.I2c.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Device.Model">
+      <HintPath>packages\nanoFramework.System.Device.Model.1.2.862\lib\System.Device.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.Stopwatch">
+      <HintPath>packages\nanoFramework.System.Diagnostics.Stopwatch.1.2.862\lib\System.Diagnostics.Stopwatch.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.FileSystem">
+      <HintPath>packages\nanoFramework.System.IO.FileSystem.1.1.87\lib\System.IO.FileSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Ports">
+      <HintPath>packages\nanoFramework.System.IO.Ports.1.1.132\lib\System.IO.Ports.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Streams">
+      <HintPath>packages\nanoFramework.System.IO.Streams.1.1.96\lib\System.IO.Streams.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Math">
+      <HintPath>packages\nanoFramework.System.Math.1.5.116\lib\System.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics">
+      <HintPath>packages\nanoFramework.System.Numerics.1.2.862\lib\System.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.Duration">
+      <HintPath>packages\UnitsNet.nanoFramework.Duration.5.74.0\lib\UnitsNet.Duration.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.ElectricResistance">
+      <HintPath>packages\UnitsNet.nanoFramework.ElectricResistance.5.74.0\lib\UnitsNet.ElectricResistance.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.Length">
+      <HintPath>packages\UnitsNet.nanoFramework.Length.5.74.0\lib\UnitsNet.Length.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.Pressure">
+      <HintPath>packages\UnitsNet.nanoFramework.Pressure.5.74.0\lib\UnitsNet.Pressure.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.RelativeHumidity">
+      <HintPath>packages\UnitsNet.nanoFramework.RelativeHumidity.5.74.0\lib\UnitsNet.RelativeHumidity.dll</HintPath>
+    </Reference>
+    <Reference Include="UnitsNet.Temperature">
+      <HintPath>packages\UnitsNet.nanoFramework.Temperature.5.74.0\lib\UnitsNet.Temperature.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
+  <ProjectExtensions>
+    <ProjectCapabilities>
+      <ProjectConfigurationsDeclaredAsItems />
+    </ProjectCapabilities>
+  </ProjectExtensions>
+</Project>

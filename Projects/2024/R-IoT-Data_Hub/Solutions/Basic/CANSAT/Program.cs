@@ -54,7 +54,9 @@ namespace CanSat
         const int pinCOM1_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
         const int pinCOM2_TX = 8;       // PORTB-G8, 
         const int pinCOM2_RX = 7;       // PORTB-G7
-        //M5atomBase grove conn. can not be used for i2C, ony for UART
+                                        //M5atomBase grove conn. can not be used for i2C, ony for UART
+        
+
 #endif
 
         //static int loopback_counter = 0;
@@ -77,6 +79,7 @@ namespace CanSat
         const int fastPubPeriod = 1000;      // Fast mode (1 second)
         const int slowPubPeriod = 10000;     // Slow mode (10 seconds)
         const int distanceThreshold = 100;   // Threshold in mm
+        static byte servoChannel = 1; // Choose a channel between 0 and 3
 
 
 
@@ -139,12 +142,30 @@ namespace CanSat
             }
             /* Buzz bz = new Buzz();
              Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);*/
+
+            try
+            {
+                //ioctrl.OpenPin(pinI2C1_SDA, PinMode.InputPullUp);  
+                //ioctrl.OpenPin(pinI2C1_SCK, PinMode.InputPullUp); 
+                Configuration.SetPinFunction(pinI2C2_SDA, DeviceFunction.I2C2_DATA);
+                Configuration.SetPinFunction(pinI2C2_SCK, DeviceFunction.I2C2_CLOCK);
+            }
+            catch
+            (Exception ex)
+            {
+                Debug.WriteLine("Error initing I2C BUS 2: " + ex.Message);
+            }
+            I2cConnectionSettings setting = new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress);
+            I2cDevice i2c = I2cDevice.Create(setting);
+            var motion = M5AtomicMotion.Create(i2c);
+            byte angle = 90;       // Set the angle (0–180 degrees)
+            motion.SetServoAngle(servoChannel, angle);
             #endregion
 
 
             #region SENSORS 
 
-            
+
 
             try
             {
@@ -156,7 +177,7 @@ namespace CanSat
             catch
             (Exception ex)
             {
-                Debug.WriteLine("Error initing I2C BUS: " + ex.Message);
+                Debug.WriteLine("Error initing I2C BUS 1: " + ex.Message);
             }
 
 
