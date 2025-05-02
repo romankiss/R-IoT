@@ -26,6 +26,7 @@
     <Compile Include="GPSM5Stack.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServoManager.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Waveshare\I2CDevBase.cs" />
     <Compile Include="Waveshare\ToFSns.cs" />

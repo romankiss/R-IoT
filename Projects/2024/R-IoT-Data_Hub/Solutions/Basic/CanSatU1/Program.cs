@@ -16,6 +16,7 @@ using Iot.Device.Bmxx80.PowerMode;
 using UnitsNet; // for pressure and temperature units
 using Memory = nanoFramework.Runtime.Native.GC;
 using Cansat;
+using CanSatU1;
 
 namespace CanSat
 {
@@ -41,7 +42,7 @@ namespace CanSat
         // 
         const int deviceId = 1;//redefining to an int instead of a string to save bytes in transmission
         const ushort loraAddress = 0x1234;
-        const byte loraNetworkId = 0x12;  // 850.125 + 18 = 868.125Mhz
+        const byte loraNetworkId = 0x13;  // 850.125 + 18 = 868.125Mhz
         const int pinButton = 41;
         const int pinNeo = 35;
         const int pinNeoPower = -1;
@@ -50,11 +51,18 @@ namespace CanSat
         const int pinI2C1_SCK = 1;      // Grove
         const int pinI2C2_SDA = 38;      // second i2C bus is being used to comm. with the base, that has the buzzer connected on the motor pins 
         const int pinI2C2_SCK = 39;        //also note, that the base MUST be on the second bus due to hardwiring reasons
-        const int pinCOM1_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  COM3 will hopefully be used for the GPS module
+        /*const int pinCOM1_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  COM3 will hopefully be used for the GPS module
         const int pinCOM1_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
         const int pinCOM2_TX = 8;       // PORTB-G8, 
         const int pinCOM2_RX = 7;       // PORTB-G7
                                         //M5atomBase grove conn. can not be used for i2C, ony for UART
+        SWAP,,,, upper is for the old config, lower is for the new one, that requires wiring changes
+        */
+        const int pinCOM2_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  COM3 will hopefully be used for the GPS module
+        const int pinCOM2_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
+        const int pinCOM1_TX = 8;       // PORTB-G8, 
+        const int pinCOM1_RX = 7;       // PORTB-G7
+
 
 
 #endif
@@ -75,7 +83,7 @@ namespace CanSat
         static bool useGPS = true;
         static Blink led = null; // LED object for blinking
         static Timer pubTimer;
-
+        static ServoManager servo = null; // Servo object for controlling servos
         static byte servoChannel = 1; // Choose a channel between 0 and 3
 
 
@@ -142,8 +150,6 @@ namespace CanSat
 
             try
             {
-                //ioctrl.OpenPin(pinI2C1_SDA, PinMode.InputPullUp);  
-                //ioctrl.OpenPin(pinI2C1_SCK, PinMode.InputPullUp); 
                 Configuration.SetPinFunction(pinI2C2_SDA, DeviceFunction.I2C2_DATA);
                 Configuration.SetPinFunction(pinI2C2_SCK, DeviceFunction.I2C2_CLOCK);
             }
@@ -155,8 +161,8 @@ namespace CanSat
             I2cConnectionSettings setting = new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress);
             I2cDevice i2c = I2cDevice.Create(setting);
             var motion = M5AtomicMotion.Create(i2c);
-            byte angle = 90;       // Set the angle (0–180 degrees)
-            motion.SetServoAngle(servoChannel, angle);
+            servo = new ServoManager(motion);
+            servo.TestServo(Times: 3);
             #endregion
 
 
@@ -397,7 +403,7 @@ namespace CanSat
                     //
                     if (lora != null && lora.IsOpen)
                     {
-                        lora.Send(address: BroadcastAddress, data: payload);
+                        lora.Send(address: BroadcastAddress, data: payload, channel: loraNetworkId);
                     }
                     else
                         Debug.WriteLine($"Device is not ready to publish message");
