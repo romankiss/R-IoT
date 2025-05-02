@@ -90,6 +90,7 @@ namespace CanSat
         static int releaseParachuteDistanceFromGND = 100; // in mm
         static byte servoClosedAngle = 160;
         static byte servoOpenAngle = 110;
+        static bool useServoParachuteRelease = true;
 
 
 
@@ -166,11 +167,15 @@ namespace CanSat
             I2cConnectionSettings setting = new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress);
             I2cDevice i2c = I2cDevice.Create(setting);
             var motion = M5AtomicMotion.Create(i2c);
-            servo = new ServoManager(motion);
-            //servo.TestServo(Times: 3);
-            servo.SetServoAngle(angle: servoClosedAngle, servoChannel: servoChannel);
-            /*Thread.Sleep(1000); // wait for servo to move to the initial position
-            servo.SetServoAngle(angle: 0, servoChannel: servoChannel);*/
+            if (motion == null && useServoParachuteRelease)
+            {
+                servo = new ServoManager(motion);
+                //servo.TestServo(Times: 3);
+                servo.SetServoAngle(angle: servoClosedAngle, servoChannel: servoChannel);
+                /*Thread.Sleep(1000); // wait for servo to move to the initial position
+                servo.SetServoAngle(angle: 0, servoChannel: servoChannel);*/
+            }
+
             #endregion
 
 
@@ -348,6 +353,7 @@ namespace CanSat
 
                 try
                 {
+                    #region build payload
                     int counter = Interlocked.Increment(ref pub_counter);
                     string payload = $"#{counter}";
                     payload += $"I{deviceId}"; // add device ID to the payload
@@ -408,17 +414,28 @@ namespace CanSat
                     payload += $"\r\n";
                     //
                     Debug.WriteLine($">>> [{DateTime.UtcNow.ToString("hh:mm:ss.fff")}] {payload}");
+                    #endregion
                     //
+                    #region send lora
                     if (lora != null && lora.IsOpen)
                     {
+                        long start = DateTime.UtcNow.Ticks;
+
                         lora.Send(address: BroadcastAddress, data: payload, channel: loraNetworkId);
+
+                        long elapsedTicks = DateTime.UtcNow.Ticks - start;
+                        double elapsedMs = elapsedTicks / (double)TimeSpan.TicksPerMillisecond;
+
+                        Debug.WriteLine($"Execution time of lora.Send: {elapsedMs} ms");
+                        
                     }
                     else
                         Debug.WriteLine($"Device is not ready to publish message");
+                    #endregion
 
                     //SetLedByColor(Color.Black);
-
-                    if(sensorToF != null && SensorData.Distance != -1)
+                    #region release parachute
+                    if (sensorToF != null && SensorData.Distance != -1 && useServoParachuteRelease)
                     {
                         if (SensorData.Distance < releaseParachuteDistanceFromGND)
                         {
@@ -433,6 +450,7 @@ namespace CanSat
                             //servo.SetMotorSpeed(M5AtomicMotion.MotorSpeedStop);
                         }
                     }
+                    #endregion
                 }
                 catch (Exception ex)
                 {
