@@ -18,10 +18,12 @@ using Memory = nanoFramework.Runtime.Native.GC;
 using Cansat;
 using CanSatU1;
 
+
 namespace CanSat
 {
     public class Program
     {
+        
 
 #if XIASEEED_S3
         //https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/
@@ -85,6 +87,9 @@ namespace CanSat
         static Timer pubTimer;
         static ServoManager servo = null; // Servo object for controlling servos
         static byte servoChannel = 1; // Choose a channel between 0 and 3
+        static int releaseParachuteDistanceFromGND = 100; // in mm
+        static byte servoClosedAngle = 160;
+        static byte servoOpenAngle = 110;
 
 
 
@@ -162,7 +167,10 @@ namespace CanSat
             I2cDevice i2c = I2cDevice.Create(setting);
             var motion = M5AtomicMotion.Create(i2c);
             servo = new ServoManager(motion);
-            servo.TestServo(Times: 3);
+            //servo.TestServo(Times: 3);
+            servo.SetServoAngle(angle: servoClosedAngle, servoChannel: servoChannel);
+            /*Thread.Sleep(1000); // wait for servo to move to the initial position
+            servo.SetServoAngle(angle: 0, servoChannel: servoChannel);*/
             #endregion
 
 
@@ -409,6 +417,22 @@ namespace CanSat
                         Debug.WriteLine($"Device is not ready to publish message");
 
                     //SetLedByColor(Color.Black);
+
+                    if(sensorToF != null && SensorData.Distance != -1)
+                    {
+                        if (SensorData.Distance < releaseParachuteDistanceFromGND)
+                        {
+                            servo.SetServoAngle(angle: servoOpenAngle, servoChannel: servoChannel);
+                            //servo.SetServoPulse(ServoPulseHighBack, servoChannel);
+                            //servo.SetMotorSpeed(M5AtomicMotion.MotorSpeedBack);
+                        }
+                        else
+                        {
+                            servo.SetServoAngle(angle: servoClosedAngle, servoChannel: servoChannel);
+                            //servo.SetServoPulse(ServoPulseStop, servoChannel);
+                            //servo.SetMotorSpeed(M5AtomicMotion.MotorSpeedStop);
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
