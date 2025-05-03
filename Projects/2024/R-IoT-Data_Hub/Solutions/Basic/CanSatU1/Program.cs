@@ -91,8 +91,7 @@ namespace CanSat
         static byte servoClosedAngle = 160;
         static byte servoOpenAngle = 110;
         static bool useServoParachuteRelease = true;
-
-
+        static bool useParachutePin = false; 
 
         public static class SensorData
         {
@@ -112,6 +111,9 @@ namespace CanSat
                 public double Longitude { get; set; }
                 public double Altitude { get; set; }
             }
+
+            public static bool ServoParachuteReleaseIsOpen { get; set; }
+            public static bool ParachutePin { get; set; }
         }
 
 
@@ -167,34 +169,36 @@ namespace CanSat
             I2cConnectionSettings setting = new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress);
             I2cDevice i2c = I2cDevice.Create(setting);
             var motion = M5AtomicMotion.Create(i2c);
-            if (motion == null && useServoParachuteRelease)
+            if (motion != null && useServoParachuteRelease)
             {
                 servo = new ServoManager(motion);
                 //servo.TestServo(Times: 3);
                 servo.SetServoAngle(angle: servoClosedAngle, servoChannel: servoChannel);
+                SensorData.ServoParachuteReleaseIsOpen = false; // initial state of the servo is closed
                 /*Thread.Sleep(1000); // wait for servo to move to the initial position
                 servo.SetServoAngle(angle: 0, servoChannel: servoChannel);*/
             }
 
-            #endregion
+
+                #endregion
 
 
-            #region SENSORS 
+                #region SENSORS 
 
 
 
-            try
-            {
-                //ioctrl.OpenPin(pinI2C1_SDA, PinMode.InputPullUp);  
-                //ioctrl.OpenPin(pinI2C1_SCK, PinMode.InputPullUp); 
-                Configuration.SetPinFunction(pinI2C1_SDA, DeviceFunction.I2C1_DATA);
-                Configuration.SetPinFunction(pinI2C1_SCK, DeviceFunction.I2C1_CLOCK);
-            }
-            catch
-            (Exception ex)
-            {
-                Debug.WriteLine("Error initing I2C BUS 1: " + ex.Message);
-            }
+                try
+                {
+                    //ioctrl.OpenPin(pinI2C1_SDA, PinMode.InputPullUp);  
+                    //ioctrl.OpenPin(pinI2C1_SCK, PinMode.InputPullUp); 
+                    Configuration.SetPinFunction(pinI2C1_SDA, DeviceFunction.I2C1_DATA);
+                    Configuration.SetPinFunction(pinI2C1_SCK, DeviceFunction.I2C1_CLOCK);
+                }
+                catch
+                (Exception ex)
+                {
+                    Debug.WriteLine("Error initing I2C BUS 1: " + ex.Message);
+                }
 
 
 
@@ -408,6 +412,48 @@ namespace CanSat
 
                     }
                     else payload += $"X-1Y-1Z-1";
+
+                    #region release parachute
+                    if (servo != null && sensorToF != null && SensorData.Distance != -1 && useServoParachuteRelease)
+                    {
+                        if (SensorData.Distance < releaseParachuteDistanceFromGND)
+                        {
+                            servo.SetServoAngle(angle: servoOpenAngle, servoChannel: servoChannel);
+                            SensorData.ServoParachuteReleaseIsOpen = true; // set the servo state to open
+                            payload += $"S1"; // add servo state to the payload
+                            //servo.SetServoPulse(ServoPulseHighBack, servoChannel);
+                            //servo.SetMotorSpeed(M5AtomicMotion.MotorSpeedBack);
+                        }
+                        else
+                        {
+                            servo.SetServoAngle(angle: servoClosedAngle, servoChannel: servoChannel);
+                            SensorData.ServoParachuteReleaseIsOpen = false; // set the servo state to closed
+                            payload += $"S0"; // add servo state to the payload
+                            //servo.SetServoPulse(ServoPulseStop, servoChannel);
+                            //servo.SetMotorSpeed(M5AtomicMotion.MotorSpeedStop);
+                        }
+                    }
+                    else
+                    {
+                        payload += $"S-1"; // add servo state to the payload
+                    }
+                    #endregion
+
+                    if (useParachutePin)
+                    {
+                        if (SensorData.ParachutePin)
+                        {
+                            payload += $"R1"; // add parachute pin state to the payload R== release
+
+                        }
+                        else
+                        {
+                            payload += $"R0"; // add parachute pin state to the payload
+                        }
+                    }
+                    else payload += $"R-1"; // add parachute pin state to the payload
+
+
                     // add more sensors to the payload    
 
                     // EOD (End of Data - Payload)
@@ -415,6 +461,8 @@ namespace CanSat
                     //
                     Debug.WriteLine($">>> [{DateTime.UtcNow.ToString("hh:mm:ss.fff")}] {payload}");
                     #endregion
+
+
                     //
                     #region send lora
                     if (lora != null && lora.IsOpen)
@@ -434,23 +482,7 @@ namespace CanSat
                     #endregion
 
                     //SetLedByColor(Color.Black);
-                    #region release parachute
-                    if (sensorToF != null && SensorData.Distance != -1 && useServoParachuteRelease)
-                    {
-                        if (SensorData.Distance < releaseParachuteDistanceFromGND)
-                        {
-                            servo.SetServoAngle(angle: servoOpenAngle, servoChannel: servoChannel);
-                            //servo.SetServoPulse(ServoPulseHighBack, servoChannel);
-                            //servo.SetMotorSpeed(M5AtomicMotion.MotorSpeedBack);
-                        }
-                        else
-                        {
-                            servo.SetServoAngle(angle: servoClosedAngle, servoChannel: servoChannel);
-                            //servo.SetServoPulse(ServoPulseStop, servoChannel);
-                            //servo.SetMotorSpeed(M5AtomicMotion.MotorSpeedStop);
-                        }
-                    }
-                    #endregion
+
                 }
                 catch (Exception ex)
                 {
