@@ -14,8 +14,8 @@ public class DatabaseManager
     public async Task SaveTelemetryAsync(Dictionary<string, string> telemetryData)
     {
         const string query = @"
-            INSERT INTO telemetry.measurements (devid, temperature, humidity, pressure, distance, counter, latitude, longitude, altitude)
-            VALUES (@devid, @temperature, @humidity, @pressure, @distance, @counter, @latitude, @longitude, @altitude)";
+            INSERT INTO telemetry.measurements (devid, temperature, humidity, pressure, distance, counter, latitude, longitude, altitude, launch_servo_open)
+            VALUES (@devid, @temperature, @humidity, @pressure, @distance, @counter, @latitude, @longitude, @altitude, @launch_servo_open)";
 
         try
         {
@@ -38,6 +38,7 @@ public class DatabaseManager
             cmd.Parameters.AddWithValue("@latitude", double.Parse(telemetryData["X"]));
             cmd.Parameters.AddWithValue("@longitude", double.Parse(telemetryData["Y"]));
             cmd.Parameters.AddWithValue("@altitude", double.Parse(telemetryData["Z"]));
+            cmd.Parameters.AddWithValue("@launch_servo_open", telemetryData["S"] == "1" ? true : false); // Convert to boolean, but does not handle -1case
             //WARNING: DB has set acceptable ranges for some vals like humidity(0-100 & NULL), so passing it a -1 signing in our local environment, that there was an err reading hum (defacto NULL), will caouse an err in DB INSERT
             await cmd.ExecuteNonQueryAsync();
         }
