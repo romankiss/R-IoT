@@ -87,7 +87,7 @@ namespace CanSat
         static Timer pubTimer;
         static ServoManager servo = null; // Servo object for controlling servos
         static byte servoChannel = 1; // Choose a channel between 0 and 3
-        static int releaseParachuteDistanceFromGND = 100; // in mm
+        static int releaseParachuteDistanceFromGND = 10000; // in mm
         static byte servoClosedAngle = 160;
         static byte servoOpenAngle = 110;
         static bool useServoParachuteRelease = true;
@@ -414,9 +414,9 @@ namespace CanSat
                     else payload += $"X-1Y-1Z-1";
 
                     #region release parachute
-                    if (servo != null && sensorToF != null && SensorData.Distance != -1 && useServoParachuteRelease)
+                    if (servo != null && sensorToF != null  && useServoParachuteRelease)
                     {
-                        if (SensorData.Distance < releaseParachuteDistanceFromGND)
+                        if (SensorData.Distance < releaseParachuteDistanceFromGND && SensorData.Distance != -1)
                         {
                             servo.SetServoAngle(angle: servoOpenAngle, servoChannel: servoChannel);
                             SensorData.ServoParachuteReleaseIsOpen = true; // set the servo state to open
