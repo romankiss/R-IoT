@@ -1,3 +1,9 @@
 # SHT40 temperature and hummidity sensor integrated in the m5stack ENV IV unit
 [sensor](https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/products/unit/ENV%E2%85%A3%20Unit/SHT40.pdf)  
 [unit](https://shop.m5stack.com/products/env-iv-unit-with-temperature-humidity-air-pressure-sensor-sht40-bmp280?srsltid=AfmBOoq7ihtFUtG8C6rnoG9gZm2vprdubArSbj4_wYeY384tutD48a2a)
+
+
+# Dodatok  
+Tieto info píšem pre lepšie pochopenie o čo tu vlastne ide, cca **pol roka po tom**, ako som na tomto reálne pracoval, takže to nebude až také kvalitné, ako keby som to písal rovno vtedy.  
+## Princíp
+V tejto zostave je pripojený **senzor teploty, vlhkosti** a tlaku ovzdušia cez zbernicu **I2C** (viď Google). Používam vlhkosť - mení sa relatívne prudko a svižne (dýchaním na senzor) a teplotu - pomalšie zmeny, pretože senzor má tiež nejakú tepelnú kapacitu, ktorú treba najskôr zohriať (najlepšie vidno tmeny zohrievaním napr. fénom). Na čítanie z tohoto senzora je vyrobená v ekosystéme nanoFramework knižnica - tzv. **nugget**. Frekvenciu zberu údajov (resp. periódu) je dobré uložiť do globálnej **premennej** niekde na začiatok programu, aby sa dalo ľahko a rýchlo meniť v prípade potreby. Namerané dáta možno vysielať cez **LoRa** (viď Google). Pracoval som s 2 alt. zariadeniami: **[RYLR998](https://github.com/romankiss/R-IoT/tree/main/Projects/2024/R-IoT-Data_Hub/Solutions/Basic/Hello_LoRa)** - malý, dosah do 1km, jednoduchá komunikácia medzi kontrolérom a ním cez AT príkazy a **E22-900T22D** - 5-10km dosah, UART komunikácia pomerne zložitá (viď [wrapper](https://github.com/romankiss/R-IoT/tree/main/Projects/2024/PatternsAndPractices/Lora/E22-900Txxx))... Inak odporúčam prekutrať túto [zložku](https://github.com/romankiss/R-IoT/tree/main/Projects/2024/PatternsAndPractices/). Pripájanie periférií (senzor, LoRa modem) a napájanie sa dá riešiť cez M5Stack Base (pogoogli). Samozrejme na príjem dát musíš mať spravený príjmacý modem pripojený napr. do PC s nastaveným SW.
