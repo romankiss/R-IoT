@@ -1,4 +1,7 @@
-//hlavný program pre družicu CanSat, viď dokumenty [HW](Solutions\Basic\CANSAT\Hardvérová zostava elektroniky družice CANSAT.odt) [Správa](Solutions\Basic\CANSAT\Formát LoRa správy.docx)
+//hlavný program pre družicu CanSat, viď dokumenty 
+//[HW](Solutions\Basic\CANSAT\Hardvérová zostava elektroniky družice CANSAT.odt) 
+//[Správa](Solutions\Basic\CANSAT\Formát LoRa správy.docx) 
+//[obkec](Solutions\Basic\CANSAT\ratzenböck.marek_4.C_IoTpráca.pdf)
 
 #define AtomS3Lite      // XIASEEED_S3, XIASEEED_C3, AtomS3Lite, ...
 //riadok hore definuje, pre aku dosku sa ma kod kompilovat, kazda doska ma ine piny pre jednotlive periferie, preto je nutne to definovat
