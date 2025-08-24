@@ -4,11 +4,11 @@
 ## Important steps
  - Select proper COM port - mostly by guessing on which is your usb receiver connected
  - Baudrate and other settings should work out of the box, if not good luck digging trough the modem docs to reconfig it using SW in chinese
-  - If above is OK click Start reading, if you want to connect to your prepared DB (tables, columns with proper names and settings) you have to create a txt file containing your connection string, make sure this program has perm. to read it and specifi it in the hardcoded string somewhere in the ConnStrGatherer subprogram, or if you feel lucky, try the GUI input. 
-  - try playing with it & remember: if it works right away its bad - problems will appear, but when you dont have time to solve them... pray to have problems to solve in the right time: at home, not when day D comes - general effect  
+- If above is OK click **Start reading**. If you want to connect to your prepared DB (tables, columns with proper names and settings), you have to create a `.txt` file containing your connection string, make sure this program has permission to read it, and specify it in the hardcoded string somewhere in the `ConnStrGatherer` subprogram, or, if you feel lucky, try the GUI input.  
+    - Try playing with it & remember: if it works right away, it's bad—problems will appear, but when you don't have time to solve them... pray to have problems to solve at the right time: at home, not when day D comes—general effect.  
 
-  Later you can visualize your data via excel or SW like Grafana.
-  Setup your DB with a tool like PGadmin.
+    Later you can visualize your data via Excel or software like Grafana.  
+    Set up your DB with a tool like PGadmin or use the not tested vibe-coded example ([here](Solutions/Basic/GroundStation/Remake of GND receiver/PostgreSQL_Setup.sql)).
 ***WARN: Vibe-Coded material - no guarantee provided***
 ## Overview
 
