@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ratze\\source\\repos\\R-IoT\\Projects\\2024\\R-IoT-Data_Hub\\Solutions\\Basic\\Inzer\u00E1t\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{CDB489EF-6841-4C91-9E19-AF681ED1711E}|Inzer\u00E1t.csproj|c:\\users\\ratze\\source\\repos\\r-iot\\projects\\2024\\r-iot-data_hub\\solutions\\basic\\inzer\u00E1t\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CDB489EF-6841-4C91-9E19-AF681ED1711E}|Inzer\u00E1t.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\ratze\\source\\repos\\R-IoT\\Projects\\2024\\R-IoT-Data_Hub\\Solutions\\Basic\\Inzer\u00E1t\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\ratze\\source\\repos\\R-IoT\\Projects\\2024\\R-IoT-Data_Hub\\Solutions\\Basic\\Inzer\u00E1t\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-24T16:04:29.608Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

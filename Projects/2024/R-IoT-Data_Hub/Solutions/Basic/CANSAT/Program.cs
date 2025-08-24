@@ -1,5 +1,8 @@
-#define AtomS3Lite      // XIASEEED_S3, XIASEEED_C3, AtomS3Lite, ...
+//hlavný program pre družicu CanSat, viď dokumenty [HW](Solutions\Basic\CANSAT\Hardvérová zostava elektroniky družice CANSAT.odt) [Správa](Solutions\Basic\CANSAT\Formát LoRa správy.docx)
 
+#define AtomS3Lite      // XIASEEED_S3, XIASEEED_C3, AtomS3Lite, ...
+//riadok hore definuje, pre aku dosku sa ma kod kompilovat, kazda doska ma ine piny pre jednotlive periferie, preto je nutne to definovat
+//nasleduje import tzv. nuggetov - knižníc, ktoré treba doinštalovať, ak niesú predinštalované
 using System;
 using System.Device.Gpio;
 using System.Diagnostics;
@@ -38,7 +41,7 @@ namespace CanSat
         const int pinCOM1_TX = 1;
         const int pinCOM1_RX = 2;
 #elif AtomS3Lite
-        // 
+        // namapovanie pinov pre M5AtomS3Lite, https://docs.m5stack.com/en/core/atom_s3_lite
         const int deviceId = 1;//redefining to an int instead of a string to save bytes in transmission
         const ushort loraAddress = 0x1234;
         const byte loraNetworkId = 0x12;  // 850.125 + 18 = 868.125Mhz
@@ -58,7 +61,7 @@ namespace CanSat
         
 
 #endif
-
+        //nasledujú konštanty a premenné, ktoré sa používajú v programe, nezávyslé od typu mikrokontroléra
         //static int loopback_counter = 0;
         static int pub_counter = 0;
         const int pub_period = 1000;     // miliseconds
@@ -113,7 +116,8 @@ namespace CanSat
 
             #region setup
 
-
+            //init of the peripherals
+            //moja trieda na blikanie led
             Blink led = new Blink();//frustrating to discover that this little line is required to init the neo obj
             if (led == null)
             {
@@ -124,13 +128,14 @@ namespace CanSat
                 led.BlinkLedAsync(255, 255, 255, 1000, 1, 1);  // it must be async call
             }
                 
-                                                      // Button setup
+            // Button setup
             GpioButton buttonM5 = new GpioButton(buttonPin: pinButton, debounceTime: TimeSpan.FromMilliseconds(333));
             if (buttonM5 == null)
             {
                 Debug.WriteLine("Button initialization failed.");
             }
 
+            // Memory info - not quite tested or used, so be aware of memory overfilling
             if (saveDataToLocalStorage)
             {
                 file_path = "I:\\Measurement_" + DateTime.UtcNow.ToString("dd-MM-yyyy_HH-mm") + ".csv";
@@ -140,9 +145,10 @@ namespace CanSat
                 Storage.append(file_path, "Time, Temperature, Humidity, Distance, Pressure\r\n");
                 Storage.read(file_path);
             }
-            /* Buzz bz = new Buzz();
+            /* plán pripojiť bzučiak na piny motora sa ukázal ako zbytočný - In GPS we trust! 
+            Buzz bz = new Buzz();
              Buzz.Buzz_init(pinI2C2_SCK, pinI2C2_SDA, true);*/
-
+            //init i2C busu pre základňu
             try
             {
                 //ioctrl.OpenPin(pinI2C1_SDA, PinMode.InputPullUp);  
@@ -158,7 +164,8 @@ namespace CanSat
             I2cConnectionSettings setting = new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress);
             I2cDevice i2c = I2cDevice.Create(setting);
             var motion = M5AtomicMotion.Create(i2c);
-            byte angle = 90;       // Set the angle (0�180 degrees)
+            // servo používané v neskorších verziách družice ovládajúce vypúšťací mechanizmus padáku (odpojenie pred dopadom)
+            byte angle = 90;       // Set the angle (0�180 degrees)
             motion.SetServoAngle(servoChannel, angle);
             #endregion
 

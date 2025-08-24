@@ -1,0 +1,15 @@
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\Inzerát.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\Inzerát.AssemblyInfoInputs.cache
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\Inzerát.AssemblyInfo.cs
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\Inzerát.csproj.CoreCompileInputs.cache
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\Inzerát.sourcelink.json
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\bin\Debug\net8.0\Inzerát.exe
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\bin\Debug\net8.0\Inzerát.deps.json
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\bin\Debug\net8.0\Inzerát.runtimeconfig.json
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\bin\Debug\net8.0\Inzerát.dll
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\bin\Debug\net8.0\Inzerát.pdb
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\Inzerát.dll
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\refint\Inzerát.dll
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\Inzerát.pdb
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\Inzerát.genruntimeconfig.cache
+C:\Users\ratze\source\repos\R-IoT\Projects\2024\R-IoT-Data_Hub\Solutions\Basic\Inzerát\obj\Debug\net8.0\ref\Inzerát.dll
