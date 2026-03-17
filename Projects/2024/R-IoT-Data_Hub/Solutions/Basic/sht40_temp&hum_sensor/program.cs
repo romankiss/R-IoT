@@ -14,9 +14,9 @@ namespace ENVsnsr
             Debug.WriteLine("Hello from nanoFramework!");
             try
             {
-                // Configure the I2C GPIOs used for the bus
-                Configuration.SetPinFunction(8 , DeviceFunction.I2C2_DATA);//this line tells, that the GPIO pin no. 8 will be used as the data pin for the second i2c bus/interface(?)
-                Configuration.SetPinFunction(7, DeviceFunction.I2C2_CLOCK);//the 7th pin will be the carrier of the CLK signal ...
+                // Configure the I2C GPIOs used for the bus EDITED FOR ESP32_S3R PINOUT
+                Configuration.SetPinFunction(2 , DeviceFunction.I2C2_DATA);//this line tells, that the GPIO pin no. 2 will be used as the data pin for the second i2c bus/interface(?)
+                Configuration.SetPinFunction(1, DeviceFunction.I2C2_CLOCK);//the 1th pin will be the carrier of the CLK signal ...
             }
             catch (Exception ex)
             {
