@@ -3,7 +3,7 @@
 //[Správa](Solutions\Basic\CANSAT\Formát LoRa správy.docx) 
 //[obkec](Solutions\Basic\CANSAT\ratzenböck.marek_4.C_IoTpráca.pdf)
 
-#define AtomS3Lite      // XIASEEED_S3, XIASEEED_C3, AtomS3Lite, ...
+#define AtomS3_R      // XIASEEED_S3, XIASEEED_C3, AtomS3Lite, ... TTOT vyberá aký hw používame
 //riadok hore definuje, pre aku dosku sa ma kod kompilovat, kazda doska ma ine piny pre jednotlive periferie, preto je nutne to definovat
 //nasleduje import tzv. nuggetov - knižníc, ktoré treba doinštalovať, ak niesú predinštalované
 using System;
@@ -61,8 +61,25 @@ namespace CanSat
         const int pinCOM2_TX = 8;       // PORTB-G8, 
         const int pinCOM2_RX = 7;       // PORTB-G7
                                         //M5atomBase grove conn. can not be used for i2C, ony for UART
-        
 
+#elif AtomS3_R
+        // namapovanie pinov pre M5AtomS3Lite, https://docs.m5stack.com/en/core/atom_s3_lite
+        const int deviceId = 1;//redefining to an int instead of a string to save bytes in transmission
+        const ushort loraAddress = 0x1234;
+        const byte loraNetworkId = 0x12;  // 850.125 + 18 = 868.125Mhz
+        const int pinButton = 41;
+        const int pinNeo = 35;
+        const int pinNeoPower = -1;
+        const int pinLedA = -1;
+        const int pinI2C1_SDA = 2;      // Grove  the first i2C bus is being used to comm. with the Temp., Hum. and Press sensors as well as the dist. sensor
+        const int pinI2C1_SCK = 1;      // Grove
+        const int pinI2C2_SDA = 38;      // second i2C bus is being used to comm. with the base, that has the buzzer connected on the motor pins 
+        const int pinI2C2_SCK = 39;        //also note, that the base MUST be on the second bus due to hardwiring reasons
+        const int pinCOM1_TX = 6;       // HAT-G6, PORTC-G6,   G33, Grove-G2,  COM3 will hopefully be used for the GPS module
+        const int pinCOM1_RX = 5;       // HAT-G8, PORTC-G5,   G19, Grove-G1,  
+        const int pinCOM2_TX = 8;       // PORTB-G8, 
+        const int pinCOM2_RX = 7;       // PORTB-G7
+                                        //M5atomBase grove conn. can not be used for i2C, ony for UART
 #endif
         //nasledujú konštanty a premenné, ktoré sa používajú v programe, nezávyslé od typu mikrokontroléra
         //static int loopback_counter = 0;
@@ -78,12 +95,13 @@ namespace CanSat
         static GpioController ioctrl = new GpioController();
         static string file_path = string.Empty;
         static GPS sensorGPS = null;
-        static bool useGPS = true;
+        static bool useGPS = false;
         static Blink led = null; // LED object for blinking
         static Timer pubTimer;
         static int currentPubPeriod = 10000; // Default to 10 seconds (10000 ms)
         const int fastPubPeriod = 1000;      // Fast mode (1 second)
         const int slowPubPeriod = 10000;     // Slow mode (10 seconds)
+        const bool useMotion = false; // Set to true if you want to use the servo for the parachute mechanism
         const int distanceThreshold = 100;   // Threshold in mm
         static byte servoChannel = 1; // Choose a channel between 0 and 3
 
@@ -164,12 +182,16 @@ namespace CanSat
             {
                 Debug.WriteLine("Error initing I2C BUS 2: " + ex.Message);
             }
-            I2cConnectionSettings setting = new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress);
-            I2cDevice i2c = I2cDevice.Create(setting);
-            var motion = M5AtomicMotion.Create(i2c);
-            // servo používané v neskorších verziách družice ovládajúce vypúšťací mechanizmus padáku (odpojenie pred dopadom)
-            byte angle = 90;       // Set the angle (0�180 degrees)
-            motion.SetServoAngle(servoChannel, angle);
+            if (useMotion)
+            {
+                I2cConnectionSettings setting = new I2cConnectionSettings(2, M5AtomicMotion.DefaultI2cAddress);
+                I2cDevice i2c = I2cDevice.Create(setting);
+                var motion = M5AtomicMotion.Create(i2c);
+                // servo používané v neskorších verziách družice ovládajúce vypúšťací mechanizmus padáku (odpojenie pred dopadom)
+                byte angle = 90;       // Set the angle (0�180 degrees)
+                motion.SetServoAngle(servoChannel, angle);
+            }
+
             #endregion
 
 
