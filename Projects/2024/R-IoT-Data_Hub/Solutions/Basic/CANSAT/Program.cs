@@ -20,7 +20,7 @@ using Iot.Device.Vl53L0X;//for ToF sensor
 using Iot.Device.Bmxx80;//for pressure sensor
 using Iot.Device.Bmxx80.PowerMode;
 using UnitsNet; // for pressure and temperature units
-using Memory = nanoFramework.Runtime.Native.GC;
+using Memory = nanoFramework.Runtime.Native.GC;//make sure youre using the following nugget version: <package id="nanoFramework.Runtime.Native" version="1.7.11" targetFramework="netnano1.0" />
 using Cansat;
 
 namespace CanSat
