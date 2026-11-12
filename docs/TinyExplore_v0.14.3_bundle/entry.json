@@ -1,0 +1,911 @@
+{
+  "Design": {
+    "declaration": {
+      "name": "CodeCraft_microLAR_community",
+      "version": "0.14.3",
+      "type": "micro_lar_repository",
+      "schema_version": "1.1.0",
+      "title": "Tiny Light Explorer \u00b7 community microLAR"
+    },
+    "purpose": "Portable private logical artifact repository; not an AI generation handoff.",
+    "spaces": [
+      {
+        "id": "lib",
+        "path": "lib/",
+        "purpose": "Golden components; immutable catalog copies from the verified source pair."
+      },
+      {
+        "id": "modules",
+        "path": "modules/",
+        "purpose": "Agile module Model-First artifacts, preserved with original filenames and references."
+      },
+      {
+        "id": "package12",
+        "path": "package12/",
+        "purpose": "VERIFIED reusable Model/Code pairs; explicit foundation selection remains required."
+      },
+      {
+        "id": "packages",
+        "path": "packages/",
+        "purpose": "Packages for examination and review, not automatically promoted to trained models."
+      },
+      {
+        "id": "templates",
+        "path": "templates/",
+        "purpose": "Generic generation and handoff workflow templates."
+      },
+      {
+        "id": "examples",
+        "path": "examples/",
+        "purpose": "Human tasks, teaching catalog and navigation documentation."
+      },
+      {
+        "id": "tools",
+        "path": "tools/",
+        "purpose": "Supporting tools and future integration guidance."
+      },
+      {
+        "id": "notices",
+        "path": "notices/",
+        "purpose": "Third-party notices for offline Explorer dependencies."
+      },
+      {
+        "id": "rkb",
+        "path": "rkb/",
+        "purpose": "Sanitized runtime teaching projections; offline reference."
+      }
+    ],
+    "policies": {
+      "golden": "Immutable bytes, explicit origin and hash. Replacements stay in original generation/deployment contexts.",
+      "pairs": "Explicit VERIFIED catalog; application compatibility assessed before use.",
+      "examination": "packages/ inputs are not automatically promoted to trained state.",
+      "future_LAR": "Stable identities, versions, hashes and origin references; no remote sync implemented."
+    },
+    "release_policy": {
+      "state": "PREVIEW",
+      "stable": "0.12.0",
+      "next_preview": "0.13.0-preview.N",
+      "retention": "Public distribution keeps the closed stable baseline and newest next-minor preview only. Development archives are separate. Pair-internal provenance/evidence are not Explorer preview history.",
+      "community": "Read-only exploring/exporting plus scoped HAL-profile authoring. Other authoring remains deferred.",
+      "current": "0.13.0-preview.38"
+    }
+  },
+  "Deployment": {
+    "explorer_ref": "CodeCraft_Model_Tiny_Explorer_v0.14.3.html",
+    "artifacts": [
+      {
+        "id": "artifact_61",
+        "ref": "CHANGELOG.md",
+        "sha256": "3ad3339582cc76d1cd7f7be771c3cd76e5f6f0c22122e81e731c84cc932322a8",
+        "space": "examples",
+        "role": "documentation"
+      },
+      {
+        "id": "artifact_48",
+        "ref": "PrivacyReview.md",
+        "space": "examples",
+        "role": "release_review",
+        "state": "REVIEWED",
+        "sha256": "4a3d1b2591d80823ecb1569d1f21e7b8a422c4dabb459f13a63873c69409e70a"
+      },
+      {
+        "id": "artifact_1",
+        "ref": "README.md",
+        "space": "tools",
+        "role": "repository_instructions",
+        "sha256": "a82e5c3b26bf110bf7e83f6c86928091703af615a7b96a923b5f023dc6651871"
+      },
+      {
+        "id": "halpreview_TinyExplore_v0_13_0_preview_5_presentation_html",
+        "ref": "TinyExplore_v0.14.3_presentation.html",
+        "space": "examples",
+        "role": "documentation",
+        "version": "0.14.3",
+        "sha256": "643a44b7094a1b613958d6b026be0c1e2630cecceb311f9b869f11fe21e3f237"
+      },
+      {
+        "id": "artifact_3",
+        "ref": "examples/AEP.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "40b83a477a9a698d486a97f4858d0d45b2b7a04a75ef0637c306e27bdf44fe51"
+      },
+      {
+        "id": "artifact_7",
+        "ref": "examples/AEP_Semaphore.reference.json",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "35cd988b13ec5896c7ffec68859eb0102ed9b93fa7c10eee9aa3b31107af1951"
+      },
+      {
+        "id": "artifact_6",
+        "ref": "examples/AI_Assistant.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "12800415d5f2a56058ce17024e34eeb46896adba063ce9fc1e324022aac8e9be"
+      },
+      {
+        "id": "artifact_12",
+        "ref": "examples/AI_Worker.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "4f700b1d2519a91279750c0283a8ed6880dbcaa5bab42d033fc456ad02dfcca9"
+      },
+      {
+        "id": "artifact_38",
+        "ref": "examples/Example3Acceptance.md",
+        "space": "examples",
+        "role": "documentation",
+        "state": "AVAILABLE",
+        "sha256": "db4d8ff6299a541e6b9a794fe062bacea1142ad8d5ca366a07f2739ec08310aa"
+      },
+      {
+        "id": "artifact_37",
+        "ref": "examples/Examples.catalog.json",
+        "space": "examples",
+        "role": "teaching_catalog",
+        "state": "AVAILABLE",
+        "sha256": "a2a470e4e2af02fbc61f2beec15f1e362b5eb8432dc76630077f4bae45412488"
+      },
+      {
+        "id": "halpreview_examples_HAL_README_md",
+        "ref": "examples/HAL/README.md",
+        "space": "examples",
+        "role": "documentation",
+        "version": "0.13.0-preview.5",
+        "sha256": "99eef657c17abb860bc7c6bc9c438b494ffb7e02381611a2df181912171e5130"
+      },
+      {
+        "id": "artifact_44",
+        "ref": "examples/Legend.json",
+        "space": "examples",
+        "role": "terminology",
+        "state": "AVAILABLE",
+        "sha256": "84b9b7340829c015d1e0753ad61fb9743824589625fa10e930bca4484053454a"
+      },
+      {
+        "id": "artifact_4",
+        "ref": "examples/Module.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "1ffdb42b738d822b73e3d9139332534a2e3bdcbca84fec301babeef43edd3656"
+      },
+      {
+        "id": "artifact_13",
+        "ref": "examples/Package12.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "d2ae7e6eb4bf66e397b038ac214f4cc415bf13208e085efa1908c7caf44b54a7"
+      },
+      {
+        "id": "artifact_10",
+        "ref": "examples/Patterns_and_Principles.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "31b9d2578d850b206c359cd7fff2389ef8fd0e1a68e6d0268670abc701681e25"
+      },
+      {
+        "id": "artifact_47",
+        "ref": "examples/QueryTerminology.md",
+        "space": "examples",
+        "role": "documentation",
+        "state": "AVAILABLE",
+        "sha256": "5611479203b42af79ec30eb0141509d553d4f10e41a60913a4258a67b51551a6"
+      },
+      {
+        "id": "artifact_8",
+        "ref": "examples/README.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "ca364bf5380bbda5f7c53b9f078ae88d83771214d5d767047272f6e4913d5cb0"
+      },
+      {
+        "id": "artifact_5",
+        "ref": "examples/Reference.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "fae5b9d7719831aaf167801a29c985c824d141b7700ba58313c39aad9ebd3d33"
+      },
+      {
+        "id": "artifact_11",
+        "ref": "examples/Review_and_Placer.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "942d5753b8ae7c6ef2080446364216505fc0f2d102365604fcf440989c14fc2c"
+      },
+      {
+        "id": "artifact_51",
+        "ref": "examples/TMR_Extension/HumanRequirements_v0.1.1.md",
+        "space": "examples",
+        "role": "documentation",
+        "state": "APPROVED_POLICY",
+        "sha256": "93efc355678a76c8a4ec606ad9ab023ae8a3ba1c2bc618fedc94ff6d378f3627"
+      },
+      {
+        "id": "artifact_49",
+        "ref": "examples/TMR_Extension/PairWithOverlay.zip",
+        "space": "examples",
+        "role": "case_study",
+        "state": "IMMUTABLE_CASE_STUDY",
+        "sha256": "e851426778842b795d39c23f2ad7788ef5f23521e09d70d9b448aef6d358b353"
+      },
+      {
+        "id": "artifact_50",
+        "ref": "examples/TMR_Extension/Review.md",
+        "space": "examples",
+        "role": "documentation",
+        "state": "AVAILABLE",
+        "sha256": "0e4600dd11fc739b8a21b2a15c25a61ee50f488ada1937219318e4d4811b91cb"
+      },
+      {
+        "id": "artifact_9",
+        "ref": "examples/Testing.md",
+        "space": "examples",
+        "role": "documentation",
+        "sha256": "deb7c0fbce3eadbce879258cb1182af2574685331e7f312cbb4bd01ad2a92132"
+      },
+      {
+        "id": "artifact_16",
+        "ref": "lib/README.md",
+        "space": "lib",
+        "role": "documentation",
+        "sha256": "56846cea8c0443c7ba208686233acbc2231dd0d82e1883e095c54319ce63b7d0"
+      },
+      {
+        "id": "artifact_29",
+        "ref": "lib/runtime/common/Common.cs",
+        "space": "lib",
+        "role": "golden_component",
+        "sha256": "dab55efa5c4f3757f6f074f2eea79bb00848a32f69c113d3290c46e3c2a32597",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/lib/runtime/common/Common.cs"
+        }
+      },
+      {
+        "id": "artifact_28",
+        "ref": "lib/runtime/common/EventDrivenQueue.cs",
+        "space": "lib",
+        "role": "golden_component",
+        "sha256": "d008bea08d21e7cc68ce1f404bf5eb7d0e303a8a066db1123fc044a6267d7a31",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/lib/runtime/common/EventDrivenQueue.cs"
+        }
+      },
+      {
+        "id": "artifact_27",
+        "ref": "lib/runtime/common/Extensions.cs",
+        "space": "lib",
+        "role": "golden_component",
+        "sha256": "290812f4edb0c1a400181bd837dda73b28014863c02651ac67ddec7c2a9708b2",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/lib/runtime/common/Extensions.cs"
+        }
+      },
+      {
+        "id": "artifact_31",
+        "ref": "lib/runtime/drivers/lora/sx126x.cs",
+        "space": "lib",
+        "role": "golden_component",
+        "sha256": "122d189ee73847ba83eb826d7e77c4538802fc7d4112d459354c23cafdeb3b2a",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/lib/runtime/drivers/lora/sx126x.cs"
+        }
+      },
+      {
+        "id": "artifact_36",
+        "ref": "lib/runtime/virtual/CodeCraft_virtual_module_ddr.json",
+        "space": "lib",
+        "role": "golden_contract",
+        "state": "AVAILABLE",
+        "sha256": "5fa7dd7a51cf710f6f7aa5a4052b819eaec96c38219b4c5beb628dd3f5797c88"
+      },
+      {
+        "id": "artifact_30",
+        "ref": "lib/runtime/virtual/VirtualModule.cs",
+        "space": "lib",
+        "role": "golden_component",
+        "sha256": "e1c26b3f92e02f9ee1e54b2d04f0d41f1e34ace29b6506572ccc92e3adabd9e2",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/lib/runtime/virtual/VirtualModule.cs"
+        }
+      },
+      {
+        "id": "artifact_26",
+        "ref": "lib/tool/WiFiAgent.cs",
+        "space": "lib",
+        "role": "golden_component",
+        "sha256": "78495849e9ea474bf58cde287f6dedb6b035d4275fe7c53c7685e78c77895ea5",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/lib/tool/WiFiAgent.cs"
+        }
+      },
+      {
+        "id": "artifact_2",
+        "ref": "modules/README.md",
+        "space": "modules",
+        "role": "documentation",
+        "sha256": "cd56b6c9a792cc884a2f0699761666bb109de9c1da0e130177d4d8d17d42a463"
+      },
+      {
+        "id": "artifact_18",
+        "ref": "modules/empty/CodeCraft_empty_at.json",
+        "space": "modules",
+        "role": "agile_module_artifact",
+        "sha256": "3402f27457e992913a315d084c4aa45d197b9964e0270a600852aa1205f65965",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/modules/empty/CodeCraft_empty_at.json"
+        }
+      },
+      {
+        "id": "artifact_17",
+        "ref": "modules/empty/CodeCraft_empty_module.json",
+        "space": "modules",
+        "role": "agile_module_artifact",
+        "sha256": "e3a37a883de95508afeba0822252420c1cfd9c4dbb8a3254271575ca91dfab2d",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/modules/empty/CodeCraft_empty_module.json"
+        }
+      },
+      {
+        "id": "artifact_19",
+        "ref": "modules/empty/README.md",
+        "space": "modules",
+        "role": "agile_module_artifact",
+        "sha256": "6ccd0a8a274a6fbb91c867d7032a22c1ae76a0582799189497581e5276ac6bc3",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/modules/empty/README.md"
+        }
+      },
+      {
+        "id": "artifact_20",
+        "ref": "modules/lora/CodeCraft_lora_at.json",
+        "space": "modules",
+        "role": "agile_module_artifact",
+        "sha256": "cd9e9f20044c3ca0ccf0cc06ad2e71cb8fdc8fcb46c29832b91a03908a21a7f9",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/modules/lora/CodeCraft_lora_at.json"
+        }
+      },
+      {
+        "id": "artifact_22",
+        "ref": "modules/lora/CodeCraft_lora_module.json",
+        "space": "modules",
+        "role": "agile_module_artifact",
+        "sha256": "dca52dcce5342d69c31871c650aa850b41571adb6c98f3f23802d467540f18b9",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/modules/lora/CodeCraft_lora_module.json"
+        }
+      },
+      {
+        "id": "artifact_21",
+        "ref": "modules/lora/README.md",
+        "space": "modules",
+        "role": "agile_module_artifact",
+        "sha256": "a2efde181970a6bbf5413340f6265b3098f7f7959a0af302c55fecade85e6d02",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/modules/lora/README.md"
+        }
+      },
+      {
+        "id": "artifact_25",
+        "ref": "modules/sys/CodeCraft_sys_at.json",
+        "space": "modules",
+        "role": "agile_module_artifact",
+        "sha256": "fbf355a7f2ccbe2f7b9196a378e899669458b328ea45aab4d16b347076bd4631",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/modules/sys/CodeCraft_sys_at.json"
+        }
+      },
+      {
+        "id": "artifact_24",
+        "ref": "modules/sys/CodeCraft_sys_module.json",
+        "space": "modules",
+        "role": "agile_module_artifact",
+        "sha256": "bf4379efdae32f2ce832fc8f389e590e9d0f4e2fe20773f2d7db8c2dbf0ced3f",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/modules/sys/CodeCraft_sys_module.json"
+        }
+      },
+      {
+        "id": "artifact_23",
+        "ref": "modules/sys/README.md",
+        "space": "modules",
+        "role": "agile_module_artifact",
+        "sha256": "0bb4ac59a340d66748a4890e690639d40b456db0c277fddc83212302f4f19a97",
+        "source": {
+          "pair_ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+          "pair_sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c",
+          "member_ref": "package1/CodeCraft_package1_RK_example0_v1.1.3.zip",
+          "member_sha256": "a59940effd021c5b010d4539efb9386382e96b94c2ab3d7ff833be9d40e9160b",
+          "artifact_ref": "device/modules/sys/README.md"
+        }
+      },
+      {
+        "id": "artifact_15",
+        "ref": "notices/THIRD_PARTY_NOTICES.md",
+        "space": "notices",
+        "role": "license_notices",
+        "sha256": "5f3699d7e936731d29521e381bf0b39c4ccc872e83cb187d4873acfd4619a8d1"
+      },
+      {
+        "id": "artifact_60",
+        "ref": "package12/CodeCraft_package12_Foundation_v1.0.0_pair.zip",
+        "sha256": "d00c1bbb8e50fff5a5e1eb13e77fa7d20ddb0eb165efe960a0d20a6e6d898247",
+        "space": "package12",
+        "role": "trained_pair",
+        "identity": "CodeCraft_package12_Foundation",
+        "version": "1.0.0",
+        "validation": "VERIFIED",
+        "state": "OWNER_ACCEPTED_FOUNDATION_PUBLIC_DEVICE_SCOPE"
+      },
+      {
+        "id": "artifact_45",
+        "ref": "package12/CodeCraft_package12_RK_example0_v1.1.3_pair.zip",
+        "space": "package12",
+        "role": "trained_pair",
+        "identity": "CodeCraft_package12_RK_example0",
+        "version": "1.1.3",
+        "validation": "VERIFIED",
+        "acceptance_classification": "VERIFIED_SCOPED",
+        "scope": "POWER_ON_IMPACT_SMOKE + LEVEL0_CORE_IMPACT_SMOKE; inherited limits",
+        "metadata_only": true,
+        "sha256": "b92a4195b868016ae891fe32a1a67fa7ee06c5e2d6bc48ae5d8ef9ebd300e81c"
+      },
+      {
+        "id": "artifact_46",
+        "ref": "package12/CodeCraft_package12_RK_example3_v1.0.1_pair.zip",
+        "space": "package12",
+        "role": "trained_pair",
+        "identity": "CodeCraft_package12_RK_example3",
+        "version": "1.0.1",
+        "validation": "VERIFIED",
+        "acceptance_classification": "OWNER_ACCEPTED_SCOPED",
+        "scope": "EXAMPLE3_WDG_ACK_IMPACT_SMOKE; OWNER_ACCEPTED_SCOPED; standard_complete_profile_pass=false",
+        "metadata_only": true,
+        "sha256": "0fee82fa976c73d51e5645cacab39712ba7953e4d910f39784d20aa1f1632614"
+      },
+      {
+        "id": "artifact_40",
+        "ref": "rkb/README.md",
+        "space": "rkb",
+        "role": "documentation",
+        "state": "AVAILABLE",
+        "sha256": "14e51e1aa7da6a905475c6ce3af9442a7b285ffc8fabfcce5080b7f158134c8f"
+      },
+      {
+        "id": "artifact_39",
+        "ref": "rkb/RecordedExchange.json",
+        "space": "rkb",
+        "role": "runtime_teaching_evidence",
+        "state": "AVAILABLE",
+        "sha256": "a0d1c5bbfa8b67971c4f8db9c8aa258872c584e99bdeb703e6436fbfbaee73c2"
+      },
+      {
+        "id": "artifact_43",
+        "ref": "rkb/applog_cmds_list.txt",
+        "space": "rkb",
+        "role": "command_reference",
+        "state": "REFERENCE",
+        "sha256": "0306092873ec8d7296e8aca55fd089fd48d9c6849456df0daf588576f8ed344f"
+      },
+      {
+        "id": "artifact_42",
+        "ref": "rkb/applog_commands.json",
+        "space": "rkb",
+        "role": "command_reference",
+        "state": "REFERENCE",
+        "sha256": "228737d73e0e601dabf1af08f3ad14ac6ef384bee94256e4c7d4b43712e75b93"
+      },
+      {
+        "id": "artifact_41",
+        "ref": "rkb/images/Example3_AI_Worker_Toolbar_RKB.png",
+        "space": "rkb",
+        "role": "runtime_screenshot",
+        "media_type": "image/png",
+        "state": "OWNER_SUPPLIED",
+        "description": "Owner-supplied Example3 screenshot: AI Worker Toolbar and RKB; ctx08000009, PING #6, accepted ACK and Green.",
+        "sha256": "2f3ec139504784948b8f92185f6e286a54b3997337f1933069997a4ad7654a62"
+      },
+      {
+        "id": "halpreview_templates_CodeCraft_increment_workflow_v1_7_1_template_zip",
+        "ref": "templates/CodeCraft_increment_workflow_v1.7.9_template.zip",
+        "space": "templates",
+        "role": "documentation",
+        "version": "1.7.9",
+        "sha256": "77e189760e42e931589190a22c7ef8050b843f19a542c6e0dc62fd4f61d71069"
+      },
+      {
+        "id": "halpreview_templates_CodeCraft_package0_workflow_v1_3_1_template_zip",
+        "ref": "templates/CodeCraft_package0_workflow_v1.3.15_template.zip",
+        "space": "templates",
+        "role": "documentation",
+        "version": "1.3.15",
+        "sha256": "0038fe62b3bb9806283d3420ca2a7d0f06a33875fb213096352f17b0d1cb45be"
+      },
+      {
+        "id": "artifact_34",
+        "ref": "templates/model-first/CodeCraft_package1_empty_v3.1.5.14.zip",
+        "space": "templates",
+        "role": "model_first_template",
+        "identity": "CodeCraft_package1_empty",
+        "version": "3.1.5.14",
+        "sha256": "ccb4da9e4ababcdfb8e7137b9f63de8407d8f31ba38f7b3d2c5a27d7bcea10b0",
+        "validation": "STATIC_REVIEW_ONLY",
+        "source": {
+          "kind": "owner_supplied_closed_package1",
+          "uploaded_name": "CodeCraft_package1_empty_v3.1.5.14.zip",
+          "archive_sha256": "ccb4da9e4ababcdfb8e7137b9f63de8407d8f31ba38f7b3d2c5a27d7bcea10b0"
+        },
+        "generation_status": "NOT_PERFORMED",
+        "runtime_status": "NOT_PERFORMED"
+      },
+      {
+        "id": "artifact_32",
+        "ref": "templates/model-first/CodeCraft_package1_sys_empty_v3.1.5.14.zip",
+        "space": "templates",
+        "role": "model_first_template",
+        "identity": "CodeCraft_package1_sys_empty",
+        "version": "3.1.5.14",
+        "sha256": "8ee03563fcb340d017bf4770ef52e0b5dd5bda847706207cef3d832f9f2f937e",
+        "validation": "STATIC_REVIEW_ONLY",
+        "source": {
+          "kind": "owner_supplied_closed_package1",
+          "uploaded_name": "CodeCraft_package1_sys_empty_v3.1.5.14(1).zip",
+          "archive_sha256": "8ee03563fcb340d017bf4770ef52e0b5dd5bda847706207cef3d832f9f2f937e"
+        },
+        "generation_status": "NOT_PERFORMED",
+        "runtime_status": "NOT_PERFORMED"
+      },
+      {
+        "id": "artifact_33",
+        "ref": "templates/model-first/CodeCraft_package1_sys_v3.1.5.14.zip",
+        "space": "templates",
+        "role": "model_first_template",
+        "identity": "CodeCraft_package1_sys",
+        "version": "3.1.5.14",
+        "sha256": "25c58fdcf915db89b9ad6d6dd4b7da3b895458f4aa0efc1d6fea1f8f6a58441b",
+        "validation": "STATIC_REVIEW_ONLY",
+        "source": {
+          "kind": "owner_supplied_closed_package1",
+          "uploaded_name": "CodeCraft_package1_sys_v3.1.5.14.zip",
+          "archive_sha256": "25c58fdcf915db89b9ad6d6dd4b7da3b895458f4aa0efc1d6fea1f8f6a58441b"
+        },
+        "generation_status": "NOT_PERFORMED",
+        "runtime_status": "NOT_PERFORMED"
+      },
+      {
+        "id": "artifact_35",
+        "ref": "templates/model-first/README.md",
+        "space": "templates",
+        "role": "static_review_report",
+        "sha256": "8f116853c775f4bb4d4eee3987278fc5c2914b162f37702ab2a6293c4b183a21"
+      },
+      {
+        "id": "artifact_54",
+        "ref": "templates/pipeline_contracts/README.md",
+        "space": "templates",
+        "role": "pipeline_contract_reference",
+        "version": "1.0.0",
+        "sha256": "feb422388633269d9f655e087161047e1370477c916f235fa7118ec65770bf87"
+      },
+      {
+        "id": "artifact_57",
+        "ref": "templates/pipeline_contracts/event_actions.example.json",
+        "space": "templates",
+        "role": "pipeline_contract_reference",
+        "version": "1.1.0",
+        "sha256": "1c3f9a3bc519658650dc63a0302abff68981bf4b8f36cafb14390bd50374cd38"
+      },
+      {
+        "id": "artifact_56",
+        "ref": "templates/pipeline_contracts/event_actions.schema.json",
+        "space": "templates",
+        "role": "pipeline_contract_reference",
+        "version": "1.1.0",
+        "sha256": "d2846f03c6908e304286d98fc212ba55a50b53907bcfe8747b14bad022a8e8c3"
+      },
+      {
+        "id": "artifact_58",
+        "ref": "templates/pipeline_contracts/fingerprint.py",
+        "space": "templates",
+        "role": "pipeline_contract_reference",
+        "version": "1.0.0",
+        "sha256": "31659b5fdfb50d54e38d4d3f979ffec9a9cac8c50ca2133c17f357f17ad05474"
+      },
+      {
+        "id": "artifact_55",
+        "ref": "templates/pipeline_contracts/review.schema.json",
+        "space": "templates",
+        "role": "pipeline_contract_reference",
+        "version": "1.0.0",
+        "sha256": "c35019d01ce16317492b9cbe4da8ff6f82e4e50cd51eff0f12a4977b5bc0f52c"
+      },
+      {
+        "id": "artifact_59",
+        "ref": "templates/pipeline_contracts/review_event_actions.py",
+        "space": "templates",
+        "role": "pipeline_contract_reference",
+        "version": "1.1.0",
+        "sha256": "ff9cd0b2b844565f2342d64546507f5d20fbb51a22243f888ec9564ef2c5cbb7"
+      },
+      {
+        "id": "halpreview_tools_HALPreviewValidation_md",
+        "ref": "tools/HALPreviewValidation.md",
+        "space": "tools",
+        "role": "documentation",
+        "version": "0.13.0-preview.5",
+        "sha256": "a77853c66442c05df3c51eef4926c876d302d41907935dff77a66fba64c1291a"
+      },
+      {
+        "id": "artifact_14",
+        "ref": "tools/README.md",
+        "space": "tools",
+        "role": "documentation",
+        "sha256": "03297bd3f4cb9bbec20ac29071c39295a26517bc11403b148ca501f7d688ea72"
+      },
+      {
+        "id": "board_hal_64",
+        "ref": "deployment_zero_patch/board_hal/device/modules/lora/LoraModule.cs",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "0b7d9a340d2e8ebdfdcbbc0724bd8d0cda49ca4b0db89635e8a20442719661b3"
+      },
+      {
+        "id": "board_hal_65",
+        "ref": "deployment_zero_patch/board_hal/device/modules/sys/ButtonResource.cs",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "afd62ded8a2925ecf7307dc7eaf86a40508970071540ff5d2971a208f233bf0c"
+      },
+      {
+        "id": "board_hal_66",
+        "ref": "deployment_zero_patch/board_hal/device/modules/sys/LedResource.cs",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "042be0aaf93d7d6eb542488c878fa961441ff9afe3084bac81383b1cac184bf8"
+      },
+      {
+        "id": "board_hal_67",
+        "ref": "deployment_zero_patch/board_hal/device/modules/sys/NeoResource.cs",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "2c7c5ec6153dd30d4e3f38ff52a724ff1cd437b59664e6061f8e647e414691ac"
+      },
+      {
+        "id": "board_hal_68",
+        "ref": "deployment_zero_patch/board_hal/evidence/LED_20261103_report.md",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "2951126ea2539fd216d3c6b1a2965b60b5bdc214a9cb83786535657349af3209"
+      },
+      {
+        "id": "board_hal_69",
+        "ref": "deployment_zero_patch/board_hal/evidence/OwnerAcceptance.json",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "b6f756b19ff1d4247e3f90a818c9f32686591671e8ed4865fdae9930472eceab"
+      },
+      {
+        "id": "board_hal_70",
+        "ref": "deployment_zero_patch/board_hal/evidence/SYS_20261103_report.md",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "cfaea572ca14389a78279842bad98857368eadaca725713f55ea2fc1ebd08ec4"
+      },
+      {
+        "id": "board_hal_71",
+        "ref": "deployment_zero_patch/board_hal/model-first/device/modules/lora/CodeCraft_lora_at.json",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "ad6808406d924a00bb083838283bc8e30ba4eb4ca273259d2d8c9a0e79516857"
+      },
+      {
+        "id": "board_hal_72",
+        "ref": "deployment_zero_patch/board_hal/model-first/device/modules/lora/CodeCraft_lora_module.json",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "596e97408279dbb27c38d2e4aa894e50223dfe50e62e7472071e10e75f5fddc0"
+      },
+      {
+        "id": "board_hal_73",
+        "ref": "deployment_zero_patch/board_hal/model-first/device/modules/sys/CodeCraft_sys_at.json",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "09efa2066c479a16823ba1f56961ece30b1178da724ad0a007eedb608f55528d"
+      },
+      {
+        "id": "board_hal_74",
+        "ref": "deployment_zero_patch/board_hal/model-first/device/modules/sys/CodeCraft_sys_module.json",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "345089ca10e20ec9e2a2cb0b0bd63171acf315c4afcb570908f41661156d4f99"
+      },
+      {
+        "id": "board_hal_75",
+        "ref": "deployment_zero_patch/board_hal/validation.json",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "5b565c95ef16205114bdedb3a75fee1da4f5d6d0fffa6666b8e84632f9bf16d1"
+      },
+      {
+        "id": "board_hal_76",
+        "ref": "deployment_zero_patch/board_hal/provenance/parent_entry.json",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "a9d7b3a66bf1f4f59db597835c7fd178a71b3098d73ab0ef56592cfa8b4ca892"
+      },
+      {
+        "id": "board_hal_77",
+        "ref": "deployment_zero_patch/board_hal/evidence/SYS_20261103_evidence.zip",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "482f1cfcf8ce8baabcbe30e6736b7af767a31aa376e5c13e9a639506026b1916"
+      },
+      {
+        "id": "board_hal_78",
+        "ref": "deployment_zero_patch/board_hal/evidence/LED_20261103_test.zip",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "cd6e6d75ee55bc76352c6e74b788c275207694c0ce720e5c24735cab6df5f151"
+      },
+      {
+        "id": "board_hal_79",
+        "ref": "deployment_zero_patch/board_hal/model-first/contract_changes.json",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "e86eae8a29b7a0a98087d8a735ada6eacd5db6752016781685199abfaf5db8c8"
+      },
+      {
+        "id": "board_hal_80",
+        "ref": "deployment_zero_patch/board_hal/entry.json",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "8b599fd27410e6811723b014525965171b68941a577fbf0e44e7b954343faa5a"
+      },
+      {
+        "id": "board_hal_81",
+        "ref": "deployment_zero_patch/board_hal/README.md",
+        "space": "packages",
+        "role": "board_resource_compatibility",
+        "sha256": "792333e11bc42b9eb953cf1f8370e1128cb218393eb0c1fa395d3e028cdffbe2"
+      },
+      {
+        "id": "trained_pair_xiaosenseth_112",
+        "ref": "package12/CodeCraft_package12_XIAOSenseTH_v1.1.2_pair.zip",
+        "space": "package12",
+        "role": "trained_pair",
+        "identity": "CodeCraft_package12_XIAOSenseTH",
+        "version": "1.1.2",
+        "validation": "VERIFIED",
+        "state": "OWNER_ACCEPTED_XIAOSENSETH_1_1_2_ASYNC_TRACE",
+        "scope": "Owner-accepted XIAO ESP32S3 Sense; startup, CAM, SYS dispatch/trace and LoRa SEND_ACK. See the pair for acceptance scope and exclusions.",
+        "sha256": "adb0c0d9ab9d2f28c25df8937ec4d6539e991ec7c07f2ece765600220575dc14"
+      },
+      {
+        "id": "offline_explorer_0143",
+        "ref": "CodeCraft_Model_Tiny_Explorer_v0.14.3.html",
+        "space": "tools",
+        "role": "offline_explorer",
+        "version": "0.14.3",
+        "sha256": "3e7eaa2a529cd365de2332a06078801941a31bf94c1173fb63eca025bbdaf7d5"
+      }
+    ],
+    "workflow_defaults": {
+      "package0": "templates/CodeCraft_package0_workflow_v1.3.0_template.zip",
+      "package1_to_package2": "templates/CodeCraft_increment_workflow_v1.7.0_template.zip",
+      "authority": "Current generic contracts; baseline archives remain immutable. A task explicitly declares its selected workflow and hashes."
+    }
+  },
+  "Runtime": {
+    "workspace": {
+      "mode": "EXPLORING_EXPORTING",
+      "persisted": "Read-only repository artifacts. Export writes a separate snapshot; package0 is download-only.",
+      "excluded": [
+        "other opened packages/repositories",
+        "downloaded package0 tasks",
+        "editor drafts"
+      ],
+      "creation_and_import": "Disabled in this community baseline; deferred to a future custom microLAR authoring release."
+    },
+    "transport": {
+      "bootstrap": "Embedded ZIP excludes the Explorer artifact; the separately compressed bare HTML shell reconstructs it without recursion. The outer archive manifest includes the exact full HTML hash.",
+      "schema_version": "1.0.0"
+    },
+    "snapshot": {
+      "scope": "Only the active read-only microLAR. Other opened inputs, downloaded tasks and unexported drafts are excluded; no implicit imports or merging.",
+      "target_validation": "UNCHANGED"
+    },
+    "available_foundations": [
+      {
+        "ref": "package12/CodeCraft_package12_XIAOSenseTH_v1.1.2_pair.zip",
+        "sha256": "adb0c0d9ab9d2f28c25df8937ec4d6539e991ec7c07f2ece765600220575dc14",
+        "identity": "CodeCraft_package12_XIAOSenseTH",
+        "version": "1.1.2",
+        "selection": "EXPLICIT_USER_CHOICE",
+        "validation": "VERIFIED_SCOPED; read exact pair acceptance/exclusions"
+      },
+      {
+        "ref": "package12/CodeCraft_package12_RK_example3_v1.0.1_pair.zip",
+        "sha256": "0fee82fa976c73d51e5645cacab39712ba7953e4d910f39784d20aa1f1632614",
+        "identity": "CodeCraft_package12_RK_example3",
+        "version": "1.0.1",
+        "selection": "EXPLICIT_USER_CHOICE",
+        "validation": "SCOPED; read exact pair acceptance/exclusions"
+      }
+    ],
+    "hal_authoring": {
+      "scope": "PinMap and existing scalar Resources in custom board profiles only; Default read-only.",
+      "transfer": "One or more same-board DDR / END_DDR tables; filled-value export, DELETE and separate PinMap/Resources inheritance.",
+      "state": "PREVIEW",
+      "compatibility_overlay": "Explicit board request + exact supported pair/preimages only; four resource replacements, no Program override.",
+      "drafts": "Browser-local by package source and HAL digest; restore board and current view.",
+      "notes": "Optional JSON-quoted Notes: for board documentation and package0 human context.",
+      "cleanup": "Unquoted DELETE explicitly removes a PinMap key or Resource property only from the target projection. Quoted \"DELETE\" remains literal text. Record the deletion separately from blanks, -1 and unresolved rows. Check dependencies and report a finding if a required binding would be broken; never modify the supplied pair or Default."
+    },
+    "package0_editor": {
+      "mode": "non_modal_dock",
+      "draft": "Explorer session; separate by example",
+      "baseline": "Explicit selection retained during navigation",
+      "repository": "Bound at draft creation; browsing and active repository changes do not replace inputs.",
+      "layout": "Resizable from the left edge; the download action remains outside the scrolling form.",
+      "preview": "Build and inspect the actual ZIP before downloading; copy the human-readable preview.",
+      "custom_patch_zip": "Optional browsed device/ replacements, retained original archive, with separate placement-only and Model-First integration paths."
+    }
+  }
+}

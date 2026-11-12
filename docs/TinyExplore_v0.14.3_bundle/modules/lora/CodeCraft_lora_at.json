@@ -1,0 +1,211 @@
+{
+  "Design": {
+    "declaration": {
+      "module": "lora",
+      "version": "3.1.5.14",
+      "type": "message_registry_ddr",
+      "category": "business_endpoint",
+      "copyright": "Copyright © 2026 Roman Kiss, rkiss@pathcom.com"
+    },
+    "message_contract": {
+      "shape": "destination,command,msgId[,args[]]",
+      "destination": "LORA + suffix",
+      "context": "int API value rendered as uppercase X8 token",
+      "payload": "string[] parsed by destination handler"
+    },
+    "business_commands": {
+      "ECHO": {
+        "syntax": "ECHO[,payload]",
+        "response": "+DATA:<ctx>,<atGroup>:<payload>",
+        "emits": "/ECHO/DONE",
+        "kind": "command"
+      },
+      "INFO": {
+        "syntax": "INFO",
+        "response": "+DATA:<ctx>,<atGroup>:<status>",
+        "emits": "/INFO",
+        "kind": "command"
+      },
+      "LOOPBACK": {
+        "syntax": "LOOPBACK",
+        "response": "+DATA:<ctx>,<atGroup>:<OK|FAIL>",
+        "kind": "command"
+      },
+      "OPEN": {
+        "syntax": "OPEN,<busId>,<cs>,<busy>,<rst>,<irq>,<address>,<clockFrequency>,<mode>,<dataFlow>,<chipSelectActiveState>,<configuration>",
+        "response": "+OK:<ctx>,<atGroup>:DriverOpened",
+        "errors": [
+          "EOPENED",
+          "EARGS:OPEN,busId,cs,busy,rst,irq,address,clockFrequency,mode,dataFlow,chipSelectActiveState,configuration",
+          "EOPEN:<message>"
+        ],
+        "emits": "/OPEN/DONE",
+        "kind": "command"
+      },
+      "CLOSE": {
+        "syntax": "CLOSE",
+        "response": "+OK:<ctx>,<atGroup>:DriverClosed",
+        "errors": [
+          "ENOTOPEN",
+          "ECLOSE:<message>"
+        ],
+        "emits": "/CLOSE/DONE",
+        "kind": "command"
+      },
+      "SETUP": {
+        "syntax": "SETUP,<frequency>,<offset>,<sf>,<bw>,<cr>,<syncWord>,<preamble>,<irqMode>",
+        "response": "+OK:<ctx>,<atGroup>:DriverSetup=<setup>",
+        "errors": [
+          "ENOTOPEN",
+          "EARGS:SETUP,frequency,offset,sf,bw,cr,syncWord(0x..),preamble,irqMode",
+          "ESETUP:<message>"
+        ],
+        "emits": "/SETUP/DONE",
+        "kind": "command"
+      },
+      "RESET": {
+        "syntax": "RESET",
+        "response": "+OK:<ctx>,<atGroup>:DriverReset",
+        "errors": [
+          "ENOTOPEN",
+          "ERESET:<message>"
+        ],
+        "emits": "/RESET/DONE",
+        "kind": "command"
+      },
+      "SEND": {
+        "syntax": "SEND,<to>[,<text>]",
+        "response": "+OK:<ctx>,<atGroup>:PacketEnqueued",
+        "errors": [
+          "ENOTOPEN",
+          "ENOTSETUP",
+          "EARGS:SEND,to(hex 0x..)[,text]",
+          "ESEND:<message>"
+        ],
+        "kind": "command"
+      },
+      "SEND_ACK": {
+        "kind": "command",
+        "syntax": "SEND_ACK,<destination>,<payload>,<consumer>,<ackFilter>",
+        "arity": 4,
+        "response": "+OK:<ctx>,<atGroup>:PacketEnqueued",
+        "errors": [
+          "ENOTOPEN",
+          "ENOTSETUP",
+          "EARGS",
+          "ECONSUMER",
+          "ESUB",
+          "ESEND:<message>"
+        ],
+        "semantics_ref": "device/modules/lora/CodeCraft_lora_module.json#/Design/handlers/SEND_ACK",
+        "existing_route": "Preserve any existing exact topic/consumer route, including other delivery modes, OFF and different filter. Only missing routes created PUSH."
+      }
+    },
+    "inherited_commands": {
+      "source": "VirtualModule",
+      "commands": [
+        "SUB",
+        "SUBLIST",
+        "UNSUB",
+        "TOGGLE",
+        "SWITCH",
+        "PULL"
+      ],
+      "SUB": "SUB,<consumer>,<topic>,<filter>,<delivery>",
+      "SUBLIST": "SUBLIST,<consumerSelector>,<topicSelector>[,<deliverySelector>]",
+      "UNSUB": "UNSUB,<consumerSelector>,<topicSelector>[,<deliverySelector>]"
+    },
+    "events": [
+      {
+        "topic": "/ATTACH",
+        "args": [
+          "name",
+          "atGroup",
+          "PUSH"
+        ]
+      },
+      {
+        "topic": "/ECHO/DONE",
+        "args": [
+          "payload"
+        ]
+      },
+      {
+        "topic": "/INFO",
+        "args": [
+          "status"
+        ]
+      },
+      {
+        "topic": "/OPEN/DONE",
+        "args": [
+          "joined OPEN args"
+        ]
+      },
+      {
+        "topic": "/CLOSE/DONE",
+        "args": []
+      },
+      {
+        "topic": "/SETUP/DONE",
+        "args": [
+          "LastSetupLoRa"
+        ]
+      },
+      {
+        "topic": "/RESET/DONE",
+        "args": []
+      },
+      {
+        "topic": "/QRX/PACK",
+        "args": [
+          "from",
+          "to",
+          "RSSI",
+          "SNR",
+          "data"
+        ],
+        "context": "received TextPacket.Id"
+      }
+    ],
+    "producer_examples": {
+      "programmatic": [
+        "Publish(\"LORA\",\"OPEN\",ctx,\"1\",\"11\",\"12\",\"13\",\"44\",\"0x0888\",\"20000000\",\"Mode0\",\"MsbFirst\",\"false\",\"FullDuplex\")",
+        "Publish(\"LORA\",\"SETUP\",ctx,\"869525000\",\"0\",\"12\",\"4\",\"1\",\"0x1424\",\"16\",\"0\")"
+      ],
+      "wifiagent": [
+        "AT+PUB=LORA,OPEN,12345,1,11,12,13,44,0x0888,20000000,Mode0,MsbFirst,false,FullDuplex",
+        "AT+PUB=LORA,SETUP,12345,869525000,0,12,4,1,0x1424,16,0",
+        "AT+PUB=LORA,SEND,0x111,0x5557,\"Hello, ABBA\"",
+        "AT+PUB=LORA,SUB,12345,LORA,/QRX/PACK,$arg0=5557 *Hello*|$arg0=9900,PUSH",
+        "AT+PUB=LORA,SUBLIST,12345,*,/*"
+      ]
+    },
+    "endpoint_model": {
+      "schema_version": "1.0",
+      "registry": "business_commands is the dispatch endpoint registry; each entry declares kind.",
+      "direct_shape": "destination,command,context[,arguments]",
+      "resource_shape": "destination,resource,context,resourceCommand[,arguments]",
+      "indices": "Zero-based comma fields after AT+PUB=: direct command at [1], resource at [1], context at [2], resource command at [3]. Handler-local resource command is args[0].",
+      "module_commands": [
+        "ECHO",
+        "INFO",
+        "LOOPBACK",
+        "OPEN",
+        "CLOSE",
+        "SETUP",
+        "RESET",
+        "SEND",
+        "SEND_ACK"
+      ],
+      "resources": [],
+      "compatibility": "Keep all existing wire syntax, response/event semantics, registry paths and handler delegate signatures unchanged."
+    }
+  },
+  "Deployment": {
+    "producer": "WiFiAgent is optional; AT+PUB parsing is outside LoraModule semantics."
+  },
+  "Runtime": {
+    "validation": "Generated RegisterHandlers must equal business_commands exactly; inherited handlers are not regenerated."
+  }
+}

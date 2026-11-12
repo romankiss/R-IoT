@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-03",
+  "actor": "Roman Kiss",
+  "source": "Current conversation; owner compile/flash/runtime testing and acceptance",
+  "statements": [
+    {
+      "text": "private void CloseNeo() chybala zatvorka na konci",
+      "meaning": "Owner reported compiler-blocking brace issue; the generated line comment had swallowed the closing brace."
+    },
+    {
+      "text": "test prebehol uspesne, takze mozes vygenerovat finally package,",
+      "meaning": "Owner confirms successful testing and authorizes final patch packaging."
+    }
+  ],
+  "physical_led_observation": {
+    "status": "OWNER_CONFIRMED",
+    "source": "Owner reply in LED test conversation: povrdzujem led, diky za test; recorded conversation context, no independent optical measurement."
+  },
+  "build_evidence": "Owner successful compile/flash/runtime sequence; no independently retained compiler log or flashed-image digest.",
+  "production_hash_binding": "Package hashes bind the included source replacements; deployed image/source hashes were not independently read from the board."
+}

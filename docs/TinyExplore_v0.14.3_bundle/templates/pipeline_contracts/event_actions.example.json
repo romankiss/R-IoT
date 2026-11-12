@@ -1,0 +1,206 @@
+{
+  "schema_version": "1.1.0",
+  "actions": [
+    {
+      "id": "send_on_press",
+      "source_name": "SendEventHandler",
+      "trigger": {
+        "producer": "SYS",
+        "topic": "/BUTTON/PRESS",
+        "delivered_topic": "SYS/BUTTON/PRESS",
+        "dispatch": {
+          "source": "filter_tag",
+          "value": "send_on_press"
+        }
+      },
+      "guard": "args[0] is a positive decimal Int32; preserve original text. OPEN marker is provenance only.",
+      "context": "event_ctx",
+      "steps": [
+        {
+          "id": "blue",
+          "endpoint": "SYS",
+          "command": "NEO",
+          "args": [
+            "SET",
+            "Blue"
+          ],
+          "required": true,
+          "success": {
+            "match": "prefix",
+            "value": "+OK:"
+          },
+          "on_failure": "stop",
+          "when": null
+        },
+        {
+          "id": "arm",
+          "endpoint": "SYS",
+          "command": "TMR",
+          "args": [
+            "WDG",
+            "job_${event_ctx:X8}",
+            "15000",
+            "SYS",
+            "job_timeout",
+            "ACK_${args[0]}",
+            "reply_action"
+          ],
+          "required": false,
+          "success": {
+            "match": "prefix",
+            "value": "+OK:"
+          },
+          "on_failure": "continue",
+          "when": null
+        },
+        {
+          "id": "send",
+          "endpoint": "LORA",
+          "command": "SEND_ACK",
+          "args": [
+            "${peer}",
+            "REQ_${args[0]}",
+            "SYS",
+            "ACK_*|$tag=reply_action"
+          ],
+          "required": true,
+          "success": {
+            "match": "prefix",
+            "value": "+OK:"
+          },
+          "on_failure": "stop",
+          "when": null
+        }
+      ],
+      "instrumentation": [
+        "Trace event ctx, input validation, every command result and accepted/ignored outcome; do not claim radio delivery from queue admission."
+      ],
+      "finally": {
+        "enter_after": "blue",
+        "steps": [
+          {
+            "id": "black",
+            "endpoint": "SYS",
+            "command": "NEO",
+            "args": [
+              "SET",
+              "Black"
+            ],
+            "required": false,
+            "success": {
+              "match": "prefix",
+              "value": "+OK:"
+            },
+            "on_failure": "continue",
+            "when": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "reply_action",
+      "source_name": "ReplyEventHandler",
+      "trigger": {
+        "producer": "LORA",
+        "topic": "/QRX/PACK",
+        "delivered_topic": "LORA/QRX/PACK",
+        "dispatch": {
+          "source": "filter_tag",
+          "value": "reply_action"
+        }
+      },
+      "guard": "Exactly five nonnull fields, nonempty ACK_ payload and nonzero event ctx.",
+      "context": "event_ctx",
+      "steps": [
+        {
+          "id": "confirm",
+          "endpoint": "SYS",
+          "command": "TMR",
+          "args": [
+            "WDG_CONFIRM",
+            "job_${event_ctx:X8}",
+            "0x${event_ctx:X8}",
+            "SYS",
+            "reply_action",
+            "${args[4]}"
+          ],
+          "required": true,
+          "success": {
+            "match": "exact",
+            "value": "+DATA:${event_ctx:X8},SYS:tmr,wdg_confirm,job_${event_ctx:X8},accepted"
+          },
+          "on_failure": "stop",
+          "when": null
+        },
+        {
+          "id": "green",
+          "endpoint": "SYS",
+          "command": "NEO",
+          "args": [
+            "BLINK",
+            "Green",
+            "1",
+            "50"
+          ],
+          "required": true,
+          "success": {
+            "match": "prefix",
+            "value": "+OK:"
+          },
+          "on_failure": "stop",
+          "when": "confirm"
+        }
+      ],
+      "instrumentation": [
+        "Trace event ctx, input validation, every command result and accepted/ignored outcome; do not claim radio delivery from queue admission."
+      ],
+      "finally": {
+        "enter_after": null,
+        "steps": []
+      }
+    },
+    {
+      "id": "job_timeout",
+      "source_name": "TimeoutEventHandler",
+      "trigger": {
+        "producer": "SYS",
+        "topic": "/WDG/EXPIRED",
+        "delivered_topic": "SYS/WDG/EXPIRED",
+        "dispatch": {
+          "source": "event_argument",
+          "index": 1,
+          "value": "job_timeout"
+        }
+      },
+      "guard": "Exactly [job_${event_ctx:X8},job_timeout,SYS]; expiry already committed; no timer mutation.",
+      "context": "event_ctx",
+      "steps": [
+        {
+          "id": "red",
+          "endpoint": "SYS",
+          "command": "NEO",
+          "args": [
+            "BLINK",
+            "Red",
+            "1",
+            "50"
+          ],
+          "required": true,
+          "success": {
+            "match": "prefix",
+            "value": "+OK:"
+          },
+          "on_failure": "stop",
+          "when": null
+        }
+      ],
+      "instrumentation": [
+        "Trace event ctx, input validation, every command result and accepted/ignored outcome; do not claim radio delivery from queue admission."
+      ],
+      "finally": {
+        "enter_after": null,
+        "steps": []
+      }
+    }
+  ]
+}

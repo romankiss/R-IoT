@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0",
+  "revision": "ATOMS3R_CAM_HAL_LIFECYCLE_V1",
+  "version": "1.0.0",
+  "kind": "deployment_zero_patch",
+  "state": "VERIFIED",
+  "effective_state": "VERIFIED_OWNER_ACCEPTED_SCOPE",
+  "active": true,
+  "baseline": {
+    "pair": "CodeCraft_package12_Foundation_v1.0.0_pair.zip",
+    "sha256": "d00c1bbb8e50fff5a5e1eb13e77fa7d20ddb0eb165efe960a0d20a6e6d898247",
+    "package1_sha256": "7f8dfc2cd9caf55b30c4b77027fd4f2129bdc3125d526f2daac3060f8ae24b69",
+    "package2_sha256": "f98018ff27f9b1116f2752b8ecc60cc5e37430ad1d5342e339624908c7e363fa"
+  },
+  "files": [
+    {
+      "target": "device/Program.cs",
+      "source": "device/Program.cs",
+      "baseline_sha256": "8a74b4cfdc0d59bcffff91a7d008a2313e21a354d4cd0756e5b60655b318cd1d",
+      "replacement_sha256": "6f90faaa0b62ad4f98da29f91f352c203cc37d76f4824560bbaa9b2de2233a77",
+      "revision": "ATOMS3R_CAM_HAL_LIFECYCLE_V1",
+      "state": "VERIFIED",
+      "validation_scope": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+      "placement": "whole_file_replace",
+      "on_hash_mismatch": "If current hash equals replacement: ALREADY_APPLIED; otherwise REVIEW_REQUIRED, do not overwrite."
+    },
+    {
+      "target": "device/modules/lora/LoraModule.cs",
+      "source": "device/modules/lora/LoraModule.cs",
+      "baseline_sha256": "91832ebf193937f62216ff642c7b6be38fb6d0ef9aa95ef662268e005f75a210",
+      "replacement_sha256": "0b7d9a340d2e8ebdfdcbbc0724bd8d0cda49ca4b0db89635e8a20442719661b3",
+      "revision": "ATOMS3R_CAM_HAL_LIFECYCLE_V1",
+      "state": "VERIFIED",
+      "validation_scope": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+      "placement": "whole_file_replace",
+      "on_hash_mismatch": "If current hash equals replacement: ALREADY_APPLIED; otherwise REVIEW_REQUIRED, do not overwrite."
+    },
+    {
+      "target": "device/modules/sys/ButtonResource.cs",
+      "source": "device/modules/sys/ButtonResource.cs",
+      "baseline_sha256": "99b29dea98af8ef9f36f5267cab17154165d80d8232b9ab49cce46315496d71f",
+      "replacement_sha256": "afd62ded8a2925ecf7307dc7eaf86a40508970071540ff5d2971a208f233bf0c",
+      "revision": "ATOMS3R_CAM_HAL_LIFECYCLE_V1",
+      "state": "VERIFIED",
+      "validation_scope": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+      "placement": "whole_file_replace",
+      "on_hash_mismatch": "If current hash equals replacement: ALREADY_APPLIED; otherwise REVIEW_REQUIRED, do not overwrite."
+    },
+    {
+      "target": "device/modules/sys/LedResource.cs",
+      "source": "device/modules/sys/LedResource.cs",
+      "baseline_sha256": "90c054ec378d8dd6c39734273c2262e6b3a0ec3e79e6010af4455085b3c37b8d",
+      "replacement_sha256": "042be0aaf93d7d6eb542488c878fa961441ff9afe3084bac81383b1cac184bf8",
+      "revision": "ATOMS3R_CAM_HAL_LIFECYCLE_V1",
+      "state": "VERIFIED",
+      "validation_scope": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+      "placement": "whole_file_replace",
+      "on_hash_mismatch": "If current hash equals replacement: ALREADY_APPLIED; otherwise REVIEW_REQUIRED, do not overwrite."
+    },
+    {
+      "target": "device/modules/sys/NeoResource.cs",
+      "source": "device/modules/sys/NeoResource.cs",
+      "baseline_sha256": "780c3f50467c1c669a92d767dd63a6f8360b5a4a75e9b0928df7a398ff07dd84",
+      "replacement_sha256": "2c7c5ec6153dd30d4e3f38ff52a724ff1cd437b59664e6061f8e647e414691ac",
+      "revision": "ATOMS3R_CAM_HAL_LIFECYCLE_V1",
+      "state": "VERIFIED",
+      "validation_scope": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+      "placement": "whole_file_replace",
+      "on_hash_mismatch": "If current hash equals replacement: ALREADY_APPLIED; otherwise REVIEW_REQUIRED, do not overwrite."
+    }
+  ],
+  "contract_overlay": {
+    "state": "ACTIVE_TEMPORARY_CONTRACT",
+    "scope": [
+      "SYS NEO/LED/BUTTON HAL binding lifecycle and INFO",
+      "Program SYS pin activation guards and ATOMS3R_CAM HAL profile",
+      "LORA OPEN optional reset/irq sentinel"
+    ],
+    "model_first_changes_ref": "model-first/contract_changes.json",
+    "integration_ref": "INTEGRATION.md",
+    "model_status": "Scoped contract changes/proposals; not a closed package1; baseline identities and archives remain immutable.",
+    "driver_changes": false
+  },
+  "patch_validation": {
+    "state": "VERIFIED",
+    "effective_state": "VERIFIED_OWNER_ACCEPTED_SCOPE",
+    "profile": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+    "full_regression": "NOT_REQUESTED",
+    "owner_acceptance_ref": "evidence/OwnerAcceptance.json",
+    "runtime_reports": [
+      "evidence/LED_20261103_report.md",
+      "evidence/SYS_20261103_report.md"
+    ],
+    "aep_exchanges": {
+      "sys": 58,
+      "led": 19,
+      "all_ack_confirmed": true
+    },
+    "verified_behavior": [
+      "Startup skips unassigned SYS NEO/BUTTON and reaches READY.",
+      "SYS NEO/BUTTON INFO defaults and idempotent CLOSE while absent.",
+      "LED GPIO18 LOW BLINK/ON/OFF/TOGGLE; CLOSE retains binding in INFO; closed ON ENOTOPEN; explicit OPEN using captured binding restores operation.",
+      "Owner RKB shows LORA SEND_ACK TX and RX subscription routing at address 0899.",
+      "Additional unchanged SYS FLASH/TMR/WDG public command smoke documented in SYS report."
+    ],
+    "exclusions": [
+      "Physical NEO and BUTTON OPEN/use/CLOSE/reopen binding-retention tests: no such resources connected on this board.",
+      "LORA IRQ=-1 polling and explicit reset/irq=-2 rejection: not exercised by retained runtime evidence; source guard reviewed. ATOMS3R_CAM tested with reset=-1 and irq=8.",
+      "Failed hardware acquisition rollback, concurrent resource lifecycle stress, and broader board matrix not executed.",
+      "No flashed-image digest or independent compiler log; source files are hash-bound package artifacts, not independently attested deployed bytes.",
+      "Model-First proposals require semantic IN/OUT review, version/reference/inventory reconciliation and Code-First integration before they become a new accepted pair."
+    ],
+    "pair_promotion": "NOT_PERFORMED"
+  },
+  "placement": {
+    "phase": "deployment_zero",
+    "strategy": "whole_file_replace",
+    "preflight": "Check ALL target files before any writes. baseline match -> apply; replacement match -> already applied; other -> finding and block affected placement. Do not infer compatibility from filename alone.",
+    "compile_roots": [
+      "device/"
+    ],
+    "non_compile_roots": [
+      "model-first/",
+      "evidence/",
+      "history/",
+      "review/",
+      "provenance/"
+    ],
+    "dependencies": "Existing Foundation packages.config and driver/runtime artifacts; no new assembly.",
+    "rollback": "Restore all five files from the declared immutable baseline; preserve current evidence and user edits separately."
+  },
+  "workflow": {
+    "default": "PRESERVE_ACTIVE",
+    "integrate_selection": [
+      "Integrate patch: all.",
+      "Integrate patch: <revision>.",
+      "Integrate patch: <artifact path>."
+    ],
+    "selected_revision": "ATOMS3R_CAM_HAL_LIFECYCLE_V1",
+    "integration_now": "NOT_REQUESTED",
+    "ambiguity": "Finding; preserve affected active scope without integration/removal. Independent unambiguous scopes may proceed.",
+    "dependency_closure": "Affected Model-First contracts and Program.cs plus SYS3 resource sources and LORA source; only demonstrated downstream impact, no unrelated regeneration.",
+    "retirement": "Only reconcile/retire successfully integrated scope through Model-First -> Code-First; keep originals, hashes, provenance and evidence. Integration does not grant VERIFIED."
+  },
+  "provenance": {
+    "program_input": "provenance/Program_ATOMS3R_CAM.cs",
+    "program_input_sha256": "6f90faaa0b62ad4f98da29f91f352c203cc37d76f4824560bbaa9b2de2233a77",
+    "original_trial": "history/CodeCraft_ATOMS3R_CAM_device_trial_v1_UNVERIFIED.zip",
+    "trial_sha256": "eee0e5977a2c5c79354dc0538cc1c29b442307273bd3e1fb79074e45d63f3c1d",
+    "trial_correction": "Owner found a closing brace consumed by a // comment in CloseNeo finally; corrected to block comment without behavior change. Historical trial retained as superseded/known-defective."
+  },
+  "effective_fingerprint": "237b8f87b69a3f1f449815d054d3bb153432a93dcff562ed1051193656159725"
+}

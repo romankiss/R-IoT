@@ -1,0 +1,747 @@
+{
+  "Design": {
+    "declaration": {
+      "module": "sys",
+      "version": "1.1.1",
+      "type": "message_registry_ddr",
+      "category": "business_endpoint",
+      "copyright": "Copyright © 2026 Roman Kiss, rkiss@pathcom.com",
+      "description": "Message registry for SYS onboard status, button eventing and policy-bound internal text storage."
+    },
+    "message_contract": {
+      "shape": "destination,command,msgId[,args[]]",
+      "destination": "SYS + suffix",
+      "context": "Legacy int msgId carries a 32-bit context rendered as uppercase X8.",
+      "payload": "string[] parsed by destination handler",
+      "inherits": "device/common/virtual/CodeCraft_virtual_module_ddr.json"
+    },
+    "resource_contract": {
+      "shape": "<resource>,<operation>[,<args>]",
+      "mandatory_operations": [
+        "OPEN",
+        "CLOSE",
+        "INFO"
+      ],
+      "open": "OPEN is the mandatory loosely decoupled attach boundary. The platform entry resolves Deployment HAL references and supplies target configuration at runtime; the agile module contains no compiler-hardcoded target values.",
+      "close": "CLOSE drives safe state, releases resources and is idempotent.",
+      "info": "INFO is valid while open or closed.",
+      "response_prefix": "+OK:<ctx>,SYS:<resource-lower>",
+      "data_prefix": "+DATA:<ctx>,SYS:<resource-lower>",
+      "error_prefix": "+ERR:<ctx>,SYS"
+    },
+    "business_commands": {
+      "ECHO": {
+        "syntax": "ECHO[,payload]",
+        "handler": "EchoHandler",
+        "response": "+DATA:<ctx>,<atGroup>:<payload>",
+        "emits": "/ECHO/DONE",
+        "kind": "command"
+      },
+      "INFO": {
+        "syntax": "INFO",
+        "handler": "InfoHandler",
+        "response": "+DATA:<ctx>,<atGroup>:<status>",
+        "emits": "/INFO",
+        "kind": "command"
+      },
+      "LOOPBACK": {
+        "syntax": "LOOPBACK",
+        "handler": "LoopbackHandler",
+        "behavior": "Publish ECHO with LOOPBACK_TEST and same context.",
+        "response": "+DATA:<ctx>,<atGroup>:<OK|FAIL>",
+        "kind": "command"
+      },
+      "NEO": {
+        "handler": "NeoHandler",
+        "shape": "NEO,<operation>[,<args>]",
+        "operations": {
+          "OPEN": {
+            "syntax": "NEO,OPEN,<data>[,<count>[,<order>[,<power>[,<powerActive>]]]]",
+            "responses": [
+              "+OK:<ctx>,SYS:neo,open",
+              "+OK:<ctx>,SYS:neo,open,already"
+            ],
+            "defaults": {
+              "count": 1,
+              "order": "RGB",
+              "power": -1,
+              "powerActive": "HIGH"
+            },
+            "minimal_example": "NEO,OPEN,21",
+            "rule": "Validate and attach the configuration resolved from the selected HAL NEO binding. Populate runtime fields only after successful acquisition; driver null is the authoritative closed state."
+          },
+          "CLOSE": {
+            "syntax": "NEO,CLOSE",
+            "responses": [
+              "+OK:<ctx>,SYS:neo,close",
+              "+OK:<ctx>,SYS:neo,close,already"
+            ],
+            "rule": "Stop activity, set pixels OFF, dispose the pixel driver, drive optional power inactive and close only the optional power pin. Retain the SYS module controller."
+          },
+          "SET": {
+            "syntax": "NEO,SET,<color>",
+            "response": "+OK:<ctx>,SYS:neo,set,<normalizedColor>",
+            "rule": "Apply immediately to the onboard status indicator; last physical write wins."
+          },
+          "OFF": {
+            "syntax": "NEO,OFF",
+            "response": "+OK:<ctx>,SYS:neo,off"
+          },
+          "BLINK": {
+            "syntax": "NEO,BLINK,<color>,<count>[,<phaseMs>]",
+            "response": "+OK:<ctx>,SYS:neo,blink,count=<count>,phaseMs=<phaseMs>",
+            "count_range": "1..5",
+            "phase_ms_range": "10..100",
+            "default_phase_ms": 25,
+            "execution": "Synchronous best-effort color/sleep/OFF/sleep repetitions; remain OFF; no EmitEvent, sequence ownership or reservation."
+          },
+          "INFO": {
+            "syntax": "NEO,INFO",
+            "response": "+DATA:<ctx>,SYS:neo,opened=<bool>,data=<gpio>,count=<n>,power=<gpio|none>,order=<order>"
+          }
+        },
+        "color_contract": {
+          "accepted": [
+            "case-insensitive named color",
+            "0x00RRGGBB",
+            "r:g:b decimal bytes"
+          ],
+          "names": [
+            "BLACK",
+            "WHITE",
+            "RED",
+            "GREEN",
+            "BLUE",
+            "YELLOW",
+            "CYAN",
+            "MAGENTA",
+            "ORANGE",
+            "PURPLE"
+          ],
+          "normal_form": "uppercase 0x00RRGGBB",
+          "state": "Color is converted for the immediate platform write and is not retained for GET."
+        },
+        "events": [],
+        "errors": {
+          "EARGS": "missing or extra arguments",
+          "EOPERATION": "unknown operation",
+          "ENOTOPEN": "operation requested while closed",
+          "ECONFIG": "invalid generated HAL binding",
+          "ECOLOR": "invalid color",
+          "ERANGE": "value outside declared range",
+          "EPLATFORM": "platform resource failure"
+        },
+        "kind": "resource",
+        "source_artifact": "NeoResource.cs"
+      },
+      "LED": {
+        "handler": "LedHandler",
+        "condition": "Generated only when Deployment HAL enables and fully binds SYS LED.",
+        "shape": "LED,<operation>[,<args>]",
+        "operations": {
+          "OPEN": {
+            "syntax": "LED,OPEN,<pin>,<active>",
+            "responses": [
+              "+OK:<ctx>,SYS:led,open",
+              "+OK:<ctx>,SYS:led,open,already"
+            ],
+            "rule": "Attach the HAL-resolved onboard LED at runtime; retain no compiler-hardcoded target pin or polarity."
+          },
+          "CLOSE": {
+            "syntax": "LED,CLOSE",
+            "responses": [
+              "+OK:<ctx>,SYS:led,close",
+              "+OK:<ctx>,SYS:led,close,already"
+            ],
+            "rule": "Drive the LED inactive, close only its runtime pin and retain the SYS module controller."
+          },
+          "ON": {
+            "syntax": "LED,ON",
+            "response": "+OK:<ctx>,SYS:led,on"
+          },
+          "OFF": {
+            "syntax": "LED,OFF",
+            "response": "+OK:<ctx>,SYS:led,off"
+          },
+          "TOGGLE": {
+            "syntax": "LED,TOGGLE",
+            "response": "+OK:<ctx>,SYS:led,toggle",
+            "rule": "Toggle the physical pin without retaining shadow state."
+          },
+          "BLINK": {
+            "syntax": "LED,BLINK,<count>[,<phaseMs>]",
+            "response": "+OK:<ctx>,SYS:led,blink,count=<count>,phaseMs=<phaseMs>",
+            "count_range": "1..5",
+            "phase_ms_range": "10..100",
+            "default_phase_ms": 25
+          },
+          "INFO": {
+            "syntax": "LED,INFO",
+            "response": "+DATA:<ctx>,SYS:led,opened=<bool>,pin=<gpio|none>,active=<HIGH|LOW>"
+          }
+        },
+        "selection_rule": "This package binds one onboard LED, so the target is implicit and no index is accepted.",
+        "events": [],
+        "errors": {
+          "EARGS": "missing or extra arguments",
+          "EOPERATION": "unknown operation",
+          "ENOTOPEN": "operation requested while closed",
+          "ECONFIG": "invalid generated HAL binding",
+          "ERANGE": "value outside declared range",
+          "EPLATFORM": "platform resource failure"
+        },
+        "kind": "resource",
+        "source_artifact": "LedResource.cs"
+      },
+      "BUTTON": {
+        "handler": "ButtonHandler",
+        "condition": "Generated only when Deployment HAL enables and fully binds SYS BUTTON.",
+        "shape": "BUTTON,<operation>[,<args>]",
+        "operations": {
+          "OPEN": {
+            "syntax": "BUTTON,OPEN,<pin>[,<pinMode>[,<debounceMs>]]",
+            "responses": [
+              "+OK:<ctx>,SYS:button,open",
+              "+OK:<ctx>,SYS:button,open,already"
+            ],
+            "defaults": {
+              "pinMode": "InputPullUp",
+              "debounceMs": 333
+            }
+          },
+          "CLOSE": {
+            "syntax": "BUTTON,CLOSE",
+            "responses": [
+              "+OK:<ctx>,SYS:button,close",
+              "+OK:<ctx>,SYS:button,close,already"
+            ],
+            "rule": "Disable delivery, detach named Press and Holding callbacks and dispose GpioButton with shouldDispose=false so its pin is released. Retain the SYS module controller and all subscriptions; do not close the button pin twice."
+          },
+          "INFO": {
+            "syntax": "BUTTON,INFO",
+            "response": "+DATA:<ctx>,SYS:button,opened=<bool>,pin=<gpio|none>,mode=<mode>,debounceMs=<n>,holding=<bool>"
+          }
+        },
+        "events": [
+          {
+            "topic": "/BUTTON/PRESS",
+            "args": [
+              "pressCounter",
+              "openContext"
+            ],
+            "counter_contract": "Positive decimal count of accepted Press callbacks since successful OPEN; same counter for short and holding-related PRESS.",
+            "open_context_contract": "args[1] is ctx + successful new BUTTON OPEN command msgId formatted uppercase X8, e.g. ctx08000005. This is lifecycle provenance, not event ctx or authentication. Repeated OPEN-already retains the original open ctx. CLOSE clears it. Physical interaction ctx allocation/preservation remains unchanged."
+          },
+          {
+            "topic": "/BUTTON/HOLDING/STARTED",
+            "args": [
+              "openContext"
+            ],
+            "open_context_contract": "Single argument ctx + successful OPEN command msgId formatted X8. Event ctx remains the interaction context and must not be replaced by the marker."
+          },
+          {
+            "topic": "/BUTTON/HOLDING/COMPLETED",
+            "args": [
+              "openContext"
+            ],
+            "open_context_contract": "Single argument ctx + successful OPEN command msgId formatted X8. Event ctx remains the interaction context and must not be replaced by the marker."
+          }
+        ],
+        "errors": {
+          "EARGS": "missing or extra arguments",
+          "EOPERATION": "unknown operation",
+          "ECONFIG": "invalid generated HAL binding",
+          "EPLATFORM": "platform resource failure"
+        },
+        "kind": "resource",
+        "source_artifact": "ButtonResource.cs"
+      },
+      "FLASH": {
+        "handler": "FlashHandler",
+        "condition": "Generated only when Deployment enables and binds SYS FLASH.",
+        "shape": "FLASH,<operation>[,<args>]",
+        "operations": {
+          "CREATE": {
+            "deployment_syntax": "FLASH,CREATE,<scope0>,<path0>[,<scopeN>,<pathN>...]",
+            "visibility": "Generated PlatformPostInit operation; not a runtime scope OPEN.",
+            "selection": "Only missing Deployment-declared RD roots are supplied. Omit CREATE when all RD roots already exist.",
+            "response": "+OK:<ctx>,SYS:flash,create,<createdScope...>",
+            "behavior": "Create requested root directories idempotently; preserve existing roots and all content; create no files, nested content or RW roots; leave FLASH closed.",
+            "emits": "/FLASH/CREATE once only when at least one root was created"
+          },
+          "OPEN": {
+            "public_syntax": "FLASH,OPEN",
+            "initial_binding": "The generated activation may append the Deployment binding on the first OPEN only; public callers cannot replace it.",
+            "responses": [
+              "+OK:<ctx>,SYS:flash,open",
+              "+OK:<ctx>,SYS:flash,open,already"
+            ],
+            "emits": "/FLASH/OPEN only on the closed-to-open transition; the already-open response emits no event"
+          },
+          "CLOSE": {
+            "syntax": "FLASH,CLOSE",
+            "responses": [
+              "+OK:<ctx>,SYS:flash,close",
+              "+OK:<ctx>,SYS:flash,close,already"
+            ],
+            "emits": "/FLASH/CLOSE only on the open-to-closed transition; the already-closed response emits no event"
+          },
+          "INFO": {
+            "syntax": "FLASH,INFO[,<scope>]",
+            "responses": {
+              "general": "+DATA:<ctx>,SYS:flash,opened=<bool>,scopes=[<scope descriptors...>]",
+              "rd_scope": "+DATA:<ctx>,SYS:flash,scope=<name>,mode=RD,recursive=<bool>",
+              "rw_scope": "+DATA:<ctx>,SYS:flash,scope=<name>,mode=RW,recursive=<bool>,quotaBytes=<n>,usedBytes=<n>,availableBytes=<n>"
+            },
+            "accounting": "RW usedBytes is aggregate UTF-8 file payload length inside only that logical scope; availableBytes=max(0,quotaBytes-usedBytes). RD has no quota accounting. Physical drive used/free is not part of this contract.",
+            "emits": "none"
+          },
+          "WRITE": {
+            "syntax": "FLASH,WRITE,<scope>,<relativePath>,<text>",
+            "response": "+OK:<ctx>,SYS:flash,write,<scope>,<relativePath>,bytes=<n>,available=<scopeAvailableBytes>",
+            "emits": "/FLASH/WRITE"
+          },
+          "READ": {
+            "syntax": "FLASH,READ,<scope>,<relativePath>",
+            "response": "+DATA:<ctx>,SYS:flash,read,<scope>,<relativePath>,<text>"
+          },
+          "DELETE": {
+            "syntax": "FLASH,DELETE,<scope>,<relativePath>",
+            "response": "+OK:<ctx>,SYS:flash,delete,<scope>,<relativePath>,bytes=<released>,available=<scopeAvailableBytes>",
+            "emits": "/FLASH/DELETE"
+          },
+          "EXISTS": {
+            "syntax": "FLASH,EXISTS,<scope>,<relativePath>",
+            "response": "+DATA:<ctx>,SYS:flash,exists,<scope>,<relativePath>,<true|false>"
+          },
+          "LDIR": {
+            "syntax": "FLASH,LDIR,<scope>[,<relativePath>[,<offset>]]",
+            "response": "+DATA:<ctx>,SYS:flash,ldir,<scope>,<relativePath>,offset=<n>,count=<n>,total=<n>,next=<n>,[<logicalDirectoryPaths>]",
+            "behavior": "Return only descendant directories recursively from the scope root or one existing selected level. Do not return the selected level itself, files or physical paths. Fixed page size is 16; next=-1 ends traversal.",
+            "emits": "none"
+          },
+          "LIST": {
+            "syntax": "FLASH,LIST,<scope>[,<relativePath>[,<offset>]]",
+            "response": "+DATA:<ctx>,SYS:flash,list,<scope>,<relativePath>,offset=<n>,count=<n>,total=<n>,next=<n>,[<fileNames>]",
+            "behavior": "Return only files directly inside exactly one existing logical pathscope. Never return directories and never recurse. Fixed page size is 16; next=-1 ends traversal.",
+            "emits": "none"
+          }
+        },
+        "policy": {
+          "scope_selector": "Logical Deployment scope name, never a physical path.",
+          "mode": "RD allows READ/EXISTS; RW also allows WRITE/DELETE.",
+          "recursive": "Nested caller paths require recursive=true.",
+          "quota": "Each RW scope enforces max_size_bytes aggregate encoded bytes.",
+          "content": "Text files only; current AT transport accepts one single-line payload and preserves a quoted comma-containing final payload.",
+          "discovery": "LDIR travels the directory hierarchy; LIST returns files in one exact pathscope. Both use deterministic ordinal ordering, offset paging with fixed page size 16, hide physical paths and emit no event.",
+          "quota_accounting": "For RW scopes, count aggregate UTF-8 payload bytes only within that scope. Scope available bytes is quota minus counted payload bytes. Do not report physical drive free space.",
+          "provisioning": "CREATE is deployment-only, consumes only RD logical-name/path pairs from the metadata connector, preserves existing content and does not open FLASH or lock the runtime policy."
+        },
+        "events": [
+          {
+            "topic": "/FLASH/CREATE",
+            "args": [
+              "createdScope..."
+            ]
+          },
+          {
+            "topic": "/FLASH/OPEN",
+            "args": [
+              "<scope>|<scope>:RW..."
+            ]
+          },
+          {
+            "topic": "/FLASH/CLOSE",
+            "args": []
+          },
+          {
+            "topic": "/FLASH/WRITE",
+            "args": [
+              "scope",
+              "scopeAvailableBytes",
+              "relativeDirectory",
+              "fileName",
+              "fileBytes"
+            ]
+          },
+          {
+            "topic": "/FLASH/DELETE",
+            "args": [
+              "scope",
+              "scopeAvailableBytes",
+              "relativeDirectory",
+              "fileName",
+              "releasedBytes"
+            ]
+          }
+        ],
+        "errors": {
+          "EARGS": "FLASH contract failure",
+          "EOPERATION": "FLASH contract failure",
+          "ENOTOPEN": "FLASH contract failure",
+          "ECONFIG": "FLASH contract failure",
+          "ECONFIGLOCKED": "FLASH contract failure",
+          "ESCOPE": "FLASH contract failure",
+          "EREADONLY": "FLASH contract failure",
+          "EPATH": "FLASH contract failure",
+          "ENOTFOUND": "FLASH contract failure",
+          "EQUOTA": "FLASH contract failure",
+          "EIO": "FLASH contract failure"
+        },
+        "kind": "resource",
+        "source_artifact": "FlashResource.cs"
+      },
+      "TMR": {
+        "kind": "resource",
+        "handler": "TimerHandler",
+        "source_artifact": "TimerResource.cs",
+        "shape": "TMR,<operation>[,<args>]",
+        "operations": {
+          "OPEN": {
+            "syntax": "TMR,OPEN,<id>,<delayMs>[,<tag>]",
+            "response": "+OK:<ctx>,SYS:tmr,open,<id>",
+            "already": "+OK:<ctx>,SYS:tmr,open,<id>,already"
+          },
+          "START": {
+            "syntax": "TMR,START,<id>[,<delayMs>]",
+            "response": "+OK:<ctx>,SYS:tmr,start,<id>",
+            "already": "+OK:<ctx>,SYS:tmr,start,<id>,already"
+          },
+          "RESTART": {
+            "syntax": "TMR,RESTART,<id>[,<delayMs>[,<tag>]]",
+            "response": "+OK:<ctx>,SYS:tmr,restart,<id>",
+            "semantics": "Reset interval and update optional checkpoint state; omitted fields retained. START/RESTART WDG responses use their requested operation, not tmr,wdg."
+          },
+          "CLOSE": {
+            "syntax": "TMR,CLOSE,<id|*>",
+            "response": "+OK:<ctx>,SYS:tmr,close,<id>",
+            "already": "+OK:<ctx>,SYS:tmr,close,<id>,already",
+            "all": "+OK:<ctx>,SYS:tmr,close,*,count=<removedCount>"
+          },
+          "INFO": {
+            "syntax": "TMR,INFO[,<id>]",
+            "general": "+DATA:<ctx>,SYS:tmr,activeCount=<n>,poolCount=<n>,capacity=<n>",
+            "detail": "id,state,delayMs,type,consumer,remainingMs,tag,context; expected reply when bound."
+          },
+          "LIST": {
+            "syntax": "TMR,LIST[,NAMES|ALL]",
+            "response": "+DATA:<ctx>,SYS:tmr,activeCount=<n>,poolCount=<n>,capacity=<n>,[<id>,<state>,<delayMs>|...]",
+            "names": "Same summary; [<id>|...] for active entries only.",
+            "all": "All retained entries including idle/expired; same summary and row format.",
+            "ordering": "Case-sensitive ordinal ID order; [] valid. Default LIST hides standby entries."
+          },
+          "WDG": {
+            "syntax": "TMR,WDG,<id>,<delayMs>,<consumer>[,<tag>[,<expectedReply>,<action>]]",
+            "argument_counts": "Including WDG operation: 4, 5 or 7. Six is EARGS. To bind correlation with an empty tag, pass empty tag position explicitly.",
+            "defaults": {
+              "tag": "",
+              "expectedReply": "",
+              "action": ""
+            },
+            "validation": "Validate every argument before mutation. Consumer and id retain their existing exact endpoint/ID rules. Tag unchanged. expectedReply is one case-sensitive text argument, without comma, CR/LF or control characters. action is 1..64 ASCII letters/digits/_/- when enabled. expectedReply/action must both be empty or both nonempty; one alone is ECORRELATION.",
+            "response": "+OK:<commandCtx>,SYS:tmr,wdg,<id>",
+            "atomicity": "Success includes configuration of all metadata, managed subscription and arm. Internal helper overloads must not add capabilities absent from command args."
+          },
+          "CANCEL": {
+            "syntax": "TMR,CANCEL,<id>",
+            "response": "+OK:<ctx>,SYS:tmr,cancel,<id>",
+            "already": "+OK:<ctx>,SYS:tmr,cancel,<id>,already"
+          },
+          "WDG_CONFIRM": {
+            "syntax": "TMR,WDG_CONFIRM,<id>,<supervisedCtx>,<consumer>,<action>,<receivedReply>",
+            "argument_counts": "Exactly 6 including operation.",
+            "context": "supervisedCtx accepts decimal or 0x-prefixed hexadecimal in 0..0x7FFFFFFF, preserving complete 32-bit supported runtime ctx. Do not apply the external WiFiAgent24-bit envelope limit to this payload argument.",
+            "validation": "Malformed ID/consumer/action/context/text or argument shape is an error; no mutation. Zero supervisedCtx has no correlation and is ignored, never auto-allocated.",
+            "accepted": "+DATA:<commandCtx>,SYS:tmr,wdg_confirm,<id>,accepted",
+            "ignored": "+DATA:<commandCtx>,SYS:tmr,wdg_confirm,<id>,ignored,reason=<reason>",
+            "reasons": [
+              "not_pending",
+              "not_correlated",
+              "expired",
+              "ctx_mismatch",
+              "consumer_mismatch",
+              "action_mismatch",
+              "reply_mismatch"
+            ],
+            "reason_selection": "For a well-formed command: missing/non-WDG/idle/delivering -> not_pending; active at/past deadline -> expired; empty binding -> not_correlated; then ctx,consumer,action,reply mismatches in that order. Expired state may report expired; reason never authorizes action.",
+            "errors": "Existing EARGS/EID/ERANGE/EPLATFORM plus ECONSUMER/EACTION/EREPLY for malformed fields. Platform stop failure is EPLATFORM, not accepted.",
+            "effects": "Only accepted may stop/consume the matched WDG and reconcile its route. Ignored does not emit an event, alter state/deadline, remove a route, or affect unrelated entries.",
+            "caller_rule": "Parse explicit accepted result before application action. Generic +OK/ResultOk success is not a confirmation. Response uses commandCtx, not supervisedCtx."
+          }
+        },
+        "events": [
+          {
+            "topic": "/TMR/EXPIRED",
+            "args": [
+              "id",
+              "tag"
+            ],
+            "context": "last successful arm context"
+          },
+          {
+            "topic": "/WDG/EXPIRED",
+            "args": [
+              "id",
+              "tag",
+              "consumer"
+            ],
+            "context": "last successful arm context",
+            "when": "one committed WDG expiration"
+          }
+        ],
+        "errors": {
+          "EARGS": "Unknown argument count",
+          "EOPERATION": "Unknown operation or LIST option",
+          "EID": "Invalid or reserved ID",
+          "ERANGE": "Invalid delay",
+          "ETAG": "Invalid tag text",
+          "ELIMIT": "Configured capacity occupied with no reclaimable standby entry",
+          "ENOTFOUND": "Unknown ID for START/RESTART/INFO",
+          "EPLATFORM": "Timer allocation/Change failure; preserve consistent state",
+          "EBUSY": "Expiry delivery already committed, or active WDG consumer change",
+          "ETYPE": "WDG ID belongs to TMR",
+          "ESUB": "Managed subscription setup failed; trace original error",
+          "ESUBOWNED": "Foreign exact WDG PUSH route exists",
+          "ECORRELATION": "WDG expectedReply/action supplied inconsistently",
+          "ECONSUMER": "Invalid exact consumer endpoint",
+          "EACTION": "Invalid correlation action token",
+          "EREPLY": "Invalid expected/received reply text"
+        },
+        "event_rule": "Only expiration emits TMR/WDG event. WDG and WDG_CONFIRM are synchronous commands; WDG_CONFIRM returns accepted/ignored/error, never invokes application action."
+      }
+    },
+    "inherited_commands": {
+      "source": "VirtualModule",
+      "commands": [
+        "SUB",
+        "SUBLIST",
+        "UNSUB",
+        "TOGGLE",
+        "SWITCH",
+        "PULL"
+      ],
+      "SUB": "SUB,<consumer>,<topic>,<filter>,<delivery>",
+      "SUBLIST": "SUBLIST,<consumerSelector>,<topicSelector>[,<deliverySelector>]",
+      "UNSUB": "UNSUB,<consumerSelector>,<topicSelector>[,<deliverySelector>]"
+    },
+    "events": [
+      {
+        "topic": "/FLASH/CREATE",
+        "args": [
+          "createdScope..."
+        ]
+      },
+      {
+        "topic": "/ATTACH",
+        "args": [
+          "name",
+          "atGroup",
+          "PUSH"
+        ]
+      },
+      {
+        "topic": "/ECHO/DONE",
+        "args": [
+          "payload"
+        ]
+      },
+      {
+        "topic": "/INFO",
+        "args": [
+          "status"
+        ]
+      },
+      {
+        "topic": "/BUTTON/PRESS",
+        "args": [
+          "pressCounter",
+          "openContext"
+        ],
+        "counter_contract": "Positive decimal count of accepted Press callbacks since successful OPEN; same counter for short and holding-related PRESS.",
+        "open_context_contract": "args[1] is ctx + successful new BUTTON OPEN command msgId formatted uppercase X8, e.g. ctx08000005. This is lifecycle provenance, not event ctx or authentication. Repeated OPEN-already retains the original open ctx. CLOSE clears it. Physical interaction ctx allocation/preservation remains unchanged."
+      },
+      {
+        "topic": "/BUTTON/HOLDING/STARTED",
+        "args": [
+          "openContext"
+        ],
+        "open_context_contract": "Single argument ctx + successful OPEN command msgId formatted X8. Event ctx remains the interaction context and must not be replaced by the marker."
+      },
+      {
+        "topic": "/BUTTON/HOLDING/COMPLETED",
+        "args": [
+          "openContext"
+        ],
+        "open_context_contract": "Single argument ctx + successful OPEN command msgId formatted X8. Event ctx remains the interaction context and must not be replaced by the marker."
+      },
+      {
+        "topic": "/FLASH/OPEN",
+        "args": [
+          "<scope>|<scope>:RW..."
+        ]
+      },
+      {
+        "topic": "/FLASH/CLOSE",
+        "args": []
+      },
+      {
+        "topic": "/FLASH/WRITE",
+        "args": [
+          "scope",
+          "scopeAvailableBytes",
+          "relativeDirectory",
+          "fileName",
+          "fileBytes"
+        ]
+      },
+      {
+        "topic": "/FLASH/DELETE",
+        "args": [
+          "scope",
+          "scopeAvailableBytes",
+          "relativeDirectory",
+          "fileName",
+          "releasedBytes"
+        ]
+      },
+      {
+        "topic": "/TMR/EXPIRED",
+        "args": [
+          "id",
+          "tag"
+        ],
+        "context": "Last successful START/RESTART context."
+      },
+      {
+        "topic": "/WDG/EXPIRED",
+        "args": [
+          "id",
+          "tag",
+          "consumer"
+        ],
+        "context": "last successful arm context",
+        "when": "one committed WDG expiration"
+      }
+    ],
+    "producer_examples": {
+      "programmatic": [
+        "Publish(\"SYS\",\"FLASH\",ctx,\"CREATE\",<generated missing RD scope roots>)",
+        "Publish(\"SYS\",\"NEO\",ctx,\"OPEN\",\"21\")",
+        "Publish(\"SYS\",\"NEO\",ctx,\"SET\",\"Blue\")",
+        "Publish(\"SYS\",\"NEO\",ctx,\"BLINK\",\"Red\",\"5\",\"25\")",
+        "Publish(\"SYS\",\"NEO\",ctx,\"CLOSE\")",
+        "Publish(\"SYS\",\"LED\",ctx,\"TOGGLE\")",
+        "Publish(\"SYS\",\"BUTTON\",ctx,\"OPEN\",\"0\")",
+        "Publish(\"SYS\",\"FLASH\",ctx,\"OPEN\")",
+        "Publish(\"SYS\",\"FLASH\",ctx,\"WRITE\",\"config\",\"settings.json\",\"Hello, ABBA\")",
+        "Publish(\"SYS\",\"FLASH\",ctx,\"READ\",\"config\",\"settings.json\")",
+        "Publish(\"SYS\",\"FLASH\",ctx,\"LDIR\",\"metadata\")",
+        "Publish(\"SYS\",\"FLASH\",ctx,\"LIST\",\"metadata\",\"level11/level12\")"
+      ]
+    },
+    "endpoint_model": {
+      "schema_version": "1.0",
+      "registry": "business_commands is the dispatch endpoint registry; each entry declares kind.",
+      "direct_shape": "destination,command,context[,arguments]",
+      "resource_shape": "destination,resource,context,resourceCommand[,arguments]",
+      "indices": "Zero-based comma fields after AT+PUB=: direct command at [1], resource at [1], context at [2], resource command at [3]. Handler-local resource command is args[0].",
+      "module_commands": [
+        "ECHO",
+        "INFO",
+        "LOOPBACK"
+      ],
+      "resources": [
+        "NEO",
+        "LED",
+        "BUTTON",
+        "FLASH",
+        "TMR"
+      ],
+      "compatibility": "Keep all existing wire syntax, response/event semantics, registry paths and handler delegate signatures unchanged."
+    }
+  },
+  "Deployment": {
+    "producer": {
+      "optional_connector": "WiFiAgent",
+      "protocol": "AT+PUB is an optional producer adapter and is not part of SYS business semantics.",
+      "examples": [
+        "AT+PUB=SYS,FLASH,0x14F0,CREATE,metadata,I:/device/metadata/",
+        "AT+PUB=SYS,NEO,0x1401,OPEN,21",
+        "AT+PUB=SYS,NEO,0x1410,SET,Blue",
+        "AT+PUB=SYS,NEO,0x1430,BLINK,255:0:0,5,25",
+        "AT+PUB=SYS,NEO,0x1440,CLOSE",
+        "AT+PUB=SYS,LED,0x1450,TOGGLE",
+        "AT+PUB=SYS,BUTTON,0x1460,OPEN,0",
+        "AT+PUB=SYS,FLASH,0x1500,OPEN",
+        "AT+PUB=SYS,FLASH,0x1501,WRITE,config,settings.json,\"Hello, ABBA\"",
+        "AT+PUB=SYS,FLASH,0x1502,READ,config,settings.json",
+        "AT+PUB=SYS,FLASH,0x1520,LDIR,metadata",
+        "AT+PUB=SYS,FLASH,0x1521,LIST,metadata,level11/level12"
+      ]
+    }
+  },
+  "Runtime": {
+    "validation": {
+      "handler_rule": "Register ECHO, INFO and LOOPBACK once, then register only SYS resources enabled by Deployment. NEO, LED, BUTTON and FLASH remain separate handlers.",
+      "inherited_rule": "Do not regenerate inherited Level 0 commands.",
+      "context_rule": "Every response and separately declared module event preserves incoming non-zero context.",
+      "resource_rule": "NEO and LED reuse OPEN/CLOSE/INFO and are synchronous push-only outputs. BUTTON reuses the lifecycle pattern but emits callback-driven events. Resources own pins, callbacks and drivers; the retained SYS module controller survives every CLOSE and failed-OPEN rollback. FLASH is policy-bound text storage and emits OPEN/CLOSE/WRITE/DELETE only after successful state change.",
+      "scope_rule": "Do not generate another planned SYS subsystem before its later contract exists.",
+      "app_log_commands": [
+        "AT+PUB=SYS,NEO,0x1401,INFO",
+        "AT+PUB=SYS,NEO,0x1402,OPEN,21",
+        "AT+PUB=SYS,NEO,0x1403,OPEN,21",
+        "AT+PUB=SYS,NEO,0x1410,SET,Blue",
+        "AT+PUB=SYS,NEO,0x1412,SET,0x00FF0000",
+        "AT+PUB=SYS,NEO,0x1413,SET,0:255:0",
+        "AT+PUB=SYS,NEO,0x1430,BLINK,White,5,25",
+        "AT+PUB=SYS,NEO,0x1440,OFF",
+        "AT+PUB=SYS,NEO,0x1441,CLOSE",
+        "AT+PUB=SYS,NEO,0x1442,CLOSE",
+        "AT+PUB=SYS,NEO,0x1443,SET,Blue",
+        "AT+PUB=SYS,NEO,0x1444,INFO",
+        "AT+PUB=SYS,LED,0x1450,INFO",
+        "AT+PUB=SYS,LED,0x1451,TOGGLE",
+        "AT+PUB=SYS,BUTTON,0x1460,INFO",
+        "AT+PUB=SYS,SUB,0x1461,EMPTY0,/BUTTON/PRESS,*,PUSH",
+        "AT+PUB=SYS,SUB,0x1462,EMPTY0,/BUTTON/HOLDING/*,*,PUSH",
+        "AT+PUB=SYS,SUB,0x1500,EMPTY0,/FLASH/*,*,PUSH",
+        "AT+PUB=SYS,FLASH,0x1501,INFO",
+        "AT+PUB=SYS,FLASH,0x1502,WRITE,config,settings.json,\"Hello, ABBA\"",
+        "AT+PUB=SYS,FLASH,0x1503,READ,config,settings.json",
+        "AT+PUB=SYS,FLASH,0x1504,EXISTS,config,settings.json",
+        "AT+PUB=SYS,FLASH,0x1505,DELETE,config,settings.json",
+        "AT+PUB=SYS,FLASH,0x1506,CLOSE",
+        "AT+PUB=SYS,FLASH,0x1507,OPEN"
+      ],
+      "lifecycle_isolation_checks": [
+        "BUTTON CLOSE -> BUTTON INFO reports closed -> repeated BUTTON CLOSE returns already -> BUTTON OPEN succeeds -> PRESS and HOLDING callbacks work.",
+        "LED BLINK and NEO operations remain functional after BUTTON CLOSE.",
+        "LED CLOSE and OPEN do not change BUTTON, NEO or LORA behavior.",
+        "Failed OPEN rollback releases only resources acquired by that OPEN and permits a later valid OPEN.",
+        "Subscriptions survive resource CLOSE and OPEN cycles.",
+        "Use /BUTTON/** for a recursive SUBLIST selector that includes PRESS and both HOLDING child topics."
+      ],
+      "flash_checks": [
+        "On first boot or after mass erase, PlatformPostInit sends CREATE only for missing RD scope roots; SYS creates the roots, leaves FLASH closed and emits/delivers one /FLASH/CREATE containing only created logical scope names.",
+        "On reboot or ordinary firmware reflash, existing RD roots and all existing content are preserved; CREATE is omitted and PlatformPostInit continues.",
+        "OPEN emits and delivers /FLASH/OPEN with compact Deployment-ordered scope descriptors and no physical used/free accounting.",
+        "CLOSE emits and delivers /FLASH/CLOSE with no arguments and preserves subscriptions.",
+        "General INFO returns opened state and compact scopes; INFO,<scope> returns RD policy or RW quota, logical used payload bytes and available quota without physical drive free-space claims.",
+        "WRITE with a comma-containing text payload preserves the complete payload and emits/delivers /FLASH/WRITE only after success.",
+        "READ and EXISTS return data and emit no FLASH event.",
+        "DELETE emits/delivers /FLASH/DELETE only after success.",
+        "CLOSE emits/delivers /FLASH/CLOSE and preserves subscriptions; OPEN reuses the locked policy and emits/delivers /FLASH/OPEN.",
+        "RD mutation returns EREADONLY; invalid or escaping path returns EPATH; unknown scope returns ESCOPE; projected quota overflow returns EQUOTA without a success event.",
+        "recursive=false rejects descendant paths and recursive=true permits them.",
+        "LDIR returns only logical descendant directories from the root or selected existing level, hides physical paths, pages at 16 and emits no event.",
+        "LIST returns only direct files from one exact existing logical pathscope, never returns directories or recurses, pages at 16 and emits no event.",
+        "The data scope permits recursive RW navigation and mutation while enforcing its aggregate 65536-byte quota."
+      ],
+      "press_counter_checks": [
+        "First three PRESS events contain 1,2,3; CLOSE/OPEN resets the next PRESS to 1; shared context logic remains unchanged."
+      ],
+      "tmr_rule": "WDG_COMMAND_AGILITY_SMOKE: command parity, correlation and resource boundaries. Reuse baseline behavior evidence; no unrelated full regression."
+    }
+  }
+}

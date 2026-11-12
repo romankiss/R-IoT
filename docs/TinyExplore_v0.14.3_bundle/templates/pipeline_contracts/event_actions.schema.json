@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CodeCraft event actions 1.1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "actions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.1.0"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/action"
+      }
+    }
+  },
+  "$defs": {
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "producer",
+        "topic",
+        "delivered_topic",
+        "dispatch"
+      ],
+      "properties": {
+        "producer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "topic": {
+          "type": "string",
+          "pattern": "^/"
+        },
+        "delivered_topic": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dispatch": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "value"
+          ],
+          "properties": {
+            "source": {
+              "enum": [
+                "filter_tag",
+                "event_argument"
+              ]
+            },
+            "index": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "source": {
+                    "const": "event_argument"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "index"
+                ]
+              },
+              "else": {
+                "not": {
+                  "required": [
+                    "index"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source_name",
+        "trigger",
+        "guard",
+        "context",
+        "steps",
+        "finally",
+        "instrumentation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+        },
+        "source_name": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*EventHandler$"
+        },
+        "trigger": {
+          "$ref": "#/$defs/trigger"
+        },
+        "guard": {
+          "type": "string",
+          "minLength": 1
+        },
+        "context": {
+          "const": "event_ctx"
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/step"
+          }
+        },
+        "finally": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enter_after",
+            "steps"
+          ],
+          "properties": {
+            "enter_after": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "steps": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/step"
+              }
+            }
+          }
+        },
+        "instrumentation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "endpoint",
+        "command",
+        "args",
+        "required",
+        "success",
+        "on_failure",
+        "when"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "endpoint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "success": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "match",
+            "value"
+          ],
+          "properties": {
+            "match": {
+              "enum": [
+                "prefix",
+                "exact"
+              ]
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "on_failure": {
+          "enum": [
+            "stop",
+            "continue"
+          ]
+        },
+        "when": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "required": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "on_failure": {
+                "const": "stop"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

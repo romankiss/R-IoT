@@ -1,0 +1,2 @@
+# Terminology Query
+In Packages, enter a legend term and Inspect (Ctrl+Enter). The definition is result0; Next/Previous traverse whole-word occurrences only in the active Micro LAR, including nested textual artifacts. uLAR/microLAR aliases share one definition. Each match shows path, line, highlighted context and Open complete artifact. Search limits are disclosed; images/binary files are not indexed. Changing repository requires a fresh query. Existing module/path/AT query behavior is retained for non-legend terms.

@@ -1,0 +1,18 @@
+{
+  "request": "AT+PUB=SYS,TMR,0x0003F004,LIST",
+  "requestor": "aiworker_example3_73c9e79117",
+  "peer": "AppLog_Test",
+  "correlation": "AIREQ_524851a149aa4969a8bda16695ea38c2",
+  "response": "[14:19:55.928] [00000] AT Command: AT+PUB=SYS,TMR,0x0003F004,LIST\r\n+DATA:0003F004,SYS:tmr,activeCount=0,poolCount=3,capacity=10,[]",
+  "ack_confirmed": true,
+  "ack_revision": 5800,
+  "rkb": "[14:19:55.934] [00000] AT Command: AT+PUB=SYS,TMR,0x0003F004,LIST\n[14:19:55.951] [TRACE] SYS:publish_entry ctx=0003F004 dest=SYS cmd=TMR args=LIST sync=True fanout=False\n[14:19:55.963] [TRACE] SYS:publish_match ctx=0003F004 dest=SYS cmd=TMR module=SYS\n[14:19:55.975] [TRACE] SYS:route_entry ctx=0003F004 cmd=TMR args=LIST\n[14:19:55.990] [TRACE] SYS:route_ok ctx=0003F004 cmd=TMR result=+DATA:0003F004,SYS:tmr,activeCount=0,poolCount=3,capacity=10,[]",
+  "source": {
+    "testing_archive": "CodeCraft_RK_example3_v1.0.0_testing.zip",
+    "capture_ref": "aep_round5/captures/007_result.json",
+    "capture_sha256": "faa006f894c5915aa12c1a667d6335fc932ab2a2b3d98b227e7e0eb320c9accc",
+    "rkb_ref": "aep_round5/captures/011_AIREQ_32009f4be4c0443a8c35bd3aeb9d5a30.txt",
+    "rkb_sha256": "42f8ce7b8a5daab6e65b9b16b0c782cd077111e81e20b9ddc4b24fecd43bdb60",
+    "kind": "sanitized teaching projection, not full original artifacts"
+  }
+}
