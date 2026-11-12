@@ -1,0 +1,148 @@
+{
+  "Design": {
+    "declaration": {
+      "module": "virtual",
+      "version": "3.0.2",
+      "type": "framework",
+      "category": "usage-contract",
+      "copyright": "Copyright \u00a9 2026 Roman Kiss, rkiss@pathcom.com",
+      "description": "Golden Level 0 contract used by every CodeCraft business module."
+    },
+    "factory": {
+      "signature": "public VirtualModule(string name, string atGroup)"
+    },
+    "lifecycle": {
+      "initialize": "public void Initialize()",
+      "start": "public void Start()",
+      "stop": "public void Stop()"
+    },
+    "delegates": {
+      "CommandHandler": "string CommandHandler(string cmd, int msgId, string[] args)",
+      "EventHandler": "void EventHandler(string topic, int msgId, string filter, string[] args)",
+      "ConsumeForwarderX": "void ConsumeForwarderX(string line)"
+    },
+    "messaging": {
+      "publish": "public string[] Publish(string destination, string command, int msgId, params string[] args)",
+      "exact_destination": "synchronous",
+      "wildcard_destination": "asynchronous, except SUBLIST which is synchronous FAN-IN",
+      "context": "Legacy int msgId parameter carries a 32-bit context; logs render ctx=X8. Zero means unassigned/system activity.",
+      "publish_async": {
+        "signature": "public string[] PublishAsync(string destination, string command, int msgId, params string[] args)",
+        "destination": "One exact endpoint only, first match from receiver along ForwardTarget. Empty or wildcard destination returns EDEST; empty command EARGS; missing endpoint EUNKNOWN; not-started/stopped endpoint ENOTREADY.",
+        "queue": "Reuse existing RouteAsync/inbox/worker. Snapshot argument array. Immediate +OK:<ctx>,<endpoint>:CommandEnqueued acknowledges admission only, never handler success. No new queue implementation or Task/async-await dependency.",
+        "context": "Preserve nonzero msgId. Allocate once when zero; same ctx in admission, worker checkpoints and result/error.",
+        "completion": "Existing ExecuteAsync contract: /RESULT carries handler/fallback response, including an application +ERR response; /ERROR carries missing-handler/registered-handler exception. Callers subscribe before sending if they need completion; no automatic subscriptions/retry/pending registry. Existing fallback exception behavior is unchanged.",
+        "ordering": "Enqueue then worker execution; a fast completion event may be observed before the HTTP receipt. Same inbox ordering; no global cross-module ordering. Admission guard is not a concurrent Stop/drain guarantee.",
+        "compatibility": "Existing Publish behavior, public delegates and wildcard SUBLIST synchronous FAN-IN are unchanged."
+      }
+    },
+    "handlers": {
+      "registration": "Derived RegisterHandlers calls RegisterHandler during Initialize; Start enables handlers.",
+      "default_command": "protected virtual string DefaultAtCommandHandler(string command, int msgId, string[] args)",
+      "default_event": "protected virtual void DefaultEventHandler(string topic, int msgId, string filter, string[] args)"
+    },
+    "subscriptions": {
+      "identity": "producer + consumer endpoint + topic pattern + delivery mode",
+      "filter_identity": "FilterExpression is not part of identity; repeating SUB atomically updates only the filter.",
+      "delivery_modes": [
+        "PUSH",
+        "PUSH_PULL",
+        "PULL"
+      ],
+      "commands": {
+        "SUB": "consumer,topic,filter,delivery",
+        "SUBLIST": "consumerSelector,topicSelector[,deliverySelector]; omitted delivery=PUSH, *=all",
+        "UNSUB": "consumerSelector,topicSelector[,deliverySelector]; omitted delivery=PUSH, *=all",
+        "TOGGLE": "consumer,topic[|filter],on|off",
+        "SWITCH": "topic,on|off",
+        "PULL": "pendingContext"
+      }
+    },
+    "filters": {
+      "grammar": "space=AND; unescaped |=OR; leading !=NOT; backslash escapes syntax",
+      "wildcards": "*=sequence, ?=one character, #=zero or more digits; case-insensitive",
+      "aliases": "$argN=pattern targets args[N]; unqualified terms target the final argument",
+      "numeric": "$argN >, >=, <, <= number; AND may form ranges",
+      "references": "@scope:name is reserved and returns EFILTERREF:UNSUPPORTED",
+      "address_equality": "$argN=@pattern strips leading @ for text/wildcard matching; NOT retains existing semantics; no numeric padding/normalization.",
+      "address_comparison": "Explicit @ operand parses both event value and comparison value as unsigned bare hexadecimal; valid 0..0x1FFFFFFFFFFFFF; no signs/0x/fractions/whitespace. Without @ retain double.TryParse. Standalone @scope:name remains reserved."
+    },
+    "topics": {
+      "local_shape": "/TOPIC",
+      "delivered_shape": "AtGroup + localTopic",
+      "wildcards": [
+        "*",
+        "?",
+        "#",
+        "/*",
+        "/**"
+      ]
+    },
+    "business_module_api": [
+      "RegisterHandler",
+      "EmitEvent",
+      "Subscribe",
+      "Unsubscribe",
+      "Publish",
+      "SetTopicSwitch",
+      "SetTopicBlock",
+      "EvalFilter",
+      "MatchTopic",
+      "TraceLog",
+      "MessageFormat",
+      "PublishAsync"
+    ],
+    "extensions": [
+      "Join",
+      "JoinKeys",
+      "AddRange",
+      "CloneList",
+      "SplitCount",
+      "UnwrapTextArg",
+      "TextArg",
+      "WildcardMatchEscaped",
+      "WildcardMatch"
+    ],
+    "invariants": [
+      "Keep ChainHead and ForwardTarget as the Level 0 routing topology.",
+      "Store cross subscriptions on the event producer.",
+      "Store no-filter internally as empty string and expose it as *.",
+      "Resolve interest before emit_event logging so uninterested events stay silent.",
+      "Preserve locks around mutable Hashtables and queues.",
+      "Do not change public delegate or Publish signatures."
+    ],
+    "golden_source": "device/lib/runtime/virtual/VirtualModule.cs"
+  },
+  "Deployment": {
+    "platform": "*",
+    "required_namespaces": [
+      "System",
+      "System.Collections",
+      "System.Diagnostics",
+      "System.Text",
+      "System.Threading"
+    ],
+    "required_types": [
+      "ArgumentException",
+      "ArrayList",
+      "AutoResetEvent",
+      "DateTime",
+      "Exception",
+      "Hashtable",
+      "Interlocked",
+      "Stopwatch",
+      "StringBuilder",
+      "Thread"
+    ]
+  },
+  "Runtime": {
+    "instrumentation": "[TRACE] <AtGroup>:<checkpoint> ctx=<X8> <extra>",
+    "response_formats": [
+      "+OK:<ctx>,...",
+      "+DATA:<ctx>,...",
+      "+ERR:<ctx>,...",
+      "+EVT:<ctx>,<topic>[,<args>]"
+    ],
+    "source_policy": "The new target copies the explicitly supplied, hash-validated core candidate source byte-identically. Preserve original selected golden pair unchanged. Candidate remains UNVERIFIED until declared impact acceptance."
+  }
+}

@@ -1,0 +1,1469 @@
+{
+  "Design": {
+    "declaration": {
+      "module": "sys",
+      "version": "1.0.1",
+      "type": "business_module",
+      "class": "SysModule",
+      "namespace": "CodeCraft.Modules.Sys",
+      "copyright": "Copyright © 2026 Roman Kiss, rkiss@pathcom.com",
+      "description": "Platform-neutral system-services module with onboard status, button eventing and policy-bound internal text storage selected through Deployment metadata.",
+      "class_modifier": "partial"
+    },
+    "artifact_identity": {
+      "id": "CodeCraft.module.sys",
+      "version_ref": "#/Design/declaration/version",
+      "role": "agile_module_capsule",
+      "identity_rule": "Logical id plus canonical contract fingerprint identify the reusable module capsule independently of package label, runtime instances and physical locator.",
+      "fingerprint": {
+        "algorithm": "SHA-256",
+        "value": "f86ec0f15044c9843794f25e876c682ae612129019578387daad7c6acb8d60e2",
+        "scope": [
+          "device/modules/sys/CodeCraft_sys_module.json excluding Design.artifact_identity.fingerprint.value and Design.declaration.version",
+          "device/modules/sys/CodeCraft_sys_at.json excluding Design.declaration.version"
+        ],
+        "canonicalization": "UTF-8 JSON with object keys sorted recursively, insignificant whitespace removed and array order preserved.",
+        "rule": "Hash the canonical module DDR after replacing this value with an empty string and removing its declaration.version, append one LF byte, then append the canonical AT DDR after removing its declaration.version. Package relabeling alone must not change the semantic contract fingerprint.",
+        "incremental_role": "Primary semantic-change key. An unchanged value permits reuse of the previously generated module source when platform projection inputs are also compatible."
+      },
+      "locator": {
+        "kind": "package_local",
+        "path": "device/modules/sys/CodeCraft_sys_module.json",
+        "repository_ready": true,
+        "rule": "A repository locator may replace the package-local locator without changing logical identity or contract fingerprint."
+      }
+    },
+    "base": {
+      "type": "VirtualModule",
+      "contract": "device/common/virtual/CodeCraft_virtual_module_ddr.json"
+    },
+    "identity": {
+      "name": "Sys",
+      "at_group_expression": "SYS + suffix",
+      "default_suffix": "",
+      "default_at_group": "SYS"
+    },
+    "agility": {
+      "neutral": true,
+      "chain_position": "none assumed",
+      "preferred_position": "head when selected by Runtime composition",
+      "dependencies_on_other_modules": [],
+      "composition": "owned by container configuration or runtime controller",
+      "multiple_instances": "allowed only when Runtime composition and platform resource bindings are non-conflicting",
+      "instance_discriminator": "suffix",
+      "dynamic_operations": [
+        "insert",
+        "remove",
+        "reorder",
+        "replace"
+      ]
+    },
+    "container_access": {
+      "construction": "A concrete SysModule reference may be a local variable only while the selected platform assembles the topology.",
+      "after_construction": "All access enters through the Level 0 container, Publish, registered handlers, subscriptions or event handlers.",
+      "forbidden": "No private/public static field, property or collection may retain a concrete SysModule instance.",
+      "tail": "When a SYS instance is the final module, set ForwardTarget = null explicitly."
+    },
+    "factory": {
+      "constructor": "private SysModule(string suffix)",
+      "signature": "public static SysModule Create(string suffix, int msgId, string[] flashOpenConfig, string[] flashProvisionConfig, string loraAddressForTest = \"0x5557\", int timerCapacity = 10)",
+      "steps": [
+        "construct",
+        "apply supplied metadata connector bindings to private runtime state",
+        "Initialize",
+        "Start",
+        "Emit /ATTACH using supplied context",
+        "return"
+      ],
+      "metadata_connector": {
+        "purpose": "Create one fully bound SYS instance; do not expose a separately callable deployment binder.",
+        "arguments": [
+          {
+            "name": "flashOpenConfig",
+            "type": "string[]",
+            "source_ref": "device/entry.json#/Deployment/HAL/module_bindings/sys/resources/flash/open_config",
+            "empty_semantics": "No FLASH runtime policy binding."
+          },
+          {
+            "name": "flashProvisionConfig",
+            "type": "string[]",
+            "source_ref": "device/entry.json#/Deployment/HAL/module_bindings/sys/resources/flash/provision_config",
+            "empty_semantics": "No FLASH deployment provisioning binding."
+          },
+          {
+            "name": "loraAddressForTest",
+            "type": "string",
+            "default": "0x5557",
+            "source_ref": "$MODULES/lora/test_address",
+            "rule": "Empty string selects explicit default; nonempty override must be valid 0x-prefixed ushort text for unicast, excluding 0x0000 and 0xFFFF. Reject invalid override before Initialize/Start."
+          },
+          {
+            "name": "timerCapacity",
+            "type": "int",
+            "default": 10,
+            "source_ref": "device/modules/sys/CodeCraft_sys_module.json#/Deployment/resources/tmr/capacity",
+            "rule": "Validate positive and apply before Initialize/Start; not a HAL value or startup command."
+          }
+        ],
+        "timing": "Copy/validate all supplied connector values and apply application target override before Initialize and Start.",
+        "ownership": "The factory copies supplied values into private module state; callers retain no mutable binding channel.",
+        "forbidden": [
+          "public BindFlashDeployment or equivalent post-creation binder",
+          "runtime capsule-id comparison",
+          "runtime contract-fingerprint comparison",
+          "starting the worker before metadata bindings are applied"
+        ]
+      }
+    },
+    "connectors": {
+      "physical": {
+        "purpose": "Expose platform-neutral SYS resource requirements through a mandatory loosely decoupled runtime binding that Deployment HAL supplies for the selected platform and target board.",
+        "binding_owner": "device/entry.json#/Deployment/HAL/module_bindings/sys/resources",
+        "resources": {
+          "neo": {
+            "capability": "pixel_output",
+            "required": false,
+            "cardinality": {
+              "min": 0,
+              "max": 1
+            },
+            "access": "push",
+            "configuration_contract": {
+              "fields": [
+                {
+                  "name": "data",
+                  "type": "integer",
+                  "required": true,
+                  "minimum": 0
+                },
+                {
+                  "name": "count",
+                  "type": "integer",
+                  "required": false,
+                  "default": 1,
+                  "minimum": 1
+                },
+                {
+                  "name": "color_order",
+                  "type": "string",
+                  "required": false,
+                  "default": "RGB",
+                  "allowed": [
+                    "RGB",
+                    "GRB",
+                    "BRG"
+                  ]
+                },
+                {
+                  "name": "power",
+                  "type": "integer",
+                  "required": false,
+                  "default": -1,
+                  "minimum": -1
+                },
+                {
+                  "name": "power_active",
+                  "type": "string",
+                  "required": false,
+                  "default": "HIGH",
+                  "allowed": [
+                    "HIGH",
+                    "LOW"
+                  ]
+                }
+              ]
+            },
+            "lifecycle": {
+              "open": {
+                "command": "NEO",
+                "operation": "OPEN",
+                "configuration": "binding"
+              },
+              "close": {
+                "command": "NEO",
+                "operation": "CLOSE"
+              },
+              "info": {
+                "command": "NEO",
+                "operation": "INFO"
+              }
+            }
+          },
+          "led": {
+            "capability": "digital_output",
+            "required": false,
+            "cardinality": {
+              "min": 0,
+              "max": 1
+            },
+            "access": "push",
+            "configuration_contract": {
+              "fields": [
+                {
+                  "name": "pin",
+                  "type": "integer",
+                  "required": true,
+                  "minimum": 0
+                },
+                {
+                  "name": "active",
+                  "type": "string",
+                  "required": true,
+                  "allowed": [
+                    "HIGH",
+                    "LOW"
+                  ]
+                }
+              ]
+            },
+            "lifecycle": {
+              "open": {
+                "command": "LED",
+                "operation": "OPEN",
+                "configuration": "binding"
+              },
+              "close": {
+                "command": "LED",
+                "operation": "CLOSE"
+              },
+              "info": {
+                "command": "LED",
+                "operation": "INFO"
+              }
+            }
+          },
+          "button": {
+            "capability": "button_input",
+            "required": false,
+            "cardinality": {
+              "min": 0,
+              "max": 1
+            },
+            "access": "event_source",
+            "configuration_contract": {
+              "fields": [
+                {
+                  "name": "pin",
+                  "type": "integer",
+                  "required": true,
+                  "minimum": 0
+                },
+                {
+                  "name": "pin_mode",
+                  "type": "string",
+                  "required": false,
+                  "default": "InputPullUp",
+                  "allowed": [
+                    "Input",
+                    "InputPullUp",
+                    "InputPullDown"
+                  ]
+                },
+                {
+                  "name": "debounce_ms",
+                  "type": "integer",
+                  "required": false,
+                  "default": 333,
+                  "minimum": 0
+                }
+              ]
+            },
+            "lifecycle": {
+              "open": {
+                "command": "BUTTON",
+                "operation": "OPEN",
+                "configuration": "binding"
+              },
+              "close": {
+                "command": "BUTTON",
+                "operation": "CLOSE"
+              },
+              "info": {
+                "command": "BUTTON",
+                "operation": "INFO"
+              }
+            }
+          },
+          "flash": {
+            "capability": "internal_text_storage",
+            "required": false,
+            "cardinality": {
+              "min": 0,
+              "max": 1
+            },
+            "access": "policy_bound_read_write_and_event_source",
+            "configuration_contract": {
+              "drive": {
+                "type": "string",
+                "required": true,
+                "platform_invariant": true,
+                "rule": "The selected platform supplies its internal-drive identity. The nanoFramework projection binds I:/ and runtime callers cannot replace it."
+              },
+              "scopes": {
+                "cardinality": "one_or_more",
+                "fields": [
+                  "name",
+                  "path",
+                  "mode",
+                  "recursive",
+                  "max_size_bytes"
+                ],
+                "mode_allowed": [
+                  "RD",
+                  "RW"
+                ],
+                "rw_rule": "Every RW scope requires max_size_bytes greater than zero. RD scopes omit max_size_bytes.",
+                "path_rule": "Normalize one leading and trailing slash; reject parent traversal and invalid drive-relative syntax.",
+                "overlap_rule": "Scope names are unique. Writable physical scope paths may not overlap."
+              }
+            },
+            "lifecycle": {
+              "open": {
+                "command": "FLASH",
+                "operation": "OPEN",
+                "configuration": "deployment_binding_once"
+              },
+              "close": {
+                "command": "FLASH",
+                "operation": "CLOSE"
+              },
+              "info": {
+                "command": "FLASH",
+                "operation": "INFO"
+              }
+            }
+          }
+        },
+        "validation": [
+          "Fail when an enabled binding references a connector resource not declared here.",
+          "Fail when a required connector has no enabled target binding.",
+          "Skip an optional connector when its binding is absent or disabled.",
+          "Validate configuration schema before generation and validate resolved values again during OPEN before acquiring resources.",
+          "Pass every enabled physical binding through its runtime OPEN contract; never bake resolved target values into generated module source.",
+          "Do not copy target board, pin, driver, namespace or package identity into this neutral connector contract."
+        ]
+      }
+    },
+    "resource_contract": {
+      "shape": "<resource>,<operation>[,<args>]",
+      "mandatory_operations": [
+        "OPEN",
+        "CLOSE",
+        "INFO"
+      ],
+      "open": {
+        "syntax": "OPEN,<required-config>[,<optional-config>]",
+        "configuration": "Resolve the selected resource binding from Deployment HAL, apply neutral contract defaults and deliver the minimally encoded configuration through OPEN at runtime.",
+        "runtime_binding": "mandatory",
+        "runtime_overrides": "OPEN is the authoritative attach operation; changing a live binding requires CLOSE followed by OPEN with another valid configuration.",
+        "idempotency": "Opening an already-open resource returns already."
+      },
+      "close": {
+        "syntax": "CLOSE",
+        "behavior": "Stop activity, drive the resource safe, release owned platform resources and clear transient state.",
+        "idempotency": "Closing an already-closed resource returns already."
+      },
+      "info": {
+        "syntax": "INFO",
+        "availability": "Valid while open or closed."
+      },
+      "state_rule": "A nullable resource driver is authoritative when a resource has a driver. FLASH explicitly has no driver object and uses one opened boolean while retaining its immutable validated Deployment policy across CLOSE/OPEN. Operations other than OPEN, CLOSE and INFO require the selected resource to be open; otherwise return ENOTOPEN.",
+      "extension_rule": "Every later SYS resource reuses this lifecycle and response/error pattern unless its DDR explicitly declares an exception.",
+      "performance_rule": "Parse and validate outside any hardware lock. Lock only the smallest mutable driver write when the selected platform API is not thread-safe. Never hold that lock during Thread.Sleep.",
+      "ownership_rule": "SYS retains one module-owned platform controller for its full module lifetime. Individual resources own only their acquired pins, callbacks and drivers. Resource CLOSE, rollback and detach cleanup never dispose, replace or null the retained controller; the selected platform binding supplies its concrete type and pin-release rules.",
+      "subscription_rule": "CLOSE releases only the resource driver, callbacks and owned pins. It preserves the module controller and never removes consumer subscriptions; subscription lifetime remains controlled by inherited SUB and UNSUB commands. Exception: TMR-owned managed WDG routes follow their declared active/delivering lifetime."
+    },
+    "resources": {
+      "NEO": {
+        "purpose": "Performance-first push status indication through the small onboard addressable RGB resource selected by HAL.",
+        "selection": "Retain this enabled agile resource independently of whether the selected board assigns its primary HAL pin; -1 affects platform activation only.",
+        "operations": [
+          "OPEN",
+          "CLOSE",
+          "SET",
+          "OFF",
+          "BLINK",
+          "INFO"
+        ],
+        "target": "The onboard resource is addressed as one status indicator; command callers do not supply a pixel index or wildcard.",
+        "open_syntax": "OPEN,<data>[,<count>[,<order>[,<power>[,<powerActive>]]]]",
+        "open_defaults": {
+          "count": 1,
+          "order": "RGB",
+          "power": -1,
+          "powerActive": "HIGH"
+        },
+        "open_example": "OPEN,21",
+        "state": "Keep a nullable driver reference plus mutable runtime binding fields populated only by successful OPEN. Driver null means CLOSED. Platform-neutral defaults are neo=null, data=-1, count=1, order=RGB, power=-1 and powerActive=HIGH. Do not generate a parallel opened flag, color array or GET shadow value.",
+        "power": "power=-1 means no controlled supply. For power>=0, OPEN uses the retained SYS controller to open and assert the declared active level before driver creation; CLOSE drives the safe inactive level and closes only the power pin through the provider pin-release API. Failed OPEN rolls back only the acquired power pin and pixel driver and retains the controller.",
+        "concurrency": "Best-effort push and last physical write wins. Do not queue, reserve or serialize complete blink sequences.",
+        "color": {
+          "accepted_formats": [
+            "named color",
+            "0x00RRGGBB",
+            "red:green:blue decimal bytes"
+          ],
+          "named_colors": {
+            "BLACK": "0x00000000",
+            "WHITE": "0x00FFFFFF",
+            "RED": "0x00FF0000",
+            "GREEN": "0x0000FF00",
+            "BLUE": "0x000000FF",
+            "YELLOW": "0x00FFFF00",
+            "CYAN": "0x0000FFFF",
+            "MAGENTA": "0x00FF00FF",
+            "ORANGE": "0x00FFA500",
+            "PURPLE": "0x00800080"
+          },
+          "name_case": "case-insensitive",
+          "hex_rule": "Exactly 0x plus eight hexadecimal digits in 0x00RRGGBB form; reserved high byte must be zero.",
+          "decimal_rule": "Three colon-separated decimal bytes in range 0..255; leading zeros are accepted.",
+          "normal_form": "Convert to the selected platform color type for the immediate write; no color state is retained."
+        },
+        "set": "Apply color immediately and synchronously to the onboard indicator.",
+        "off": "Apply Black immediately and synchronously.",
+        "blink": {
+          "execution": "synchronous best-effort push sequence; no EmitEvent and no sequence ownership",
+          "sequence": "For each repetition set color, sleep phaseMs, set OFF, sleep phaseMs; remain OFF after the final repetition.",
+          "count_range": "1..5",
+          "phase_ms_range": "10..100",
+          "default_phase_ms": 25,
+          "maximum_block_ms": 1000
+        },
+        "write_pattern": "SetLedByColor performs Image.SetPixel plus driver Update inside the minimal driver lock when required, then performs an optional sleep outside the lock.",
+        "eventing": "NEO emits no business events because every declared operation completes synchronously.",
+        "source_artifact": {
+          "source_name": "Neo",
+          "filename": "NeoResource.cs",
+          "class": "SysModule",
+          "namespace": "CodeCraft.Modules.Sys",
+          "class_modifier": "partial",
+          "dispatch_handler": "NeoHandler",
+          "replacement_rule": "Preserve all members consumed by the main class and the complete existing resource semantics."
+        },
+        "kind": "resource",
+        "commands": [
+          "OPEN",
+          "CLOSE",
+          "SET",
+          "OFF",
+          "BLINK",
+          "INFO"
+        ],
+        "binding_lifecycle": "Defaults apply before the first successful OPEN. Successful new OPEN atomically commits the validated binding; failed OPEN and OPEN-already preserve the last successful binding. CLOSE releases hardware but retains this binding; repeated CLOSE is idempotent. INFO is available open or closed; opened derives only from the nullable hardware object. Reopening still requires explicit OPEN arguments; no new implicit OPEN form.",
+        "primary_pin_contract": {
+          "open_minimum": 0,
+          "hal_unassigned": -1,
+          "platform_activation": "Skip OPEN for HAL -1; direct OPEN with -1 remains ECONFIG."
+        },
+        "info_response": "+DATA:<ctx>,SYS:neo,opened=<bool>,data=<gpio|-1>,count=<n>,power=<gpio|-1>,order=<order>,powerActive=<HIGH|LOW>",
+        "binding_defaults": {
+          "data": -1,
+          "count": 1,
+          "order": "RGB",
+          "power": -1,
+          "powerActive": "HIGH"
+        }
+      },
+      "LED": {
+        "purpose": "Performance-first binary status indication for one onboard user LED.",
+        "selection": "Retain this enabled agile resource independently of whether the selected board assigns its primary HAL pin; -1 affects platform activation only.",
+        "operations": [
+          "OPEN",
+          "CLOSE",
+          "ON",
+          "OFF",
+          "TOGGLE",
+          "BLINK",
+          "INFO"
+        ],
+        "target": "The onboard target is implicit and command callers never supply an index.",
+        "configuration": "HAL supplies one GPIO reference and active HIGH or LOW through LED OPEN. Store validated values only as runtime fields.",
+        "state": "Keep a nullable runtime pin/driver reference plus OPEN binding fields; the retained module controller is not resource state. Do not retain a logical state for GET.",
+        "toggle": "Use the selected platform pin Toggle operation so no logical shadow state is required. For active LOW hardware, LOW is ON and HIGH is OFF; Toggle remains polarity-independent.",
+        "concurrency": "Best-effort push and last physical write wins. Do not queue, reserve or serialize complete blink sequences.",
+        "blink": {
+          "execution": "synchronous best-effort push sequence; no EmitEvent and no sequence ownership",
+          "sequence": "For each repetition write active, sleep phaseMs, write inactive, sleep phaseMs; remain inactive after the final repetition.",
+          "count_range": "1..5",
+          "phase_ms_range": "10..100",
+          "default_phase_ms": 25,
+          "maximum_block_ms": 1000
+        },
+        "eventing": "LED emits no business events.",
+        "source_artifact": {
+          "source_name": "Led",
+          "filename": "LedResource.cs",
+          "class": "SysModule",
+          "namespace": "CodeCraft.Modules.Sys",
+          "class_modifier": "partial",
+          "dispatch_handler": "LedHandler",
+          "replacement_rule": "Preserve all members consumed by the main class and the complete existing resource semantics."
+        },
+        "kind": "resource",
+        "commands": [
+          "OPEN",
+          "CLOSE",
+          "ON",
+          "OFF",
+          "TOGGLE",
+          "BLINK",
+          "INFO"
+        ],
+        "binding_lifecycle": "Defaults apply before the first successful OPEN. Successful new OPEN atomically commits the validated binding; failed OPEN and OPEN-already preserve the last successful binding. CLOSE releases hardware but retains this binding; repeated CLOSE is idempotent. INFO is available open or closed; opened derives only from the nullable hardware object. Reopening still requires explicit OPEN arguments; no new implicit OPEN form.",
+        "primary_pin_contract": {
+          "open_minimum": 0,
+          "hal_unassigned": -1,
+          "platform_activation": "Skip OPEN for HAL -1; direct OPEN with -1 remains ECONFIG."
+        },
+        "info_response": "+DATA:<ctx>,SYS:led,opened=<bool>,pin=<gpio|-1>,active=<HIGH|LOW>",
+        "binding_defaults": {
+          "pin": -1,
+          "active": "HIGH"
+        }
+      },
+      "BUTTON": {
+        "purpose": "Event-driven onboard BOOT/user button input whose Press and Holding callbacks feed Level 0 event subscriptions.",
+        "selection": "Retain this enabled agile resource independently of whether the selected board assigns its primary HAL pin; -1 affects platform activation only.",
+        "operations": [
+          "OPEN",
+          "CLOSE",
+          "INFO"
+        ],
+        "open_syntax": "OPEN,<pin>[,<pinMode>[,<debounceMs>]]",
+        "open_defaults": {
+          "pinMode": "InputPullUp",
+          "debounceMs": 333,
+          "holdingEnabled": true,
+          "doublePressEnabled": false
+        },
+        "open_example": "OPEN,0",
+        "driver_policy": "Use the selected platform GpioButton driver and its native Press and Holding events. Do not generate a parallel polling loop, hold timer or debounce state machine.",
+        "state": "Keep a nullable button driver, active interaction context and holding flag. BUTTON uses the retained SYS controller; that controller is not BUTTON state. Driver null means CLOSED.",
+        "event_sequence": {
+          "short_press": [
+            "/BUTTON/PRESS"
+          ],
+          "long_press": [
+            "/BUTTON/HOLDING/STARTED",
+            "/BUTTON/PRESS",
+            "/BUTTON/HOLDING/COMPLETED"
+          ],
+          "context": "Allocate one non-zero context at the start of each physical interaction and preserve it through all events belonging to that interaction. Reset it after standalone PRESS or HOLDING/COMPLETED."
+        },
+        "callbacks": {
+          "Press": "After active driver/sender guards, increment pressCounter and emit /BUTTON/PRESS with [decimal pressCounter, ctx + openContext formatted X8]. Preserve the existing short/holding interaction ctx.",
+          "Holding.Started": "Allocate interaction ctx when absent, set holding state and emit /BUTTON/HOLDING/STARTED with that event ctx and one argument ctx + successful OPEN msgId formatted X8.",
+          "Holding.Completed": "Emit /BUTTON/HOLDING/COMPLETED with the same interaction event ctx and one argument ctx + successful OPEN msgId formatted X8; then clear interaction ctx and holding flag, retaining OPEN lifetime marker until CLOSE."
+        },
+        "close": "Detach Press/Holding callbacks and dispose the owned GpioButton, retaining SYS controller and subscriptions. Null button, clear interaction ctx, OPEN ctx, holding state and counter; retain pin, mode and debounce binding.",
+        "eventing": "Events are emitted only from driver callbacks and delivered only when matching inherited subscriptions exist.",
+        "source_artifact": {
+          "source_name": "Button",
+          "filename": "ButtonResource.cs",
+          "class": "SysModule",
+          "namespace": "CodeCraft.Modules.Sys",
+          "class_modifier": "partial",
+          "dispatch_handler": "ButtonHandler",
+          "replacement_rule": "Preserve all members consumed by the main class and the complete existing resource semantics."
+        },
+        "kind": "resource",
+        "commands": [
+          "OPEN",
+          "CLOSE",
+          "INFO"
+        ],
+        "press_counter": {
+          "field": "private int buttonPressCounter;",
+          "lock": "existing buttonSync",
+          "open": "On successful new OPEN set zero before the acquired button becomes visible; OPEN-already does not reset.",
+          "press": "After existing active-button/sender guards, increment under buttonSync then emit decimal value in args[0].",
+          "close": "Reset to zero in existing cleanup finally, including already-closed normalization.",
+          "reset": "Instance reconstruction/reset initializes zero; no new RESET command is introduced.",
+          "overflow": "At int.MaxValue wrap to 1 under the same lock.",
+          "context": "Keep existing short/holding context logic and unchanged HOLDING topic payloads."
+        },
+        "open_context": {
+          "capture": "Store command msgId under existing buttonSync only on successful new acquisition, after successful acquisition try/catch and before returning button,open; callbacks remain serialized by buttonSync.",
+          "format": "ctx + msgId.ToString(\"X8\")",
+          "open_already": "Preserve original context and counter.",
+          "close": "Clear in cleanup finally.",
+          "press": "Append as args[1], retaining pressCounter at args[0] and the existing interaction event ctx.",
+          "holding": "Append the OPEN marker as sole args[0] on both HOLDING/STARTED and HOLDING/COMPLETED; preserve their common interaction event ctx."
+        },
+        "binding_lifecycle": "Defaults apply before the first successful OPEN. Successful new OPEN atomically commits the validated binding; failed OPEN and OPEN-already preserve the last successful binding. CLOSE releases hardware but retains this binding; repeated CLOSE is idempotent. INFO is available open or closed; opened derives only from the nullable hardware object. Reopening still requires explicit OPEN arguments; no new implicit OPEN form.",
+        "primary_pin_contract": {
+          "open_minimum": 0,
+          "hal_unassigned": -1,
+          "platform_activation": "Skip OPEN for HAL -1; direct OPEN with -1 remains ECONFIG."
+        },
+        "info_response": "+DATA:<ctx>,SYS:button,opened=<bool>,pin=<gpio|-1>,mode=<mode>,debounceMs=<n>,holding=<bool>",
+        "binding_defaults": {
+          "pin": -1,
+          "mode": "InputPullUp",
+          "debounceMs": 333
+        }
+      },
+      "FLASH": {
+        "purpose": "Policy-bound access to the selected platform internal text-file drive through stable logical application scope names.",
+        "selection": "Generate only when Deployment enables and fully binds SYS FLASH.",
+        "operations": [
+          "CREATE",
+          "OPEN",
+          "CLOSE",
+          "INFO",
+          "LDIR",
+          "LIST",
+          "WRITE",
+          "READ",
+          "DELETE",
+          "EXISTS"
+        ],
+        "content": {
+          "kind": "text_only",
+          "command_transport": "single_line_text_payload",
+          "encoding": "Encode text deterministically as UTF-8 bytes without a BOM and persist those exact bytes. READ decodes the same bytes as UTF-8; no public binary or multiline transport contract is generated.",
+          "binary": "unsupported",
+          "multiline_at_transport": "deferred"
+        },
+        "binding": {
+          "drive": "Deployment supplies one platform internal-drive invariant; nanoFramework binds I:/.",
+          "scope_identity": "Commands use the logical scope name and never expose or accept the physical scope path.",
+          "initial_open": "The first OPEN receives the generated Deployment binding, validates it atomically and locks it for the module-instance lifetime.",
+          "reopen": "After CLOSE, OPEN takes no configuration and reuses the locked policy. A later attempt to replace the policy returns ECONFIGLOCKED.",
+          "security_boundary": "Runtime callers cannot create paths, scopes, modes or quotas outside the locked Deployment policy."
+        },
+        "scope": {
+          "fields": [
+            "name",
+            "path",
+            "mode",
+            "recursive",
+            "max_size_bytes"
+          ],
+          "mode": "RD permits READ and EXISTS. RW additionally permits WRITE and DELETE.",
+          "recursive": "false permits files directly in the scope root only; true permits descendant relative paths.",
+          "quota": "max_size_bytes is mandatory for RW and limits aggregate UTF-8 file payload bytes inside that logical scope. For recursive=true count every descendant file; for recursive=false count direct files only. Ignore filesystem allocation overhead and everything outside that scope.",
+          "path_safety": "Reject absolute caller paths, drive prefixes, empty filenames, parent traversal and descendant paths when recursive is false.",
+          "accounting": "scopeUsedBytes is the sum of FileInfo.Length for all files counted by the scope rule. scopeAvailableBytes=max(0,max_size_bytes-scopeUsedBytes). WRITE admission projects current used bytes minus the replaced target length plus Encoding.UTF8.GetBytes(text).Length; persist exactly those no-BOM bytes so projected and stored lengths agree."
+        },
+        "events": {
+          "open": {
+            "topic": "/FLASH/OPEN",
+            "args": [
+              "scope descriptors..."
+            ],
+            "scope_descriptor": "Polish projection: <scope> means default RD; <scope>:RW means the writable exception. Preserve Deployment declaration order."
+          },
+          "close": {
+            "topic": "/FLASH/CLOSE",
+            "args": []
+          },
+          "write": {
+            "topic": "/FLASH/WRITE",
+            "args": [
+              "scope",
+              "scopeAvailableBytes",
+              "relativeDirectory",
+              "fileName",
+              "fileBytes"
+            ]
+          },
+          "delete": {
+            "topic": "/FLASH/DELETE",
+            "args": [
+              "scope",
+              "scopeAvailableBytes",
+              "relativeDirectory",
+              "fileName",
+              "releasedBytes"
+            ]
+          },
+          "create": {
+            "topic": "/FLASH/CREATE",
+            "args": [
+              "createdScope..."
+            ]
+          }
+        },
+        "eventing": "CREATE emits once only when one or more missing RD roots were successfully created. OPEN, CLOSE, WRITE and DELETE emit only after their successful state changes with the incoming context. INFO, LDIR, LIST, READ and EXISTS emit no FLASH event. Errors and no-op results emit no success event, and file content is never included.",
+        "subscription_lifetime": "FLASH CLOSE/OPEN preserves inherited subscriptions.",
+        "concurrency": "Serialize quota calculation and the corresponding mutation under one FLASH-local lock so concurrent callers cannot exceed quota.",
+        "errors": [
+          "EARGS",
+          "EOPERATION",
+          "ENOTOPEN",
+          "ECONFIG",
+          "ECONFIGLOCKED",
+          "ESCOPE",
+          "EREADONLY",
+          "EPATH",
+          "ENOTFOUND",
+          "EQUOTA",
+          "EIO"
+        ],
+        "discovery": {
+          "page_size": 16,
+          "ordering": "Ordinal ascending by complete logical path or file name.",
+          "ldir": {
+            "purpose": "Travel the logical scope hierarchy from the scope root or one existing selected level.",
+            "result": "Directories only; recursively return descendant logical scope paths. Never return files or physical paths.",
+            "selected_level": "Omit the selected starting directory itself from the result.",
+            "recursive_false": "Return an empty page because the scope has no discoverable nested hierarchy."
+          },
+          "list": {
+            "purpose": "Discover files located directly in exactly one selected logical pathscope.",
+            "result": "Files only; never return directories and never recurse.",
+            "pathscope": "The selected root or nested logical pathscope must exist and must be permitted by the scope recursive policy."
+          },
+          "paging": "offset defaults to zero; return count, total and next. next=-1 means the last page. Consumer cannot change the fixed page size."
+        },
+        "accounting_boundary": "The public contract does not expose or estimate physical drive used/free space. Physical allocation overhead and files outside declared scopes are intentionally outside the FLASH business contract.",
+        "provisioning": {
+          "purpose": "Create only missing Deployment-declared RD scope root directories before runtime OPEN.",
+          "boundary": "CREATE is a deployment operation. It does not open FLASH, lock or replace the runtime access policy, create files, create nested content or provision RW scopes.",
+          "binding": "Receive ordered logical scope-name and resolved physical-root pairs through the metadata connector. Never compile paths into SysModule source.",
+          "idempotency": "Existing roots and all existing RD/RW content are preserved. When no RD root is missing, PlatformPostInit omits CREATE.",
+          "persistence": "Provisioned roots and runtime-created RW content survive reboot and ordinary firmware flashing. A mass erase may remove them.",
+          "failure": "Any failed requested root creation returns an error and stops PlatformPostInit.",
+          "event": "After successful creation emit /FLASH/CREATE once with only the logical names of roots actually created. Emit no event when none were created."
+        },
+        "source_artifact": {
+          "source_name": "Flash",
+          "filename": "FlashResource.cs",
+          "class": "SysModule",
+          "namespace": "CodeCraft.Modules.Sys",
+          "class_modifier": "partial",
+          "dispatch_handler": "FlashHandler",
+          "replacement_rule": "Preserve all members consumed by the main class and the complete existing resource semantics."
+        },
+        "kind": "resource",
+        "commands": [
+          "CREATE",
+          "OPEN",
+          "CLOSE",
+          "INFO",
+          "LDIR",
+          "LIST",
+          "WRITE",
+          "READ",
+          "DELETE",
+          "EXISTS"
+        ]
+      },
+      "TMR": {
+        "kind": "resource",
+        "purpose": "Named one-shot TMR, periodic TMR and WDG over the same timer provider, namedTimers table and bounded allocation pool.",
+        "selection": "Deployment.resources.tmr.enabled",
+        "operations": [
+          "OPEN",
+          "START",
+          "RESTART",
+          "WDG",
+          "CANCEL",
+          "CLOSE",
+          "INFO",
+          "LIST",
+          "WDG_CONFIRM"
+        ],
+        "commands": [
+          "OPEN",
+          "START",
+          "RESTART",
+          "WDG",
+          "CANCEL",
+          "CLOSE",
+          "INFO",
+          "LIST",
+          "WDG_CONFIRM"
+        ],
+        "source_artifact": {
+          "filename": "TimerResource.cs",
+          "class": "SysModule",
+          "class_modifier": "partial",
+          "dispatch_handler": "TimerHandler",
+          "boundary": "Generic resource only; no ArmPingWatchdog or PING/ACK literals. Private generic helpers allowed only behind public command handlers."
+        },
+        "capacity": {
+          "default": 10,
+          "configuration": "Positive timerCapacity via SYS Create, fixed for instance.",
+          "allocation": "Existing ID reused; new ID allocates below capacity, otherwise reclaims standby; no candidate means ELIMIT.",
+          "standby": "idle or expired and not delivering an expiry; available for reuse, not permanently reserved.",
+          "invariants": [
+            "Count never exceeds configured capacity.",
+            "Recycling preserves count and unique identity mapping.",
+            "Active and delivering entries cannot be reclaimed."
+          ]
+        },
+        "identity": {
+          "key": "Caller ID, case-sensitive, 1..64 ASCII letters/digits/_/-. * reserved for CLOSE all.",
+          "lifetime": "Until CLOSE or standby reclamation."
+        },
+        "entry": {
+          "state": [
+            "idle",
+            "active",
+            "expired"
+          ],
+          "type": [
+            "TMR",
+            "WDG"
+          ],
+          "context": "Last successful arm context; preserve in expiry.",
+          "tag": "OPEN/WDG omission means empty; RESTART omission preserves. No comma, pipe or control characters.",
+          "delay": "Positive Int32 milliseconds.",
+          "mode": "TMR one-shot: periodMs=0; TMR periodic: periodMs=1..2147483647; WDG: periodMs=0. Type stays TMR or WDG; do not introduce a new wire Type.",
+          "periodMs": "Positive decimal Int32 milliseconds when supplied to OPEN; absent means 0 internally. Persist until CLOSE/reclamation; allocation/reuse resets all mode-specific state.",
+          "expirationCount": "Int64 count of committed periodic expirations in current run; reset on allocation and successful START/RESTART. ONE emits count=0. WDG wire payload stays unchanged."
+        },
+        "lifecycle": {
+          "OPEN": "TMR,OPEN,<id>,<delayMs>[,<tag>] preserves one-shot; TMR,OPEN,<id>,<delayMs>,<tag>,<periodMs> configures periodic idle without arming. Validate all supplied fields before mutation; valid duplicate OPEN returns already and leaves configuration unchanged. Empty tag requires its comma position.",
+          "START": "Arm idle/expired entry. Active returns already without changes. Optional delay persists; keep tag. For WDG ensure its consumer route exists. Periodic resets first-delay sequence; see periodic.during_delivery for an old delivery after CANCEL.",
+          "RESTART": "Retrigger same timer and metadata identity; optional delay/tag persist, omitted values retained. Begin new interval promptly after validation, before checkpoint metadata updates. No disposal/recreation. Delivering expiry returns EBUSY. For periodic too, in-flight delivery returns EBUSY; otherwise reset first-delay sequence and preserve periodMs.",
+          "WDG": "WDG,<id>,<delayMs>,<consumer>[,<tag>[,<expectedReply>,<action>]]: all supplied correlation metadata and arm are one atomic operation. Legacy no-correlation forms remain valid. Both correlation values empty disables confirmation; otherwise both required nonempty. No post-command state writes. Existing type/consumer/delivery restrictions preserved.",
+          "CANCEL": "Stop existing timer into idle, retaining configuration and object; idle returns already. Reconcile WDG route; unknown ID ENOTFOUND. Periodic additionally supports successful stop during delivery as specified by periodic.during_delivery.CANCEL.",
+          "EXPIRE": "One-shot/WDG: Current active arm at its deadline commits expired once, then delivers event. During delivery entry is not reclaimable; after delivery release standby and reconcile WDG route. Periodic: use periodic schedule/state/run_ownership and during_delivery rules; remains active.",
+          "CLOSE": "Remove and release ID; unknown returns already; CLOSE,* releases all entries and managed routes when their in-flight deliveries finish. For periodic in-flight delivery use the transient tombstone and same-ID exclusion specified in periodic.during_delivery.CLOSE.",
+          "WDG_CONFIRM": "Validate supplied id, supervised context, consumer, action and exact reply against an active unexpired pending WDG; stop and consume once atomically with expiry/restart/cancel/recycling. Return accepted or ignored; never execute application action inside resource."
+        },
+        "concurrency": {
+          "atomicity": "Serialize arm/retrigger, completion, cancel, expiry commit and reclamation.",
+          "stale_callback": "An older callback cannot expire a newer interval before its current monotonic deadline.",
+          "expiry_boundary": "Committed expiry cannot be retracted; RESTART during its delivery returns EBUSY.",
+          "delivery": "Execute consumer handlers outside timer-state synchronization; preserve captured event state despite other operations.",
+          "failures": "Contain callback errors; do not report successful arm after platform failure or interfere with unrelated timers/workflows.",
+          "periodic_ref": "#/Design/resources/TMR/periodic"
+        },
+        "events": [
+          {
+            "topic": "/TMR/EXPIRED",
+            "args": [
+              "id",
+              "tag",
+              "mode=PER|ONE",
+              "count=<decimal>"
+            ],
+            "context": "last successful arm context",
+            "payload_semantics": {
+              "PER": "count=1,2,... for committed expirations of current run; includes no-subscriber expirations; skipped scheduled slots do not increment",
+              "ONE": "count=0",
+              "reset": "Successful START/RESTART and allocation/pool reuse reset ExpirationCount to zero; active START-already and duplicate OPEN retain state",
+              "snapshot": "Increment and capture under timerSync at commitment, before delivery outside the lock; committed event values remain independent of later control operations",
+              "scope": "Event payload only; existing INFO mode=PERIODIC and LIST PERIODIC strings remain unchanged"
+            },
+            "compatibility": "First two positions unchanged; exact arity/payload consumers must account for two appended fields. WDG topic/payload unchanged."
+          },
+          {
+            "topic": "/WDG/EXPIRED",
+            "args": [
+              "id",
+              "tag",
+              "consumer"
+            ],
+            "context": "last successful arm context",
+            "when": "one committed WDG expiration"
+          }
+        ],
+        "isolation": "Generic TMR remains independent of radio protocol. PING is a separate application use of WDG.",
+        "watchdog_routing": {
+          "identity": "One resource-owned PUSH subscription per exact consumer on /WDG/EXPIRED.",
+          "filter": "$arg2=<consumer>",
+          "lifetime": "First demand creates route; no rewrites; last active/delivering WDG completion removes it.",
+          "isolation": "No cross-consumer expiry delivery. Do not take over an existing foreign exact route (ESUBOWNED).",
+          "tag": "Application state in event args[1], not a growing filter list.",
+          "implementation_boundary": "Use supported SUB/SUBLIST/UNSUB APIs, directly as permitted resource infrastructure APIs or via message handlers; never _crossSubs, internal key encoding or SubscriptionEntry reference identity. Managed exact routes must not be externally edited while owned."
+        },
+        "completion": {
+          "configuration": "WDG command args supply expectedReply and action as opaque application values. Command success means configuration, route setup and arming are complete atomically.",
+          "command": "WDG_CONFIRM,<id>,<supervisedCtx>,<consumer>,<action>,<receivedReply>. Command envelope ctx is for its response, supervisedCtx identifies the pending operation.",
+          "accept": "Same id, WDG type, arm ctx, consumer, action, exact expected reply, active/not-delivering state and monotonic now<deadline. Stop timer and mark idle/consumed before returning accepted. Reconcile route, no resource-side application action.",
+          "ignore": "Unknown/non-WDG/uncorrelated/completed/expired or mismatched ctx/consumer/action/reply: ignored, no state or deadline change and no application side effects. Wrong reply leaves correct reply eligible.",
+          "retrigger": "START/RESTART of same WDG preserve configured expectedReply/action; fresh WDG replaces all supplied correlation values, omitted means disabled. CLOSE/reclamation resets correlation; consumed state cannot be accepted twice.",
+          "limits": "Correlation is not sender authentication. A caller-selected expectedReply/action is not hardcoded PING behavior."
+        },
+        "periodic": {
+          "requirements": [
+            "SYS-PTMR-01",
+            "SYS-PTMR-02",
+            "SYS-PTMR-03",
+            "SYS-PTMR-04",
+            "SYS-PTMR-05",
+            "SYS-PTMR-06",
+            "SYS-PTMR-07",
+            "SYS-PTMR-D01"
+          ],
+          "authority": "SYS-PTMR-D01 is APPROVED by explicit user instruction in this task; the original Notepad bytes remain immutable provenance. These rules supersede its Open decision/not yet approved wording.",
+          "provider": "Reuse existing System.Threading.Timer and monotonic timerClock; one logical scheduling mechanism, no new dependency, parallel table, polling loop or application restart handler.",
+          "schedule": "A successful START/RESTART establishes monotonic first deadline D0=armTime+delayMs. Scheduled slots are D0+k*periodMs for k>=0. A due callback commits at most one delivery. After that delivery completes, select the earliest slot strictly later than current monotonic time, skipping every missed slot; do not schedule relative to handler completion or emit catch-up bursts.",
+          "late_callback": "A late callback delivers at most one pending due expiration, then skips all intervening missed slots on completion. Never deliver before its current deadline. A stale/early callback must check current entry identity, active run ownership, delivery gate and current deadline before committing.",
+          "serialization": "Use timerSync for state transitions; consumer delivery occurs outside timerSync. At most one committed delivery for the same timer object/ID at a time. Independent timers have independent run state; no guarantee of parallel execution by the provider.",
+          "state": "Periodic remains active across expiration delivery; it is never transitioned to expired by normal periodic expiration. Delivering entries are not reclaimable. Count an active periodic entry in activeCount including while delivering.",
+          "run_ownership": "Each successful periodic START/RESTART creates a distinct run identity/token. Capture entry identity and run token at commit; after delivery rearm/update only if the table still maps that exact object, the same run remains active and no stop/removal superseded it. Invalidate prior ownership on successful CANCEL/CLOSE/reclamation. A callback finally block may release only its own delivery gate; it must not overwrite State or a newer run.",
+          "during_delivery": {
+            "OPEN": "Valid duplicate returns already, unchanged.",
+            "START": "For active periodic returns already unchanged, even during delivery. If a prior CANCEL left an old delivery in flight, START returns EBUSY until it finishes; prevents overlap with an old run.",
+            "RESTART": "Returns EBUSY while delivery is in flight, including after CANCEL, with no mutation. Caller may explicitly retry after completion; no queued restart.",
+            "CANCEL": "Periodic-only exception to baseline delivering EBUSY: stop and mark idle after successful platform stop, invalidate run ownership, retain configuration. Already committed delivery completes once; success guarantees no later commitment/rearm for that run.",
+            "CLOSE": "Remove/dispose and invalidate ownership; already committed delivery may finish. Reopening the same ID while its removed object is still delivering returns EBUSY until completion. Retain a transient closing/tombstone entry in the existing namedTimers table, non-active/nonreclaimable and capacity-counted, until the final callback releases it; no second periodic table. INFO may report state=closed for this transient entry; LIST,ALL includes it, default LIST/NAMES exclude it. CLOSE,* applies this rule to each object; removed count counts objects newly closed, never double-counts tombstones.",
+            "INFO_LIST": "Observational snapshots; no mutation. Keep legacy row formats and selectors for one-shot and WDG."
+          },
+          "controls": "Outside delivery preserve existing START/RESTART/CANCEL/CLOSE responses and selectors. Optional delay override persists only as first delay; periodMs unchanged. Optional RESTART tag persists as before. CANCEL followed by START starts again with first delay and a new arm context.",
+          "context_event": "Capture id,tag,arm context,mode and count at commitment under timerSync, deliver outside lock. Emit /TMR/EXPIRED(id,tag,mode=PER,count=<decimal>) for periodic and (id,tag,mode=ONE,count=0) for one-shot. Preserve run arm context and captured values independently of later controls. Tag remains event payload, independent of subscription tag.",
+          "interest": "Fire & Forget: no business ACK or consumer continuation management. Schedule continues with zero subscribers; existing interest rules may suppress emission/logging. Delivery means synchronous EmitEvent invocation completion; asynchronous consumer work beyond it is outside this timer gate.",
+          "remaining": "INFO periodic remainingMs=max(0,nextScheduledSlot-now) while active, otherwise 0. During an in-flight delivery compute the next strictly future cadence slot, without scheduling another callback until completion; it is provisional if the consumer is still running.",
+          "failures": "Contain and trace callback/delivery errors. A thrown consumer delivery still releases its gate and follows guarded skip/rearm if the same run is active. Platform scheduling failure terminates/removes that periodic run with diagnostic, never reports a successful arm or leaves a phantom active timer; no unrelated entries affected.",
+          "pool": "Reclamation only for idle/expired, not delivering or closing entries. Reset period, run ownership, deadline, delivery gate and mode-specific fields on allocation/reuse before publishing new identity; reset WDG metadata as baseline. WDG must never inherit periodic settings.",
+          "legacy_preservation": "All one-shot and WDG paths retain their existing control-during-delivery behavior (including EBUSY), expiry commitment to expired before EmitEvent, retained expired object and post-delivery bookkeeping. No unconditional State assignment after EmitEvent. Periodic tombstone/rearm rules do not alter legacy behavior."
+        },
+        "event_payload": {
+          "topic": "/TMR/EXPIRED",
+          "args": [
+            "id",
+            "tag",
+            "mode=PER|ONE",
+            "count=<decimal>"
+          ],
+          "compatibility": "First two positions unchanged; exact arity/payload consumers must account for two appended fields. WDG topic/payload unchanged.",
+          "semantics": {
+            "PER": "count=1,2,... for committed expirations of current run; includes no-subscriber expirations; skipped scheduled slots do not increment",
+            "ONE": "count=0",
+            "reset": "Successful START/RESTART and allocation/pool reuse reset ExpirationCount to zero; active START-already and duplicate OPEN retain state",
+            "snapshot": "Increment and capture under timerSync at commitment, before delivery outside the lock; committed event values remain independent of later control operations",
+            "scope": "Event payload only; existing INFO mode=PERIODIC and LIST PERIODIC strings remain unchanged"
+          }
+        }
+      }
+    },
+    "topics": {
+      "Create": "/ATTACH",
+      "EchoDone": "/ECHO/DONE",
+      "Info": "/INFO",
+      "ButtonPress": "/BUTTON/PRESS",
+      "ButtonHoldingStarted": "/BUTTON/HOLDING/STARTED",
+      "ButtonHoldingCompleted": "/BUTTON/HOLDING/COMPLETED",
+      "FlashOpen": "/FLASH/OPEN",
+      "FlashClose": "/FLASH/CLOSE",
+      "FlashWrite": "/FLASH/WRITE",
+      "FlashDelete": "/FLASH/DELETE",
+      "TimerExpired": "/TMR/EXPIRED",
+      "WatchdogExpired": "/WDG/EXPIRED"
+    },
+    "handlers": {
+      "registration_order": [
+        "ECHO",
+        "INFO",
+        "LOOPBACK",
+        "<enabled SYS resources in DDR order>"
+      ],
+      "ECHO": {
+        "handler": "EchoHandler",
+        "args": "optional payload",
+        "behavior": "Join args, emit /ECHO/DONE and return BuildData with the same context."
+      },
+      "INFO": {
+        "handler": "InfoHandler",
+        "behavior": "Emit and return name, AtGroup, enabled, inherited rxCount and compact resource summary."
+      },
+      "LOOPBACK": {
+        "handler": "LoopbackHandler",
+        "behavior": "Publish ECHO to this AtGroup with LOOPBACK_TEST; scan responses and return OK or FAIL."
+      },
+      "NEO": {
+        "handler": "NeoHandler",
+        "condition": "HAL resource neo enabled",
+        "behavior": "Dispatch the first argument as a lightweight push operation. Check SET, OFF and BLINK before lifecycle operations; parse outside the driver lock."
+      },
+      "LED": {
+        "handler": "LedHandler",
+        "condition": "HAL resource led enabled",
+        "behavior": "Dispatch the first argument as a lightweight binary push operation; generate no NEO branch inside LED and no LED branch inside NEO."
+      },
+      "BUTTON": {
+        "handler": "ButtonHandler",
+        "condition": "HAL resource button enabled",
+        "behavior": "Dispatch OPEN, CLOSE and INFO lifecycle operations. Physical Press and Holding callbacks emit the declared BUTTON topics; command handling itself emits no synthetic button event."
+      },
+      "default_event": {
+        "handler": "DefaultEventHandler",
+        "behavior": "Trace delivered topic, normalized filter and joined args through inherited instrumentation."
+      },
+      "FLASH": {
+        "handler": "FlashHandler",
+        "condition": "Deployment resource flash enabled",
+        "behavior": "Dispatch lifecycle, hierarchy discovery and text-file operations; resolve logical scope names through the locked Deployment policy, enforce RD/RW, recursion, path safety and RW aggregate quota, and emit only successful state-changing events."
+      },
+      "TMR": {
+        "handler": "TimerHandler",
+        "condition": "Deployment.resources.tmr.enabled",
+        "behavior": "Dispatch all declared operations including WDG correlation args and WDG_CONFIRM. Same handler for local shortcut and Publish; no private-only application capabilities."
+      }
+    },
+    "events_emitted": [
+      {
+        "topic": "/ATTACH",
+        "context": "factory context",
+        "args": [
+          "name",
+          "atGroup",
+          "PUSH"
+        ]
+      },
+      {
+        "topic": "/ECHO/DONE",
+        "context": "command context",
+        "args": [
+          "payload"
+        ]
+      },
+      {
+        "topic": "/INFO",
+        "context": "command context",
+        "args": [
+          "status"
+        ]
+      },
+      {
+        "topic": "/BUTTON/PRESS",
+        "context": "physical interaction context",
+        "args": [
+          "pressCounter",
+          "openContext"
+        ],
+        "counter_contract": "Positive decimal count of accepted Press callbacks since successful OPEN; same counter for short and holding-related PRESS.",
+        "open_context_contract": "args[1] is ctx + successful new BUTTON OPEN command msgId formatted uppercase X8, e.g. ctx08000005. This is lifecycle provenance, not event ctx or authentication. Repeated OPEN-already retains the original open ctx. CLOSE clears it. Physical interaction ctx allocation/preservation remains unchanged."
+      },
+      {
+        "topic": "/BUTTON/HOLDING/STARTED",
+        "context": "physical interaction context",
+        "args": [
+          "openContext"
+        ],
+        "open_context_contract": "Single argument ctx + successful OPEN command msgId formatted X8. Event ctx remains the interaction context and must not be replaced by the marker."
+      },
+      {
+        "topic": "/BUTTON/HOLDING/COMPLETED",
+        "context": "physical interaction context",
+        "args": [
+          "openContext"
+        ],
+        "open_context_contract": "Single argument ctx + successful OPEN command msgId formatted X8. Event ctx remains the interaction context and must not be replaced by the marker."
+      },
+      {
+        "topic": "/FLASH/CREATE",
+        "args": [
+          "createdScope..."
+        ]
+      },
+      {
+        "topic": "/FLASH/OPEN",
+        "context": "command context",
+        "args": [
+          "scope descriptors..."
+        ]
+      },
+      {
+        "topic": "/FLASH/CLOSE",
+        "context": "command context",
+        "args": []
+      },
+      {
+        "topic": "/FLASH/WRITE",
+        "context": "command context",
+        "args": [
+          "scope",
+          "scopeAvailableBytes",
+          "relativeDirectory",
+          "fileName",
+          "fileBytes"
+        ]
+      },
+      {
+        "topic": "/FLASH/DELETE",
+        "context": "command context",
+        "args": [
+          "scope",
+          "scopeAvailableBytes",
+          "relativeDirectory",
+          "fileName",
+          "releasedBytes"
+        ]
+      },
+      {
+        "topic": "/TMR/EXPIRED",
+        "args": [
+          "id",
+          "tag",
+          "mode=PER|ONE",
+          "count=<decimal>"
+        ],
+        "context": "Last successful START/RESTART context.",
+        "payload_semantics": {
+          "PER": "count=1,2,... for committed expirations of current run; includes no-subscriber expirations; skipped scheduled slots do not increment",
+          "ONE": "count=0",
+          "reset": "Successful START/RESTART and allocation/pool reuse reset ExpirationCount to zero; active START-already and duplicate OPEN retain state",
+          "snapshot": "Increment and capture under timerSync at commitment, before delivery outside the lock; committed event values remain independent of later control operations",
+          "scope": "Event payload only; existing INFO mode=PERIODIC and LIST PERIODIC strings remain unchanged"
+        },
+        "compatibility": "First two positions unchanged; exact arity/payload consumers must account for two appended fields. WDG topic/payload unchanged."
+      },
+      {
+        "topic": "/WDG/EXPIRED",
+        "args": [
+          "id",
+          "tag",
+          "consumer"
+        ],
+        "context": "last successful arm context",
+        "when": "one committed WDG expiration"
+      }
+    ],
+    "event_interests": {
+      "static": [],
+      "runtime": "Managed through inherited Level 0 subscription commands."
+    },
+    "subsystem_extension_policy": {
+      "purpose": "Add heterogeneous services without changing module, container and resource-lifecycle invariants.",
+      "implemented_subsystems": [
+        "onboard_neo_status",
+        "onboard_led_status",
+        "boot_button",
+        "internal_flash_text_storage"
+      ],
+      "planned_subsystems": [
+        "reboot",
+        "reset_reason",
+        "named_timers"
+      ],
+      "ownership": "A subsystem belongs to SYS only when it is an application-level service owned by the SYS lifecycle.",
+      "platform_boundary": "Neutral behavior is declared here; board, HAL, native and framework bindings belong to Deployment or selected platform.",
+      "generation_rule": "Do not generate a planned subsystem until a later DDR patch supplies complete semantics, state, resources, errors and cleanup."
+    },
+    "semantic_invariants": {
+      "generation_policy": "Do not add undeclared subsystems, dependencies, fixed chain position or static instance storage.",
+      "default_event_handler": "Trace handler_event with topic, FilterForLog(filter) and args.Join().",
+      "echo": "Use args.Join(); emit /ECHO/DONE; return BuildData with the same context.",
+      "info": "Return base fields name,atGroup,enabled,rxCount followed by a compact resource summary.",
+      "loopback": "Publish ECHO with the same context and safely scan every response for LOOPBACK_TEST.",
+      "status_resources": "NEO and LED are separate contracts and handlers. Generate only resources enabled by HAL; never implement runtime kind switching between them.",
+      "connector_boundary": "Every enabled physical resource is initialized exclusively through its runtime OPEN metadata connector. No generated module source may compile in resolved target values.",
+      "push_semantics": "SET/ON/OFF/BLINK are best-effort immediate status writes. A concurrent or later write may overwrite an active indication; last physical write wins.",
+      "button_event_semantics": "PRESS, HOLDING/STARTED and HOLDING/COMPLETED are distinct topic identities. Preserve one context across a long interaction and do not encode the holding state as a payload string.",
+      "resource_isolation": "Every CLOSE and failed-OPEN rollback releases only pins, callbacks and drivers acquired by that resource. The retained SYS controller and all other SYS resources and business modules remain functional; isolation comes from pin ownership, not separate managed controller objects.",
+      "no_query_state": "Do not generate GET, color arrays, logical LED state, animation queues or sequence ownership.",
+      "instance_neutrality": "Generate the class once; Runtime may create zero, one or more valid instances with distinct identities and bindings.",
+      "flash_policy_semantics": "FLASH maps logical scope identities to Deployment-owned physical paths. Runtime commands cannot replace the locked policy; every mutation enforces mode, recursion, path safety and aggregate quota."
+    },
+    "source_generation": {
+      "determinism": "Generate one logical partial SysModule with SysModule.cs and one selected resource source per declared enabled resource, independent of runtime instance count.",
+      "topics_type": {
+        "kind": "public readonly struct",
+        "name": "Topics",
+        "constants": [
+          "Create=/ATTACH",
+          "EchoDone=/ECHO/DONE",
+          "Info=/INFO",
+          "ButtonPress=/BUTTON/PRESS",
+          "ButtonHoldingStarted=/BUTTON/HOLDING/STARTED",
+          "ButtonHoldingCompleted=/BUTTON/HOLDING/COMPLETED",
+          "FlashOpen=/FLASH/OPEN",
+          "FlashClose=/FLASH/CLOSE",
+          "FlashWrite=/FLASH/WRITE",
+          "FlashDelete=/FLASH/DELETE",
+          "TimerExpired=/TMR/EXPIRED",
+          "WatchdogExpired=/WDG/EXPIRED"
+        ]
+      },
+      "construction": {
+        "constructor": "private SysModule(string suffix)",
+        "factory": "public static SysModule Create(string suffix, int msgId, string[] flashOpenConfig, string[] flashProvisionConfig, string loraAddressForTest = \"0x5557\", int timerCapacity = 10)",
+        "rule": "Apply connector arrays inside Create before Initialize and Start. The generated module exposes no public post-creation deployment binder. Apply the declared test-address override before Initialize/Start."
+      },
+      "handler_signatures": {
+        "EchoHandler": "private string EchoHandler(string cmd, int msgId, string[] args)",
+        "InfoHandler": "private string InfoHandler(string cmd, int msgId, string[] args)",
+        "LoopbackHandler": "private string LoopbackHandler(string cmd, int msgId, string[] args)",
+        "NeoHandler": "private string NeoHandler(string cmd, int msgId, string[] args) when HAL enables NEO",
+        "LedHandler": "private string LedHandler(string cmd, int msgId, string[] args) when HAL enables LED",
+        "ButtonHandler": "private string ButtonHandler(string cmd, int msgId, string[] args) when HAL enables BUTTON",
+        "DefaultEventHandler": "protected override void DefaultEventHandler(string topic, int msgId, string filter, string[] args)",
+        "FlashHandler": "private string FlashHandler(string cmd, int msgId, string[] args) when Deployment enables FLASH",
+        "TimerHandler": "private string TimerHandler(string cmd, int msgId, string[] args)"
+      },
+      "namespace_rule": "Emit declared and capability-resolved namespaces only; reuse inherited Level 0 helpers.",
+      "configuration_rule": "Construct resource open configuration from Deployment HAL references in the platform entry and pass it through OPEN. Never emit resolved target pins, buses, addresses, counts, order, polarity or setup values as constants or initialized target-specific fields in SysModule. The explicit application_binding default is distinct from physical resource configuration; override comes through the factory connector.",
+      "runtime_fields_rule": "Platform-neutral defaults initialize fields; successful OPEN commits binding. NEO/LED/BUTTON CLOSE retains binding while nulling runtime objects. Nullable hardware reference is the only open-state authority; no shadow opened flag.",
+      "hot_path_rule": "Generated NEO SET/OFF and LED ON/OFF/TOGGLE paths contain no configuration parsing, target loop, wildcard handling, shadow storage or runtime driver-kind branch.",
+      "button_generation_rule": "Use the resolved platform GpioButton type. Construct it only during BUTTON OPEN with the retained module controller and shouldDispose=false, enable holding, attach named Press and Holding handlers, and detach those same handlers during CLOSE before disposing the button driver while retaining the controller. Apply the declared press_counter lifecycle under the existing buttonSync lock; preserve all callback ownership and context rules.",
+      "controller_lifetime_rule": "Resolve the selected platform manager/controller binding, create one private controller during SYS module instance construction and retain it across every resource OPEN and CLOSE. Do not create, null, replace or dispose the controller inside a resource handler.",
+      "resource_cleanup_rule": "CLOSE and failed-OPEN rollback release only resources acquired by that operation, never call controller Dispose and never affect foreign pins. When a driver already releases its pin, do not close that pin a second time.",
+      "flash_generation_rule": "Generate deployment-only idempotent CREATE from the RD-root metadata connector and runtime OPEN from the complete scope policy connector. CREATE receives no hardcoded paths, creates only requested missing RD roots, preserves all existing content, leaves FLASH closed and emits /FLASH/CREATE only when roots were created. First OPEN validates and retains the complete runtime policy; never compile physical paths, modes or quotas into SysModule source. Generate UTF-8 text operations, safe path resolution, fixed-page LDIR/LIST discovery, per-RW-scope logical payload accounting and a FLASH-local mutation lock. Never synthesize physical drive used/free values.",
+      "structure_policy_ref": "$DESIGN/generation/business_module_structure",
+      "event_action_outputs": []
+    },
+    "runtime_connectivity": {
+      "provider": "Level 0 VirtualModule",
+      "contract_ref": "device/common/virtual/CodeCraft_virtual_module_ddr.json",
+      "purpose": "Carry runtime business messaging and Pub/Sub eventing independently of metadata binding.",
+      "messaging": {
+        "entry": "Publish",
+        "dispatch": "registered handlers",
+        "context": "preserve the 32-bit context across request, response and emitted events"
+      },
+      "eventing": {
+        "producer_scope": "module instance",
+        "subscription_storage": "module instance",
+        "delivery": [
+          "PUSH",
+          "PUSH_PULL",
+          "PULL"
+        ],
+        "topics_ref": "#/Design/topics"
+      },
+      "chain": {
+        "membership": "zero or one position per runtime instance",
+        "position_owner": "device/entry.json#/Runtime/composition",
+        "direct_static_instance_access": "forbidden"
+      },
+      "module": "sys"
+    },
+    "metadata_connector": {
+      "schema_version": "1.0",
+      "purpose": "Standard plug-in boundary that keeps the module agile and neutral while supplying configuration, initialization, state policy, logical bindings, physical bindings and instance metadata from the container.",
+      "capsule_ref": "#/Design/artifact_identity",
+      "binding_owner": "device/entry.json#/Deployment/metadata_bindings",
+      "late_binding": "Resolve metadata outside generated module source and apply it during composition or declared runtime lifecycle operations.",
+      "planes": {
+        "instance": {
+          "binding_source": "device/entry.json#/Runtime/composition/instances",
+          "fields": [
+            {
+              "name": "suffix",
+              "type": "string",
+              "required": true,
+              "default": "",
+              "factory_argument": true
+            },
+            {
+              "name": "at_group",
+              "type": "string",
+              "derived": "SYS + suffix",
+              "runtime_identity": true
+            }
+          ],
+          "projection": "factory arguments and runtime identity"
+        },
+        "logical": {
+          "binding_source": "device/entry.json#/Runtime/composition",
+          "provides": [
+            "enabled state",
+            "chain position",
+            "head/tail role",
+            "successor relation",
+            "runtime connectivity"
+          ],
+          "projection": "container composition; never compiler-hardcode one topology in the reusable module class"
+        },
+        "physical": {
+          "required": false,
+          "resources_ref": "#/Design/connectors/physical/resources",
+          "binding_source": "device/entry.json#/Deployment/HAL when resources are declared",
+          "absence_semantics": "An empty resource map is a valid connector with no HAL requirement."
+        }
+      },
+      "lifecycle": {
+        "discover": "Resolve capsule by logical id and contract fingerprint.",
+        "attach": "Create the requested instance, apply instance/logical bindings and copy enabled physical-resource metadata through factory arguments before Initialize and Start.",
+        "activate": "Initialize and start the instance; execute declared runtime OPEN/SETUP bindings only for enabled resources.",
+        "detach": "Close owned resources according to their contracts, unlink the instance and preserve unrelated module state.",
+        "replace": "Detach the previous capsule state and attach a compatible resolved capsule without retaining direct static instance access."
+      },
+      "incremental_generation": {
+        "purpose": "Expose stable comparison keys so Code-First can update only affected projections while still producing one complete Package 2.",
+        "inputs": {
+          "logical_identity": "#/Design/artifact_identity/id",
+          "contract_fingerprint": "#/Design/artifact_identity/fingerprint/value",
+          "instance_bindings": "selected Runtime.composition.instances entries whose module_ref resolves this capsule",
+          "deployment_binding": "selected Deployment.metadata_bindings entry and referenced HAL subset",
+          "platform_projection": "selected Deployment.target.platform generation contract",
+          "dependencies": "$DEPLOYMENT/required_namespaces + $DEPLOYMENT/required_types and resolved driver/connector contributions"
+        },
+        "change_classification": {
+          "reuse": "Identity, contract fingerprint, relevant bindings, platform projection and dependencies are unchanged.",
+          "regenerate": "Contract fingerprint or generated-source platform projection changed.",
+          "rebind": "Contract is unchanged but instance, logical, HAL or activation binding changed; reuse module source and update only affected container/platform artifacts.",
+          "add": "Logical capsule or selected instance exists only in current Model-First.",
+          "remove": "Logical capsule or selected instance exists only in previous Model-First."
+        },
+        "output_scope": {
+          "module_source": "device/modules/sys/<declared-class>.cs",
+          "composition": "device/Program.cs for the selected platform",
+          "dependencies": "selected platform dependency artifact such as device/packages.config",
+          "manifest_and_readme": [
+            "device/entry.json",
+            "device/README.md"
+          ],
+          "resource_sources": "device/modules/<owning-module>/<source_name>Resource.cs for each selected resource",
+          "event_actions": "Declared event-action partial artifacts beside the main source."
+        },
+        "reuse_rule": "A reused output must be copied byte-identically from the previous verified Package 2 and its prior hash recorded in current provenance.",
+        "safety_rule": "Never reuse an output when its complete declared comparison inputs cannot be resolved and verified."
+      },
+      "validation": [
+        "Every runtime instance resolves exactly one logical capsule identity and canonical contract fingerprint.",
+        "Physical target values remain outside reusable generated module source.",
+        "An empty physical resource map is valid and must not cause generation failure.",
+        "Incremental comparison includes only declared relevant binding subsets; unrelated module changes must not invalidate this capsule projection.",
+        "Attach or detach must not create direct static access to a concrete module instance.",
+        "Factory-applied metadata must precede Initialize and Start; a running partially bound module is invalid.",
+        "Capsule identity and contract fingerprint are generation/provenance keys and must not become runtime factory arguments or module checks."
+      ]
+    },
+    "endpoint_classification": {
+      "module_commands": [
+        "ECHO",
+        "INFO",
+        "LOOPBACK"
+      ],
+      "resources": [
+        "NEO",
+        "LED",
+        "BUTTON",
+        "FLASH",
+        "TMR"
+      ],
+      "registry_ref": "device/modules/sys/CodeCraft_sys_at.json#/Design/business_commands",
+      "rule": "Kinds are explicit; a physical dependency is not automatically a resource endpoint."
+    },
+    "application_binding": {
+      "field": "private string loraAddressForTest = \"0x5557\";",
+      "owner": "main SysModule.cs",
+      "default": "0x5557",
+      "semantics": "Application test peer, not SYS hardware binding and not local LoRa identity.",
+      "exception": "The explicit model-declared application default is allowed; the generator must not embed the resolved override in SYS. Program passes its HAL constant via Create."
+    },
+    "event_actions": {
+      "policy_ref": "$DESIGN/generation/event_action_policy",
+      "actions": [],
+      "dispatch_order": [],
+      "dispatch_rule": "Preserve default event trace and tag parsing. All topics/tags are trace-only; no Pinging/ACK/WDG application action.",
+      "cleaning": {
+        "remove_outputs": [
+          "device/modules/sys/HelloWorldEventHandler.cs",
+          "device/modules/sys/PingEventHandler.cs"
+        ],
+        "replacement": "Retain a trace-only DefaultEventHandler in the main SYS partial; retain ParseEventTag and all generic resource handlers.",
+        "preserve": [
+          "All generic TMR/WDG and SEND_ACK capabilities",
+          "SYS factory test-target connector and override",
+          "Resource lifecycle and instrumentation"
+        ]
+      }
+    }
+  },
+  "Deployment": {
+    "platform_ref": "$PLATFORM",
+    "HAL": {
+      "required": "conditional when a SYS status resource is enabled by device composition",
+      "binding_sources": [
+        "device/entry.json#/Deployment/HAL/module_bindings/sys/controller_binding",
+        "device/entry.json#/Deployment/HAL/module_bindings/sys/resources/neo",
+        "device/entry.json#/Deployment/HAL/module_bindings/sys/resources/led",
+        "device/entry.json#/Deployment/HAL/module_bindings/sys/resources/button",
+        "device/entry.json#/Deployment/HAL/module_bindings/sys/resources/flash"
+      ],
+      "binding_policy": "The neutral connector declares capabilities and configuration schemas. The device package independently binds the module-lifetime controller and optional NEO, LED and BUTTON physical resources. This reusable DDR declares no board identity, fixed GPIO or concrete controller type.",
+      "required_capabilities": [
+        "synchronous millisecond delay"
+      ],
+      "conditional_capabilities": [
+        "addressable RGB output when NEO is enabled",
+        "digital GPIO output when LED is enabled",
+        "event-driven GPIO button input with Press and Holding events when BUTTON is enabled",
+        "internal text-file storage and capacity APIs when FLASH is enabled"
+      ]
+    },
+    "required_namespaces": [
+      "CodeCraft.Common",
+      "System.IO when FLASH is enabled"
+    ],
+    "required_types": [
+      "VirtualModule",
+      "MessageFormat"
+    ],
+    "platform_resolution": "Resolve GPIO, pixel and delay APIs and add only namespaces/packages required by the independently enabled HAL resources.",
+    "resources": {
+      "tmr": {
+        "enabled": true,
+        "kind": "logical",
+        "HAL_required": false,
+        "capacity": 10
+      }
+    }
+  },
+  "Runtime": {
+    "state": {
+      "module_state": "inherited Level 0 lifecycle and counters",
+      "resources": {
+        "NEO": [
+          "driver reference",
+          "runtime binding"
+        ],
+        "LED": [
+          "selected platform pin resources",
+          "runtime binding"
+        ],
+        "BUTTON": [
+          "driver reference",
+          "callback registrations",
+          "interaction context",
+          "holding state",
+          "successful OPEN command context"
+        ],
+        "FLASH": [
+          "locked Deployment policy",
+          "opened state",
+          "mutation lock"
+        ],
+        "TMR": [
+          "named timer/watchdog lifecycle",
+          "configured bounded capacity",
+          "standby reuse",
+          "pending reply expectations",
+          "periodMs and monotonic scheduled slots",
+          "periodic run ownership and single-delivery gate",
+          "transient periodic close tombstone in shared table",
+          "ExpirationCount per periodic run, incremented and snapshotted before delivery regardless of subscribers"
+        ]
+      },
+      "static_subscriptions": 0,
+      "external_resources": "Closed resources have no open pins, active callbacks or live resource drivers. The retained module controller may exist while every resource is CLOSED.",
+      "application": [
+        "retained test peer address binding; no active application action or watchdog"
+      ]
+    },
+    "message_flow": [
+      "Command enters through Level 0 container.",
+      "Matching SYS instance dispatches its handler.",
+      "Handler validates lifecycle and arguments before changing state.",
+      "Handler preserves context in its synchronous response."
+    ],
+    "generation": {
+      "output": "device/modules/sys/SysModule.cs",
+      "source_in_model_first": false,
+      "semantic_oracle": "Design.connectors + Design.handlers + Design.resource_contract + Design.resources + Design.semantic_invariants + Design.source_generation + resolved Deployment HAL binding",
+      "resource_outputs": [
+        "device/modules/sys/NeoResource.cs",
+        "device/modules/sys/LedResource.cs",
+        "device/modules/sys/ButtonResource.cs",
+        "device/modules/sys/FlashResource.cs",
+        "device/modules/sys/TimerResource.cs"
+      ],
+      "event_action_outputs": []
+    },
+    "periodic_tmr": {
+      "contract_ref": "#/Design/resources/TMR/periodic",
+      "acceptance_ref": "device/tests/FoundationPatchIntegrationAcceptance.md",
+      "state": "MODEL_FIRST_ONLY; integration source supplied exactly; no current device execution"
+    }
+  }
+}

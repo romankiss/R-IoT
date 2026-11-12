@@ -1,0 +1,31 @@
+{
+  "state": "VERIFIED",
+  "effective_state": "VERIFIED_OWNER_ACCEPTED_SCOPE",
+  "profile": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+  "full_regression": "NOT_REQUESTED",
+  "owner_acceptance_ref": "evidence/OwnerAcceptance.json",
+  "runtime_reports": [
+    "evidence/LED_20261103_report.md",
+    "evidence/SYS_20261103_report.md"
+  ],
+  "aep_exchanges": {
+    "sys": 58,
+    "led": 19,
+    "all_ack_confirmed": true
+  },
+  "verified_behavior": [
+    "Startup skips unassigned SYS NEO/BUTTON and reaches READY.",
+    "SYS NEO/BUTTON INFO defaults and idempotent CLOSE while absent.",
+    "LED GPIO18 LOW BLINK/ON/OFF/TOGGLE; CLOSE retains binding in INFO; closed ON ENOTOPEN; explicit OPEN using captured binding restores operation.",
+    "Owner RKB shows LORA SEND_ACK TX and RX subscription routing at address 0899.",
+    "Additional unchanged SYS FLASH/TMR/WDG public command smoke documented in SYS report."
+  ],
+  "exclusions": [
+    "Physical NEO and BUTTON OPEN/use/CLOSE/reopen binding-retention tests: no such resources connected on this board.",
+    "LORA IRQ=-1 polling and explicit reset/irq=-2 rejection: not exercised by retained runtime evidence; source guard reviewed. ATOMS3R_CAM tested with reset=-1 and irq=8.",
+    "Failed hardware acquisition rollback, concurrent resource lifecycle stress, and broader board matrix not executed.",
+    "No flashed-image digest or independent compiler log; source files are hash-bound package artifacts, not independently attested deployed bytes.",
+    "Model-First proposals require semantic IN/OUT review, version/reference/inventory reconciliation and Code-First integration before they become a new accepted pair."
+  ],
+  "pair_promotion": "NOT_PERFORMED"
+}

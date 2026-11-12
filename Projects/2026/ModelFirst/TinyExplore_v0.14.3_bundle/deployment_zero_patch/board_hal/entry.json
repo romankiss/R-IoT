@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "revision": "HAL_RESOURCE_COMPATIBILITY_V1",
+  "state": "VERIFIED",
+  "effective_state": "VERIFIED_OWNER_ACCEPTED_ATOMS3R_CAM_SCOPE",
+  "supported_pair_sha256": [
+    "d00c1bbb8e50fff5a5e1eb13e77fa7d20ddb0eb165efe960a0d20a6e6d898247"
+  ],
+  "files": [
+    {
+      "target": "device/modules/lora/LoraModule.cs",
+      "source": "board_hal/device/modules/lora/LoraModule.cs",
+      "baseline_sha256": "91832ebf193937f62216ff642c7b6be38fb6d0ef9aa95ef662268e005f75a210",
+      "replacement_sha256": "0b7d9a340d2e8ebdfdcbbc0724bd8d0cda49ca4b0db89635e8a20442719661b3",
+      "revision": "HAL_RESOURCE_COMPATIBILITY_V1",
+      "state": "VERIFIED",
+      "validation_scope": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+      "placement": "whole_file_replace",
+      "on_hash_mismatch": "If current hash equals replacement: ALREADY_APPLIED; otherwise REVIEW_REQUIRED, do not overwrite."
+    },
+    {
+      "target": "device/modules/sys/ButtonResource.cs",
+      "source": "board_hal/device/modules/sys/ButtonResource.cs",
+      "baseline_sha256": "99b29dea98af8ef9f36f5267cab17154165d80d8232b9ab49cce46315496d71f",
+      "replacement_sha256": "afd62ded8a2925ecf7307dc7eaf86a40508970071540ff5d2971a208f233bf0c",
+      "revision": "HAL_RESOURCE_COMPATIBILITY_V1",
+      "state": "VERIFIED",
+      "validation_scope": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+      "placement": "whole_file_replace",
+      "on_hash_mismatch": "If current hash equals replacement: ALREADY_APPLIED; otherwise REVIEW_REQUIRED, do not overwrite."
+    },
+    {
+      "target": "device/modules/sys/LedResource.cs",
+      "source": "board_hal/device/modules/sys/LedResource.cs",
+      "baseline_sha256": "90c054ec378d8dd6c39734273c2262e6b3a0ec3e79e6010af4455085b3c37b8d",
+      "replacement_sha256": "042be0aaf93d7d6eb542488c878fa961441ff9afe3084bac81383b1cac184bf8",
+      "revision": "HAL_RESOURCE_COMPATIBILITY_V1",
+      "state": "VERIFIED",
+      "validation_scope": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+      "placement": "whole_file_replace",
+      "on_hash_mismatch": "If current hash equals replacement: ALREADY_APPLIED; otherwise REVIEW_REQUIRED, do not overwrite."
+    },
+    {
+      "target": "device/modules/sys/NeoResource.cs",
+      "source": "board_hal/device/modules/sys/NeoResource.cs",
+      "baseline_sha256": "780c3f50467c1c669a92d767dd63a6f8360b5a4a75e9b0928df7a398ff07dd84",
+      "replacement_sha256": "2c7c5ec6153dd30d4e3f38ff52a724ff1cd437b59664e6061f8e647e414691ac",
+      "revision": "HAL_RESOURCE_COMPATIBILITY_V1",
+      "state": "VERIFIED",
+      "validation_scope": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+      "placement": "whole_file_replace",
+      "on_hash_mismatch": "If current hash equals replacement: ALREADY_APPLIED; otherwise REVIEW_REQUIRED, do not overwrite."
+    }
+  ],
+  "contract_overlay": {
+    "source": "Explicit owner preview.6 request: keep SYS/LORA resource fixes for the old pair; generate Program.cs normally from reviewed board/activation metadata.",
+    "scope": "Four resource source replacements and module contracts only; no Program.cs or board-specific central DDR override.",
+    "changes_ref": "deployment_zero_patch/board_hal/model-first/contract_changes.json",
+    "placement": "Source paths resolve relative to deployment_zero_patch/. Preserve complete board_hal subtree in every handoff.",
+    "model_status": "Module DDR snapshots/deltas are temporary contract authority; integrate only on explicit Integrate patch selection and reconcile identities/fingerprints before closing a new pair."
+  },
+  "program_disposition": {
+    "active_override": false,
+    "reason": "Owner explicitly selected normal Model-First/Code-First generation for HAL and platform activation; no Program replacement is carried as active.",
+    "historical_parent_manifest": "deployment_zero_patch/board_hal/provenance/parent_entry.json",
+    "parent_archive_name": "CodeCraft_ATOMS3R_CAM_deployment_zero_patch_v1.0.0.zip",
+    "parent_archive_availability": "Retained separately; not an execution input. Included original manifest, scoped source/contracts and test evidence are sufficient for this derived overlay.",
+    "parent_sha256": "b79313eea49f169b8cf6c378b3cca5d5ba7604639498123f5ab0dff471a17d5b",
+    "integration_boundary": "This is an explicit derived variant, not silent deletion from the original immutable patch. If another supplied active Program override exists, preserve/reconcile it separately; never silently drop it."
+  },
+  "patch_validation": {
+    "state": "VERIFIED",
+    "profile": "OWNER_ACCEPTED_ATOMS3R_CAM_PUBLIC_DEVICE_SCOPE",
+    "evidence_ref": "deployment_zero_patch/board_hal/validation.json",
+    "scope": "Same four production replacement bytes as accepted parent; target acceptance on new boards remains UNVERIFIED. No new hardware test claimed."
+  },
+  "workflow": "PRESERVE_ACTIVE by default. Explicit Integrate patch: HAL_RESOURCE_COMPATIBILITY_V1. integrates only this resource scope through Model-First -> Code-First; preserve original archive and evidence. No full fallback solely for patch presence."
+}
